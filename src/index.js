@@ -1,9 +1,13 @@
+import EditMosaic from './components/manage/Edit'
 
-const View = require('./components/theme/View')
 
-exports.Structure = require('./src/components/manage/Edit')
+import View from './components/theme/View'
 
-exports.layoutViews = {
+const layoutViews = {
     mosaic_tiles_view: View,
 }
 
+
+export {
+    layoutViews, EditMosaic
+}
