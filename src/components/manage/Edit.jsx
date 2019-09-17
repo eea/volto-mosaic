@@ -14,7 +14,7 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import qs from 'query-string';
 
-import MosaicForm from '~/components/manage/Mosaic/Form';
+import MosaicForm from './Form';
 import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
 import { updateContent, getContent, getSchema } from '@plone/volto/actions';
 import { getBaseUrl, hasTilesData } from '@plone/volto/helpers';
