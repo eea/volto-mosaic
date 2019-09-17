@@ -2,7 +2,7 @@
   "name": "volto-mosaic",
   "version": "0.0.1",
   "description": "Edit/view package for volto using mosaic",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "prepublishOnly": "babel ./src --out-dir ./dist -s inline"
   },
@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git+ssh://git@github.com/eaudeweb/volto-mosaic.git"
   },
+  "files": [
+    "dist/*"
+  ],
   "keywords": [
     "volto",
     "mosaic"
