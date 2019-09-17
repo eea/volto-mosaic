@@ -1,6 +1,8 @@
-import Form from './components/manage/Form.jsx'
 import View from './components/manage/View.jsx'
-
+import * as Structure from './components/index.js'
+const layoutViews = {
+    mosaic_tiles_view: View,
+}
 export {
-    Form, View
+    Structure, layoutViews
 }
