@@ -1,6 +1,6 @@
 {
   "name": "volto-mosaic",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Edit/view package for volto using mosaic",
   "main": "dist/index.js",
   "scripts": {
