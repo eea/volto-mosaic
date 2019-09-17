@@ -1,8 +1,8 @@
-import View from './src/components/theme/View.jsx'
-import * as Structure from './src/components/index.js'
-const layoutViews = {
+
+const Structure = require('./src/components/index.js')
+
+exports.layoutViews = {
     mosaic_tiles_view: View,
 }
-export {
-    Structure, layoutViews
-}
+
+exports.View = require('./src/components/theme/View.jsx')
