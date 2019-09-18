@@ -43,6 +43,9 @@ import {
   Segment,
   // Tab,
   // Message,
+  Select,
+  Modal,
+  Grid,
 } from 'semantic-ui-react';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
@@ -126,31 +129,30 @@ class AddNewTile extends Component {
       },
       ...tiles.customTiles,
     ];
+
+    const selectTiles = availableTiles.map(t => ({
+      key: t.title,
+      value: t.title,
+      text: t.title,
+    }));
+
     this.state = {
-      availableTiles,
+      selectTiles,
     };
   }
 
   render() {
     return (
       <div className="add-tile toolbar">
-        <Button.Group>
-          {this.state.availableTiles.map(tile => (
-            <Button
-              key={tile.title}
-              icon
-              basic
-              onClick={() =>
-                this.props.onMutateTile(this.props.tile, {
-                  '@type': tile.title,
-                })
-              }
-            >
-              <Icon name={tile.icon} size="24px" />
-              {/* <span>{tile.title}</span> */}
-            </Button>
-          ))}
-        </Button.Group>
+        <Select
+          onChange={(event, data) =>
+            this.props.onMutateTile(this.props.tile, {
+              '@type': data.value,
+            })
+          }
+          placeholder="Change tile type"
+          options={this.state.selectTiles}
+        />
       </div>
     );
   }
@@ -638,7 +640,6 @@ class Form extends Component {
           {titlediv}
           <div className="mosaic-window-controls">
             <Separator />
-            <AddNewTile onMutateTile={onMutateTile} tile={tileid} />
             <Separator />
             <SplitButton />
             <ExpandButton />
@@ -677,7 +678,25 @@ class Form extends Component {
                 renderToolbar={this.getToolbar(tileid, this.onMutateTile)}
                 key={tileid}
               >
-                {this.renderEditTile(tileid)}
+                <Grid columns={2}>
+                  <Grid.Column>
+                    <AddNewTile
+                      onMutateTile={this.onMutateTile}
+                      tile={tileid}
+                    />
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Modal
+                      trigger={<Button>Edit tile</Button>}
+                    >
+                      <Modal.Content>
+                        <Modal.Description>
+                          {this.renderEditTile(tileid)}
+                        </Modal.Description>
+                      </Modal.Content>
+                    </Modal>
+                  </Grid.Column>
+                </Grid>
               </MosaicWindow>
             )}
             zeroStateView={<MosaicZeroState createNode={this.createNode} />}
