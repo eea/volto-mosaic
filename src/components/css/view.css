@@ -1,0 +1,34 @@
+#page-document .mosaic-tile {
+    margin: 0;
+}
+
+#page-document .mosaic-window-toolbar {
+    display: none;
+}
+
+#page-document .mosaic-window-body {
+    background: none;
+    border: none;
+}
+
+#page-document .mosaic-preview {
+    display: none;
+}
+
+#page-document .mosaic-drop-target {
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#page-document .mosaic-window-additional-actions-bar {
+    display: none;
+}
+
+#page-document .mosaic-split {
+    display: none!important;
+}
+
+#page-document .tile-container {
+    height: 100%;
+}

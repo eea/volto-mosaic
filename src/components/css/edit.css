@@ -1,0 +1,25 @@
+.modal .tile {
+    min-height: 600px;
+}
+
+.ui.modal {
+    transform: translate(-50%, -50%);
+    margin: 0!important;
+}
+
+#page-edit .mosaic-window-body {
+    padding: 0.3rem;
+}
+
+#page-edit .mosaic-window-body .tile {
+    height: 100%;
+}
+
+#page-edit .mosaic-window-body .tile .tile-inner-wrapper {
+    height: 100%;
+}
+
+#page-edit .mosaic-window-body .tile .tile-inner-wrapper .hero-body {
+    height: 100%;
+    min-width: 100px;
+}

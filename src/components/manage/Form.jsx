@@ -71,6 +71,8 @@ export const THEMES = {
   Blueprint: 'mosaic-blueprint-theme',
 };
 
+import '../css/edit.css'
+
 const messages = defineMessages({
   addTile: {
     id: 'Add tile...',

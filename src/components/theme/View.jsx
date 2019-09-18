@@ -35,6 +35,8 @@ import {
   // hasTilesData,
 } from '@plone/volto/helpers';
 
+import '../css/view.css';
+
 /**
  * Component to display the document view.
  * @function DocumentView
