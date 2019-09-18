@@ -562,6 +562,26 @@ class Form extends Component {
     }
   }
 
+  renderTile(tileid) {
+    const content = this.props.formData;
+    const tilesFieldname = getTilesFieldname(content);
+    const availableTiles = content[tilesFieldname];
+    const tiletype = availableTiles[tileid]['@type'];
+
+    console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
+
+    let Tile = null;
+    Tile = tiles.defaultTilesViewMap[tiletype];
+
+    return Tile !== null ? (
+      <div class="tile-container">
+        <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
+      </div>
+    ) : (
+      <div> {JSON.stringify(tiletype)} </div>
+    );
+  }
+
   renderEditTile(tileid) {
     const { formData } = this.state; // destructuring
     const tilesFieldname = getTilesFieldname(formData);
@@ -694,7 +714,7 @@ class Form extends Component {
                 key={tileid}
               >
                 {this.state.preview ? (
-                  this.renderEditTile(tileid)
+                  this.renderTile(tileid)
                 ) : (
                   <Grid stackable columns={2}>
                     <Grid.Column width={9}>
