@@ -46,6 +46,7 @@ import {
   Select,
   Modal,
   Grid,
+  Radio,
 } from 'semantic-ui-react';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
@@ -64,14 +65,15 @@ import textSVG from '@plone/volto/icons/text.svg';
 import { Resizable, ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
-import '../css/edit.css'
+import '../css/edit.css';
+import '../css/view.css';
 
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
 
 export const THEMES = {
   Blueprint: 'mosaic-blueprint-theme',
-};;
+};
 
 const messages = defineMessages({
   addTile: {
@@ -273,6 +275,7 @@ class Form extends Component {
 
     this.state = {
       formData,
+      preview: false,
       errors: {},
       selected:
         formData[tilesLayoutFieldname].items.length > 0
@@ -288,6 +291,7 @@ class Form extends Component {
     this.onDeleteTile = this.onDeleteTile.bind(this);
     this.onAddTile = this.onAddTile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.setPreview = this.setPreview.bind(this);
 
     // this.onMoveTile = this.onMoveTile.bind(this);
     // this.onFocusPreviousTile = this.onFocusPreviousTile.bind(this);
@@ -309,6 +313,17 @@ class Form extends Component {
         [id]: value || null,
       },
     });
+  }
+
+  setPreview() {
+    const newPreviewState = !this.state.preview;
+    const body = document.querySelector('body');
+    if (newPreviewState) {
+      body.classList.add('mosaic-preview-body');
+    } else {
+      body.classList.remove('mosaic-preview-body');
+    }
+    this.setState({ preview: newPreviewState });
   }
 
   /**
@@ -678,23 +693,27 @@ class Form extends Component {
                 renderToolbar={this.getToolbar(tileid, this.onMutateTile)}
                 key={tileid}
               >
-                <Grid stackable columns={2}>
-                  <Grid.Column width={9}>
-                    <AddNewTile
-                      onMutateTile={this.onMutateTile}
-                      tile={tileid}
-                    />
-                  </Grid.Column>
-                  <Grid.Column width={3}>
-                    <Modal trigger={<Button>Edit tile</Button>}>
-                      <Modal.Content>
-                        <Modal.Description>
-                          {this.renderEditTile(tileid)}
-                        </Modal.Description>
-                      </Modal.Content>
-                    </Modal>
-                  </Grid.Column>
-                </Grid>
+                {this.state.preview ? (
+                  this.renderEditTile(tileid)
+                ) : (
+                  <Grid stackable columns={2}>
+                    <Grid.Column width={9}>
+                      <AddNewTile
+                        onMutateTile={this.onMutateTile}
+                        tile={tileid}
+                      />
+                    </Grid.Column>
+                    <Grid.Column width={3}>
+                      <Modal trigger={<Button>Edit tile</Button>}>
+                        <Modal.Content>
+                          <Modal.Description>
+                            {this.renderEditTile(tileid)}
+                          </Modal.Description>
+                        </Modal.Content>
+                      </Modal>
+                    </Grid.Column>
+                  </Grid>
+                )}
               </MosaicWindow>
             )}
             zeroStateView={<MosaicZeroState createNode={this.createNode} />}
@@ -704,7 +723,17 @@ class Form extends Component {
             className={THEMES[this.state.currentTheme]}
           />
         </ResizableBox>
-
+        <Portal
+          node={
+            __CLIENT__ && document.querySelector('.toolbar .toolbar-actions')
+          }
+        >
+          <div>
+            <small>Preview</small>
+            <br />
+            <Radio toggle onChange={() => this.setPreview()} />
+          </div>
+        </Portal>
         <Portal
           node={__CLIENT__ && document.getElementById('sidebar-metadata')}
         >
