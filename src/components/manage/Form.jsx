@@ -64,14 +64,14 @@ import textSVG from '@plone/volto/icons/text.svg';
 import { Resizable, ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
+import '../css/edit.css'
+
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
 
 export const THEMES = {
   Blueprint: 'mosaic-blueprint-theme',
-};
-
-import '../css/edit.css'
+};;
 
 const messages = defineMessages({
   addTile: {
@@ -630,7 +630,7 @@ class Form extends Component {
     const tilesFieldname = getTilesFieldname(formData);
     const tileType = this.state.formData[tilesFieldname][tileid]['@type'];
 
-    let titlediv = <div className="mosaic-window-title">Tile: {tileType}</div>;
+    let titlediv = <div className="mosaic-window-title">{tileType}</div>;
 
     return (props, draggable) => {
       return (
@@ -641,8 +641,6 @@ class Form extends Component {
         >
           {titlediv}
           <div className="mosaic-window-controls">
-            <Separator />
-            <Separator />
             <SplitButton />
             <ExpandButton />
             <RemoveButton />
@@ -680,17 +678,15 @@ class Form extends Component {
                 renderToolbar={this.getToolbar(tileid, this.onMutateTile)}
                 key={tileid}
               >
-                <Grid columns={2}>
-                  <Grid.Column>
+                <Grid stackable columns={2}>
+                  <Grid.Column width={9}>
                     <AddNewTile
                       onMutateTile={this.onMutateTile}
                       tile={tileid}
                     />
                   </Grid.Column>
-                  <Grid.Column>
-                    <Modal
-                      trigger={<Button>Edit tile</Button>}
-                    >
+                  <Grid.Column width={3}>
+                    <Modal trigger={<Button>Edit tile</Button>}>
                       <Modal.Content>
                         <Modal.Description>
                           {this.renderEditTile(tileid)}
