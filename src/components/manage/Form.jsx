@@ -276,6 +276,7 @@ class Form extends Component {
     this.state = {
       formData,
       preview: false,
+      modalOpen: false,
       errors: {},
       selected:
         formData[tilesLayoutFieldname].items.length > 0
@@ -292,6 +293,8 @@ class Form extends Component {
     this.onAddTile = this.onAddTile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.setPreview = this.setPreview.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
 
     // this.onMoveTile = this.onMoveTile.bind(this);
     // this.onFocusPreviousTile = this.onFocusPreviousTile.bind(this);
@@ -314,6 +317,11 @@ class Form extends Component {
       },
     });
   }
+
+
+  handleOpen = () => this.setState({ modalOpen: true })
+
+  handleClose = () => this.setState({ modalOpen: false })
 
   setPreview() {
     const newPreviewState = !this.state.preview;
@@ -607,6 +615,7 @@ class Form extends Component {
         onChangeField={nop}
         onDeleteTile={nop}
         onSelectTile={nop}
+        handleClose={this.handleClose}
         onMoveTile={nop}
         onFocusPreviousTile={nop}
         onFocusNextTile={nop}
@@ -724,12 +733,19 @@ class Form extends Component {
                       />
                     </Grid.Column>
                     <Grid.Column width={3}>
-                      <Modal trigger={<Button>Edit tile</Button>}>
+                      <Modal 
+                        trigger={<Button onClick={this.handleOpen}>Edit tile</Button>}
+                        open={this.state.modalOpen}
+                        onClose={this.handleClose}
+                      >
                         <Modal.Content>
                           <Modal.Description>
                             {this.renderEditTile(tileid)}
                           </Modal.Description>
                         </Modal.Content>
+                        <Modal.Actions>
+                          <Button color='green' onClick={this.handleClose}>Close</Button>
+                        </Modal.Actions>
                       </Modal>
                     </Grid.Column>
                   </Grid>
