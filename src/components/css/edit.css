@@ -66,3 +66,7 @@
 .mosaic-window > .mosaic-window-toolbar .mosaic-window-controls {
     display: none!important;
 }
+
+.tile-selector .menu{
+    height: 200px;
+}

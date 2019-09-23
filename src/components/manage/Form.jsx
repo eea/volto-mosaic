@@ -146,14 +146,17 @@ class AddNewTile extends Component {
   }
 
   render() {
+
     return (
       <div className="add-tile toolbar">
         <Select
+          className={"tile-selector"}
           onChange={(event, data) =>
             this.props.onMutateTile(this.props.tile, {
               '@type': data.value,
             })
           }
+          defaultValue={this.props.tiles[this.props.tile]['@type']}
           placeholder="Change tile type"
           options={this.state.selectTiles}
         />
@@ -241,7 +244,6 @@ class Form extends Component {
     let { formData } = props;
     const tilesFieldname = getTilesFieldname(formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-
     let defaultLayoutHeight =
       formData[tilesLayoutFieldname].layout_height || 500;
 
@@ -276,7 +278,6 @@ class Form extends Component {
     this.state = {
       formData,
       preview: false,
-      modalOpen: false,
       errors: {},
       selected:
         formData[tilesLayoutFieldname].items.length > 0
@@ -701,13 +702,12 @@ class Form extends Component {
       <div className="bp3-navbar bp3-dark">
         <div className="bp3-navbar-group bp3-button-group">
 
-          <span className="actions-label">Example Actions:</span>
          
           <button
             className="bp3-button bp3-icon-arrow-top-right"
             onClick={() => this.onAddTile('text', -1, true)}
           >
-            Add Window to Top Right
+            Add Tile
           </button>
         </div>
       </div>
@@ -724,13 +724,13 @@ class Form extends Component {
 
     return (
       <div className="ui wrapper">
+        {this.renderNavBar()}
         <ResizableBox
           width={200}
           height={this.state.height}
           minConstraints={[100, 100]}
           onResize={this.onResize}
         >
-          {this.renderNavBar()}
           <Mosaic
             renderTile={(tileid, path) => (
               <MosaicWindow
@@ -749,30 +749,27 @@ class Form extends Component {
                 {this.state.preview ? (
                   this.renderTile(tileid)
                 ) : (
-                  <Grid stackable columns={2}>
-                    <Grid.Column width={9}>
-                      <AddNewTile
-                        onMutateTile={this.onMutateTile}
-                        tile={tileid}
-                      />
-                    </Grid.Column>
-                    <Grid.Column width={3}>
-                      <Modal 
-                        trigger={<Button onClick={this.handleOpen}>Edit tile</Button>}
-                        open={this.state.modalOpen}
-                        onClose={this.handleClose}
-                      >
-                        <Modal.Content>
-                          <Modal.Description>
-                            {this.renderEditTile(tileid)}
-                          </Modal.Description>
-                        </Modal.Content>
-                        <Modal.Actions>
-                          <Button color='green' onClick={this.handleClose}>Close</Button>
-                        </Modal.Actions>
-                      </Modal>
-                    </Grid.Column>
-                  </Grid>
+                <div>
+                  <AddNewTile
+                    onMutateTile={this.onMutateTile}
+                    tile={tileid}
+                    tiles={this.state.formData.tiles}
+                  />
+                  
+                  <Modal 
+                    onClose={this.handleClose}
+                    key={tileid}
+                    trigger={<Button>Edit tile</Button>}
+                  >
+                  <Modal.Content>
+                      {this.renderEditTile(tileid)}
+                  </Modal.Content>
+                    <Modal.Actions>
+                      <Button color='green' onClick={this.handleClose}>Close</Button>
+                    </Modal.Actions>
+                  </Modal>
+                </div>
+           
                 )}
               </MosaicWindow>
             )}
