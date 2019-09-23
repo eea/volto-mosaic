@@ -449,7 +449,7 @@ class Form extends Component {
    * @param {Number} index Index where to add the tile
    * @returns {string} Id of the tile
    */
-  onAddTile(type, index) {
+  onAddTile(type, index, column) {
     console.log('doing on add tile');
 
     const id = uuid();
@@ -464,7 +464,9 @@ class Form extends Component {
       const path = getPathToCorner(currentNode, Corner.TOP_RIGHT);
       const parent = getNodeAtPath(currentNode, dropRight(path));
       const destination = getNodeAtPath(currentNode, path);
-      const direction = parent ? getOtherDirection(parent.direction) : 'row';
+      let direction = parent ? getOtherDirection(parent.direction) : 'row';
+      
+      if(column) direction = 'column';
 
       let first;
       let second;
@@ -703,7 +705,7 @@ class Form extends Component {
          
           <button
             className="bp3-button bp3-icon-arrow-top-right"
-            onClick={() => this.onAddTile('text', -1)}
+            onClick={() => this.onAddTile('text', -1, true)}
           >
             Add Window to Top Right
           </button>
