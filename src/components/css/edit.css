@@ -9,10 +9,17 @@
 
 #page-edit .mosaic-window-body {
     padding: 0.3rem;
-    background: none;
-    display: flex;
+    background: #ddd;
     justify-content: center;
     align-items: center;
+    display: flex;
+    z-index: 5;
+    position: static;
+    pointer-events: none;
+}
+
+#page-edit .mosaic-window-body > * {
+    pointer-events: all;
 }
 
 #page-edit .mosaic-window-body .tile {
@@ -38,4 +45,24 @@
 
 .mosaic-window-body>div {
     width: 100%;
+}
+
+.mosaic-window > .mosaic-window-toolbar.draggable {
+    /* display: none!important; */
+
+    position: absolute;
+    width: 100%;
+    height: 100%!important;
+}
+
+.mosaic-window > .mosaic-window-toolbar.draggable .mosaic-window-title {
+    position: absolute;
+    top:0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.mosaic-window > .mosaic-window-toolbar .mosaic-window-controls {
+    display: none!important;
 }

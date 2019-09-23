@@ -295,6 +295,7 @@ class Form extends Component {
     this.setPreview = this.setPreview.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.renderNavBar = this.renderNavBar.bind(this);
 
     // this.onMoveTile = this.onMoveTile.bind(this);
     // this.onFocusPreviousTile = this.onFocusPreviousTile.bind(this);
@@ -511,8 +512,8 @@ class Form extends Component {
         },
       },
       selected: id,
-    });
-
+    }, this.onChange(currentNode));
+    console.log(id)
     return id;
   }
 
@@ -676,29 +677,46 @@ class Form extends Component {
 
     let titlediv = <div className="mosaic-window-title">{tileType}</div>;
 
-    return (props, draggable) => {
-      return (
-        <div
-          key={tileid}
-          className="mosaic-window-toolbar"
-          style={{ width: '100%' }}
-        >
-          {titlediv}
-          <div className="mosaic-window-controls">
-            <SplitButton />
-            <ExpandButton />
-            <RemoveButton />
-          </div>
+    return (
+      <div
+        key={tileid}
+        className="mosaic-window-toolbar draggable"
+        style={{ width: '100%' }}
+      >
+        {titlediv}
+        <div className="mosaic-window-controls">
+          <SplitButton />
+          <ExpandButton />
+          <RemoveButton />
         </div>
-      );
-    };
+      </div>
+    );
   };
 
-  /**
-   * Render method.
-   * @method render
-   * @returns {string} Markup for the component.
-   */
+
+  renderNavBar() {
+    return (
+      <div className="bp3-navbar bp3-dark">
+        <div className="bp3-navbar-group bp3-button-group">
+
+          <span className="actions-label">Example Actions:</span>
+         
+          <button
+            className="bp3-button bp3-icon-arrow-top-right"
+            onClick={() => this.onAddTile('text', -1)}
+          >
+            Add Window to Top Right
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
+
+
+
+
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
 
@@ -710,6 +728,7 @@ class Form extends Component {
           minConstraints={[100, 100]}
           onResize={this.onResize}
         >
+          {this.renderNavBar()}
           <Mosaic
             renderTile={(tileid, path) => (
               <MosaicWindow
@@ -717,11 +736,14 @@ class Form extends Component {
                 title="Window"
                 createNode={this.createNode}
                 path={path}
+                draggable={true}
                 onDragStart={() => console.log('MosaicWindow.onDragStart')}
                 onDragEnd={type => console.log('MosaicWindow.onDragEnd', type)}
-                renderToolbar={this.getToolbar(tileid, this.onMutateTile)}
                 key={tileid}
               >
+                {/* {this.getToolbar(tileid, this.onMutateTile)} */}
+                {/* renderToolbar={} */}
+
                 {this.state.preview ? (
                   this.renderTile(tileid)
                 ) : (
