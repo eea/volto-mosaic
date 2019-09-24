@@ -269,6 +269,7 @@ class Form extends Component {
     this.state = {
       formData,
       preview: false,
+      modals: {},
       errors: {},
       selected:
         formData[tilesLayoutFieldname].items.length > 0
@@ -312,9 +313,9 @@ class Form extends Component {
   }
 
 
-  handleOpen = () => this.setState({ modalOpen: true })
+  handleOpen = (tileid) => this.setState({ modals: {...this.state.modals, [tileid]: true} })
 
-  handleClose = () => this.setState({ modalOpen: false })
+  handleClose = (tileid) => this.setState({ modals: {...this.state.modals, [tileid]: false} })
 
   setPreview() {
     const newPreviewState = !this.state.preview;
@@ -592,7 +593,6 @@ class Form extends Component {
 
     let Tile = null;
     let type = tilesDict[tileid]['@type'].toLowerCase();
-    console.log(tiles, type)
     Tile = tiles.tilesConfig[type].edit;
 
     let data = tilesDict[tileid];
@@ -749,16 +749,17 @@ class Form extends Component {
                     tiles={this.state.formData.tiles}
                   />
                   <div style={{textAlign: 'center'}}>
+                    <Button onClick={()=>this.handleOpen(tileid)}>Edit tile</Button>
                     <Modal 
-                      onClose={this.handleClose}
                       key={tileid}
-                      trigger={<Button>Edit tile</Button>}
+                      closeIcon
+                      open={this.state.modals[tileid]}
                     >
-                    <Modal.Content>
-                        {this.renderEditTile(tileid)}
-                    </Modal.Content>
+                      <Modal.Content>
+                          {this.renderEditTile(tileid)}
+                      </Modal.Content>
                       <Modal.Actions>
-                        <Button color='green' onClick={this.handleClose}>Close</Button>
+                        <Button color='green' onClick={()=>this.handleClose(tileid)}>Close</Button>
                       </Modal.Actions>
                     </Modal>
                     <RemoveButton>Delete</RemoveButton>
