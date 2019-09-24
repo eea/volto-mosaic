@@ -596,10 +596,10 @@ class Form extends Component {
   }
 
   renderTile(tileid) {
-    const content = this.props.formData;
+    const content = this.state.formData;
     const tilesFieldname = getTilesFieldname(content);
     const availableTiles = content[tilesFieldname];
-    const tiletype = availableTiles[tileid]['@type'];
+    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
 
     console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
 
@@ -607,7 +607,7 @@ class Form extends Component {
     Tile = tiles.tilesConfig[tiletype].view;
 
     return Tile !== null ? (
-      <div class="tile-container">
+      <div className="tile-container">
         <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
       </div>
     ) : (
