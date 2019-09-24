@@ -118,23 +118,12 @@ class AddNewTile extends Component {
 
   constructor(props) {
     super(props);
-    let availableTiles = [
-      {
-        title: 'text',
-        icon: textSVG,
-      },
-      {
-        title: 'video',
-        icon: videoSVG,
-      },
-      {
-        title: 'image',
-        icon: cameraSVG,
-      },
-      ...tiles.customTiles,
-    ];
+    console.log('aici', tiles)
+    let availableTiles = {
+      ...tiles.tilesConfig,
+    };
 
-    const selectTiles = availableTiles.map(t => ({
+    const selectTiles = Object.values(availableTiles).map(t => ({
       key: t.title,
       value: t.title,
       text: t.title,
@@ -148,7 +137,9 @@ class AddNewTile extends Component {
   render() {
 
     return (
-      <div className="add-tile toolbar">
+      <div className="ui form add-tile toolbar">
+
+        <label>Tile type:</label>
         <Select
           className={"tile-selector"}
           onChange={(event, data) =>
@@ -159,7 +150,7 @@ class AddNewTile extends Component {
           defaultValue={this.props.tiles[this.props.tile]['@type']}
           placeholder="Change tile type"
           options={this.state.selectTiles}
-        />
+          />
       </div>
     );
   }
@@ -583,7 +574,7 @@ class Form extends Component {
     console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
 
     let Tile = null;
-    Tile = tiles.defaultTilesViewMap[tiletype];
+    Tile = tiles.tilesConfig[tiletype].view;
 
     return Tile !== null ? (
       <div class="tile-container">
@@ -600,8 +591,9 @@ class Form extends Component {
     const tilesDict = formData[tilesFieldname];
 
     let Tile = null;
-    let type = tilesDict[tileid]['@type'];
-    Tile = tiles.defaultTilesEditMap[type];
+    let type = tilesDict[tileid]['@type'].toLowerCase();
+    console.log(tiles, type)
+    Tile = tiles.tilesConfig[type].edit;
 
     let data = tilesDict[tileid];
 
@@ -620,6 +612,7 @@ class Form extends Component {
         onDeleteTile={nop}
         onSelectTile={nop}
         handleClose={this.handleClose}
+        pathname={this.props.pathname}
         onMoveTile={nop}
         onFocusPreviousTile={nop}
         onFocusNextTile={nop}
@@ -755,19 +748,22 @@ class Form extends Component {
                     tile={tileid}
                     tiles={this.state.formData.tiles}
                   />
-                  
-                  <Modal 
-                    onClose={this.handleClose}
-                    key={tileid}
-                    trigger={<Button>Edit tile</Button>}
-                  >
-                  <Modal.Content>
-                      {this.renderEditTile(tileid)}
-                  </Modal.Content>
-                    <Modal.Actions>
-                      <Button color='green' onClick={this.handleClose}>Close</Button>
-                    </Modal.Actions>
-                  </Modal>
+                  <div style={{textAlign: 'center'}}>
+                    <Modal 
+                      onClose={this.handleClose}
+                      key={tileid}
+                      trigger={<Button>Edit tile</Button>}
+                    >
+                    <Modal.Content>
+                        {this.renderEditTile(tileid)}
+                    </Modal.Content>
+                      <Modal.Actions>
+                        <Button color='green' onClick={this.handleClose}>Close</Button>
+                      </Modal.Actions>
+                    </Modal>
+                    <RemoveButton>Delete</RemoveButton>
+                  </div>
+
                 </div>
            
                 )}

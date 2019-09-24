@@ -80,12 +80,12 @@ class MosaicView extends Component {
     const content = this.props.content;
     const tilesFieldname = getTilesFieldname(content);
     const availableTiles = content[tilesFieldname];
-    const tiletype = availableTiles[tileid]['@type'];
+    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
 
     console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
 
     let Tile = null;
-    Tile = tiles.defaultTilesViewMap[tiletype];
+    Tile = tiles.tilesConfig[tiletype].view;
 
     return Tile !== null ? (
       <div class="tile-container">
