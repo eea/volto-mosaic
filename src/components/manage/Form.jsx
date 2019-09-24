@@ -11,11 +11,11 @@ import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 import dropRight from 'lodash/dropRight';
 // import classNames from 'classnames';
-
+import clone from 'lodash/clone';
 import {
   Corner,
   // createBalancedTreeFromLeaves,
-  // getLeaves,
+  getLeaves,
   getNodeAtPath,
   getOtherDirection,
   getPathToCorner,
@@ -435,13 +435,36 @@ class Form extends Component {
     });
   }
 
-  /**
-   * Add tile handler
-   * @method onAddTile
-   * @param {string} type Type of the tile
-   * @param {Number} index Index where to add the tile
-   * @returns {string} Id of the tile
-   */
+
+
+
+  createBalancedTreeFromLeaves(leaves,startDirection) {
+    if (leaves.length === 0) {
+      return null;
+    }
+  
+    let current = clone(leaves);
+    let next = [];
+  
+    while (current.length > 1) {
+      while (current.length > 0) {
+        if (current.length > 1) {
+          next.push({
+            direction: 'column',
+            first: current && current.shift(),
+            second: current && current.shift(),
+            splitPercentage: 50
+          });
+        } else {
+          next.unshift(current && current.shift());
+        }
+      }
+      current = next;
+      next = [];
+    }
+    return current[0]
+  }
+
   onAddTile(type, index, column) {
     console.log('doing on add tile');
 
@@ -487,7 +510,13 @@ class Form extends Component {
       currentNode = id;
     }
 
+    console.log('in add', currentNode)
+
+    const leaves = getLeaves(currentNode);
+    currentNode = this.createBalancedTreeFromLeaves(leaves, 'column')
+
     this.setState({
+      height: this.state.height + 250,
       formData: {
         ...this.state.formData,
         [tilesLayoutFieldname]: {
@@ -630,7 +659,6 @@ class Form extends Component {
   onChange = currentNode => {
     // this.setState({  });
     const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
-
     this.setState(
       {
         currentNode,
