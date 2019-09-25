@@ -67,3 +67,8 @@
 .tile-selector .menu{
     height: 200px;
 }
+
+.react-grid-item:not(.react-grid-placeholder) {
+    background: #ddd;
+    border: 1px solid black;
+}
