@@ -6,9 +6,8 @@ import RGL, { WidthProvider, Responsive } from "react-grid-layout";
 import _ from "lodash";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { SizeMe } from 'react-sizeme'
 
-const ReactGridLayout = WidthProvider(Responsive);
+const ReactGridLayout = Responsive;
 
 // TILES STUFF
 import { tiles } from '~/config';
@@ -103,7 +102,6 @@ class Form extends Component {
       newCounter: 0,
       cols: 12
     };
-
     this.onAddItem = this.onAddItem.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
   }
@@ -118,24 +116,14 @@ class Form extends Component {
     const i = el.add ? "+" : el.i;
     return (
       <div key={i} data-grid={el}>
-        {el.add ? (
-          <span
-            className="add text"
-            onClick={this.onAddItem}
-            title="You can add an item by clicking here, too."
-          >
-            Add +
-              </span>
-        ) : (
-            <span className="text">{i}</span>
-          )}
+        assds
         <span
           className="remove"
           style={removeStyle}
           onClick={this.onRemoveItem.bind(this, i)}
         >
           x
-            </span>
+        </span>
       </div>
     );
   }
@@ -184,7 +172,7 @@ class Form extends Component {
         <ReactGridLayout
           onLayoutChange={this.onLayoutChange}
           onBreakpointChange={this.onBreakpointChange}
-          onWidthChange={(e)=>console.log(this.state, e)}
+          width={this.props.size.width}
           {...this.props}
         >
           {_.map(this.state.items, el => this.createElement(el))}

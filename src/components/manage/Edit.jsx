@@ -21,6 +21,11 @@ import { getBaseUrl, hasTilesData } from '@plone/volto/helpers';
 
 import saveSVG from '@plone/volto/icons/save.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
+import { withSize } from 'react-sizeme'
+
+const withSizeHOC = withSize();
+
+
 
 const messages = defineMessages({
   edit: {
@@ -156,7 +161,7 @@ class Edit extends Component {
         this.props.content['@type'] === 'Plone Site';
 
       let FormImpl =
-        this.props.content.layout == 'mosaic_tiles_view' ? MosaicForm : Form;
+        this.props.content.layout == 'mosaic_tiles_view' ? withSizeHOC(MosaicForm) : Form;
 
       return (
         <div id="page-edit">
@@ -248,4 +253,7 @@ export default compose(
       getSchema,
     },
   ),
-)(Edit);
+)(withSize()(Edit));
+
+
+// withSize()(MyComponent)
