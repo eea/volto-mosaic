@@ -98,13 +98,99 @@ class Form extends Component {
   constructor(props) {
     super(props);
 
+
+
+
+
+    const ids = {
+      title: uuid(),
+      description: uuid(),
+      text: uuid(),
+    };
+    let { formData } = props;
+    const tilesFieldname = getTilesFieldname(formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+
+    if (formData === null) {
+      // get defaults from schema
+      formData = mapValues(props.schema.properties, 'default');
+    }
+    // defaults for block editor; should be moved to schema on server side
+    if (!formData[tilesLayoutFieldname]) {
+      formData[tilesLayoutFieldname] = {
+        items: [ids.title, ids.description, ids.text],
+        layout: null,
+      };
+    }
+    if (!formData[tilesFieldname]) {
+      formData[tilesFieldname] = {
+        [ids.title]: {
+          '@type': 'title',
+        },
+        [ids.description]: {
+          '@type': 'description',
+        },
+        [ids.text]: {
+          '@type': 'text',
+        },
+      };
+    }
+
     this.state = {
       items: [],
       newCounter: 0,
-      cols: 12
+      cols: 12,
+      formData,
+      preview: false,
+      modals: {}
     };
     this.onAddItem = this.onAddItem.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
+    // this.onChangeField = this.onChangeField.bind(this);
+    // this.onChangeTile = this.onChangeTile.bind(this);
+    // this.onMutateTile = this.onMutateTile.bind(this);
+    // this.onSelectTile = this.onSelectTile.bind(this);
+    // this.onDeleteTile = this.onDeleteTile.bind(this);
+    this.onAddTile = this.onAddTile.bind(this);
+    // this.onSubmit = this.onSubmit.bind(this);
+    // this.setPreview = this.setPreview.bind(this);
+    // this.handleOpen = this.handleOpen.bind(this);
+    // this.handleClose = this.handleClose.bind(this);
+    // this.renderNavBar = this.renderNavBar.bind(this);
+
+  }
+
+  onAddTile(type, index, column) {
+    console.log('doing on add tile');
+
+    const id = uuid();
+    const tilesFieldname = getTilesFieldname(this.state.formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
+    const totalItems = this.state.formData[tilesLayoutFieldname].items.length;
+
+    // this.setState({
+    //   formData: {
+    //     ...this.state.formData,
+    //     [tilesLayoutFieldname]: {
+    //       items: [
+    //         ...this.state.formData[tilesLayoutFieldname].items.slice(0, insert),
+    //         id,
+    //         ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
+    //       ],
+    //       layout: currentNode,
+    //       layout_height: this.state.height,
+    //     },
+    //     [tilesFieldname]: {
+    //       ...this.state.formData[tilesFieldname],
+    //       [id]: {
+    //         '@type': type,
+    //       },
+    //     },
+    //   },
+    //   selected: id,
+    // }, this.onChange(currentNode));
+    // console.log(id)
+    return id;
   }
 
   createElement(el) {
