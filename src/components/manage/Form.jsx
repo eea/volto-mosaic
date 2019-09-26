@@ -9,6 +9,7 @@ import "react-resizable/css/styles.css";
 
 const ReactGridLayout = Responsive;
 
+import { SizeMe } from 'react-sizeme'
 // TILES STUFF
 import { tiles } from '~/config';
 import {
@@ -169,14 +170,19 @@ class Form extends Component {
     return (
       <div>
         <button onClick={this.onAddItem}>Add Item</button>
-        <ReactGridLayout
-          onLayoutChange={this.onLayoutChange}
-          onBreakpointChange={this.onBreakpointChange}
-          width={this.props.size.width}
-          {...this.props}
-        >
-          {_.map(this.state.items, el => this.createElement(el))}
+        <SizeMe>
+        {({ size }) => 
+         <ReactGridLayout
+         onLayoutChange={this.onLayoutChange}
+         onBreakpointChange={this.onBreakpointChange}
+         width={size.width}
+         {...this.props}
+       >
+         {_.map(this.state.items, el => this.createElement(el))}
         </ReactGridLayout>
+        }
+       
+        </SizeMe>
       </div>
     );
   }
