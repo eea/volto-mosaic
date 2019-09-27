@@ -1,3 +1,4 @@
+import { breakpoints, rowHeight } from '../../config';
 import React, { Component } from 'react';
 import { Responsive } from 'react-grid-layout';
 // import WidthProvider from './WidthProvider';
@@ -84,10 +85,10 @@ class View extends Component {
         {({ size }) => (
           <ReactGridLayout
             layout={this.state.mosaic_layout}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            breakpoints={breakpoints}
             cols={{ lg: 12, md: 12, sm: 6, xs: 2, xxs: 2 }}
             measureBeforeMount={true}
-            rowHeight={30}
+            rowHeight={rowHeight}
             margin={[0, 0]}
             isDraggable={false}
             isResizable={false}

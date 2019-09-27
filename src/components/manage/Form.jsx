@@ -34,6 +34,7 @@ import {
 import _ from 'lodash';
 
 import { Responsive } from 'react-grid-layout';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -44,6 +45,9 @@ import TileEditor from './TileEditor';
 
 import '../css/edit.css';
 import '../css/view.css';
+
+import { rowHeight } from '../../config';
+import LayoutToolbar from './LayoutToolbar';
 
 const ReactGridLayout = Responsive;
 
@@ -133,19 +137,16 @@ class Form extends Component {
     className: 'mosaic-edit-layout',
     // cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
     cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
-    rowHeight: 30,
+    rowHeight: rowHeight,
     margin: [0, 0],
     // onLayoutChange: () => {},
   };
 
-  /**
-   * Constructor
-   * @method constructor
-   * @param {Object} props Component properties
-   * @constructs Form
-   */
   constructor(props) {
     super(props);
+
+    console.log('responsive utils', Responsive.utils);
+
     const ids = {
       title: uuid(),
       text: uuid(),
@@ -540,6 +541,8 @@ class Form extends Component {
     console.log('render props', this.props);
     return this.props.visual ? (
       <div className="ui wrapper">
+        <LayoutToolbar />
+
         <SizeMe>
           {({ size }) => (
             <ReactGridLayout
