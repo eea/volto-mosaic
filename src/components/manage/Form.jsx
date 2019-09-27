@@ -207,6 +207,7 @@ class Form extends Component {
 
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
+    this.onDragStart = this.onDragStart.bind(this);
   }
 
   handleOpen(tileid) {
@@ -496,6 +497,10 @@ class Form extends Component {
     }
   }
 
+  onDragStart(ev) {
+    console.log(ev);
+  }
+
   render() {
     const { schema, onCancel, onSubmit } = this.props;
     const { formData } = this.state;
@@ -541,6 +546,7 @@ class Form extends Component {
               onLayoutChange={this.onLayoutChange}
               onBreakpointChange={this.onBreakpointChange}
               width={size.width || document.querySelector('main').offsetWidth}
+              onDragStart={this.onDragStart}
               {...this.props}
             >
               {_.map(this.state.mosaic_layout, el => this.createElement(el))}
