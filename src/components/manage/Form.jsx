@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from "react";
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 // GRID STUFF
-import RGL, { WidthProvider, Responsive } from "react-grid-layout";
+import { Responsive } from "react-grid-layout";
 import _ from "lodash";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -137,60 +137,167 @@ class Form extends Component {
     }
 
     this.state = {
-      items: [],
+      layout: [],
       newCounter: 0,
       cols: 12,
       formData,
       preview: false,
       modals: {}
     };
-    this.onAddItem = this.onAddItem.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
     // this.onChangeField = this.onChangeField.bind(this);
     // this.onChangeTile = this.onChangeTile.bind(this);
-    // this.onMutateTile = this.onMutateTile.bind(this);
+    this.onMutateTile = this.onMutateTile.bind(this);
     // this.onSelectTile = this.onSelectTile.bind(this);
     // this.onDeleteTile = this.onDeleteTile.bind(this);
     this.onAddTile = this.onAddTile.bind(this);
-    // this.onSubmit = this.onSubmit.bind(this);
-    // this.setPreview = this.setPreview.bind(this);
-    // this.handleOpen = this.handleOpen.bind(this);
-    // this.handleClose = this.handleClose.bind(this);
-    // this.renderNavBar = this.renderNavBar.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.setPreview = this.setPreview.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.renderNavBar = this.renderNavBar.bind(this);
 
   }
 
-  onAddTile(type, index, column) {
+  renderNavBar() {
+    return (
+      <div className="bp3-navbar bp3-dark">
+        <div className="bp3-navbar-group bp3-button-group">
+
+         
+          <button
+            className="bp3-button bp3-icon-arrow-top-right"
+            onClick={() => this.onAddTile('text', -1, true)}
+          >
+            Add Tile
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  onAddTile(type, index) {
     console.log('doing on add tile');
 
     const id = uuid();
     const tilesFieldname = getTilesFieldname(this.state.formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
     const totalItems = this.state.formData[tilesLayoutFieldname].items.length;
+    const insert = index === -1 ? totalItems : index;
 
-    // this.setState({
-    //   formData: {
-    //     ...this.state.formData,
-    //     [tilesLayoutFieldname]: {
-    //       items: [
-    //         ...this.state.formData[tilesLayoutFieldname].items.slice(0, insert),
-    //         id,
-    //         ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
-    //       ],
-    //       layout: currentNode,
-    //       layout_height: this.state.height,
-    //     },
-    //     [tilesFieldname]: {
-    //       ...this.state.formData[tilesFieldname],
-    //       [id]: {
-    //         '@type': type,
-    //       },
-    //     },
-    //   },
-    //   selected: id,
-    // }, this.onChange(currentNode));
+      // needed hackz. Might change it later
+      console.log("adding", "n" + this.state.newCounter, this.state);
+      this.setState({
+        // Add a new item. It must have a unique key!
+        layout: this.state.layout.concat({
+          i: id,
+          x: 0,
+          y: Infinity, // puts it at the bottom
+          w: this.state.cols || 2,
+          h: 2
+        }),
+        // Increment the counter to ensure key is always unique.
+        newCounter: this.state.newCounter + 1
+      });
+ 
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [tilesLayoutFieldname]: {
+          layout: this.state.layout.concat({
+            i: id,
+            x: 0,
+            y: Infinity, // puts it at the bottom
+            w: this.state.cols || 2,
+            h: 2
+          }),
+          items: [
+            ...this.state.formData[tilesLayoutFieldname].items.slice(0, insert),
+           id,
+            ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
+          ],
+          layout: this.state.layout.concat({
+            i: id,
+            x: 0,
+            y: Infinity, // puts it at the bottom
+            w: this.state.cols || 2,
+            h: 2
+          }),
+        },
+        [tilesFieldname]: {
+          ...this.state.formData[tilesFieldname],
+          [id]: {
+            '@type': type,
+          },
+        },
+      },
+      selected: id,
+    });
     // console.log(id)
     return id;
+  }
+
+
+  
+  onMutateTile(id, value) {
+    const tilesFieldname = getTilesFieldname(this.state.formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
+    const index =
+      this.state.formData[tilesLayoutFieldname].items.indexOf(id) + 1;
+
+    this.setState(
+      {
+        formData: {
+          ...this.state.formData,
+          [tilesFieldname]: {
+            ...this.state.formData[tilesFieldname],
+            [id]: value || null,
+          },
+          [tilesLayoutFieldname]: {
+            items: [
+              ...this.state.formData[tilesLayoutFieldname].items.slice(
+                0,
+                index,
+              ),
+              ...this.state.formData[tilesLayoutFieldname].items.slice(index),
+            ],
+            layout: this.state.layout,
+          },
+        },
+      },
+      () => {
+        console.log('mutated state', this.state);
+      },
+    );
+  }
+
+
+  handleOpen = (tileid) => this.setState({ modals: {...this.state.modals, [tileid]: true} })
+
+  handleClose = (tileid) => this.setState({ modals: {...this.state.modals, [tileid]: false} })
+
+  setPreview() {
+    const newPreviewState = !this.state.preview;
+    const body = document.querySelector('body');
+    if (newPreviewState) {
+      body.classList.add('mosaic-preview-body');
+    } else {
+      body.classList.remove('mosaic-preview-body');
+    }
+    this.setState({ preview: newPreviewState });
+  }
+
+  onChangeTile(id, value) {
+    const tilesFieldname = getTilesFieldname(this.state.formData);
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [tilesFieldname]: {
+          ...this.state.formData[tilesFieldname],
+          [id]: value || null,
+        },
+      },
+    });
   }
 
   createElement(el) {
@@ -215,25 +322,6 @@ class Form extends Component {
     );
   }
 
-  onAddItem() {
-    // needed hackz. Might change it later
-    this.onBreakpointChange(this.state.breakpoint, this.state.cols)
-    console.log("adding", "n" + this.state.newCounter, this.state);
-    this.setState({
-      // Add a new item. It must have a unique key!
-      items: this.state.items.concat({
-        i: "n" + this.state.newCounter,
-        x: 0,
-        y: Infinity, // puts it at the bottom
-        w: this.state.cols || 2,
-        h: 2
-      }),
-      // Increment the counter to ensure key is always unique.
-      newCounter: this.state.newCounter + 1
-    });
-    console.log(this.state.items)
-  }
-
   // We're using the cols coming back from this to calculate where to add new items.
   onBreakpointChange(breakpoint, cols) {
     this.setState({
@@ -249,26 +337,131 @@ class Form extends Component {
 
   onRemoveItem(i) {
     console.log("removing", i);
-    this.setState({ items: _.reject(this.state.items, { i: i }) });
+    const tilesFieldname = getTilesFieldname(this.state.formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
+
+    this.setState({
+      layout: _.reject(this.state.layout, { i: i }),
+      formData: {
+        ...this.state.formData,
+        [tilesLayoutFieldname]: {
+          items: without(this.state.formData[tilesLayoutFieldname].items, id),
+          layout: _.reject(this.state.layout, { i: i }),
+        },
+        [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
+      }
+    });
+  }
+
+  onSubmit(event) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    const errors = {};
+    map(this.props.schema.fieldsets, fieldset =>
+      map(fieldset.fields, fieldId => {
+        const field = this.props.schema.properties[fieldId];
+        const data = this.state.formData[fieldId];
+        if (this.props.schema.required.indexOf(fieldId) !== -1) {
+          if (field.type !== 'boolean' && !data) {
+            errors[fieldId] = errors[field] || [];
+            errors[fieldId].push(
+              this.props.intl.formatMessage(messages.required),
+            );
+          }
+          if (field.minLength && data.length < field.minLength) {
+            errors[fieldId] = errors[field] || [];
+            errors[fieldId].push(
+              this.props.intl.formatMessage(messages.minLength, {
+                len: field.minLength,
+              }),
+            );
+          }
+        }
+        if (field.uniqueItems && data && uniq(data).length !== data.length) {
+          errors[fieldId] = errors[field] || [];
+          errors[fieldId].push(
+            this.props.intl.formatMessage(messages.uniqueItems),
+          );
+        }
+      }),
+    );
+    if (keys(errors).length > 0) {
+      this.setState({
+        errors,
+      });
+    } else {
+      this.props.onSubmit(this.state.formData);
+      if (this.props.resetAfterSubmit) {
+        this.setState({
+          formData: this.props.formData,
+        });
+      }
+    }
   }
 
   render() {
     return (
-      <div>
-        <button onClick={this.onAddItem}>Add Item</button>
+      <div className="ui wrapper">
+        <button onClick={this.onAddTile}>Add Item</button>
         <SizeMe>
         {({ size }) => 
          <ReactGridLayout
          onLayoutChange={this.onLayoutChange}
          onBreakpointChange={this.onBreakpointChange}
-         width={size.width}
+         width={size.width || document.querySelector('main').offsetWidth}
          {...this.props}
        >
-         {_.map(this.state.items, el => this.createElement(el))}
+         {_.map(this.state.layout, el => this.createElement(el))}
         </ReactGridLayout>
         }
        
         </SizeMe>
+        <Portal
+          node={
+            __CLIENT__ && document.querySelector('.toolbar .toolbar-actions')
+          }
+        >
+          <div>
+            <small>Preview</small>
+            <br />
+            <Radio toggle onChange={() => this.setPreview()} />
+          </div>
+        </Portal>
+        <Portal
+          node={__CLIENT__ && document.getElementById('sidebar-metadata')}
+        >
+          <UiForm
+            method="post"
+            onSubmit={this.onSubmit}
+            error={keys(this.state.errors).length > 0}
+          >
+            {map(schema.fieldsets, item => [
+              <React.Fragment key={item}>
+                <Segment secondary attached>
+                  {item.title}
+                </Segment>
+                ,
+                <Segment attached>
+                  {map(item.fields, (field, index) => (
+                    <Field
+                      {...schema.properties[field]}
+                      id={field}
+                      focus={index === 0}
+                      value={this.state.formData[field]}
+                      required={schema.required.indexOf(field) !== -1}
+                      onChange={this.onChangeField}
+                      key={field}
+                      error={this.state.errors[field]}
+                    />
+                  ))}
+                </Segment>
+                ,
+              </React.Fragment>,
+            ])}
+          </UiForm>
+        </Portal>
       </div>
     );
   }
