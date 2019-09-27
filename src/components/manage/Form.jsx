@@ -6,30 +6,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
-import move from 'lodash-move';
+// import move from 'lodash-move';
 import {
   Button,
-  Container,
+  // Container,
   Form as UiForm,
   Segment,
-  Tab,
-  Message,
-  Modal,
-  Select,
+  // Tab,
+  // Message,
+  // Modal,
+  // Select,
   Radio,
 } from 'semantic-ui-react';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
 
-import { EditTile, Icon, Field } from '@plone/volto/components';
+import { Field } from '@plone/volto/components'; // EditTile, Icon,
 import {
   getTilesFieldname,
   getTilesLayoutFieldname,
 } from '@plone/volto/helpers';
 
-import aheadSVG from '@plone/volto/icons/ahead.svg';
-import clearSVG from '@plone/volto/icons/clear.svg';
+// import aheadSVG from '@plone/volto/icons/ahead.svg';
+// import clearSVG from '@plone/volto/icons/clear.svg';
 
 import _ from 'lodash';
 
@@ -502,10 +502,10 @@ class Form extends Component {
   }
 
   render() {
-    const { schema, onCancel, onSubmit } = this.props;
-    const { formData } = this.state;
-    const tilesFieldname = getTilesFieldname(formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const { schema } = this.props; // , onCancel, onSubmit
+    // const { formData } = this.state;
+    // const tilesFieldname = getTilesFieldname(formData);
+    // const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     // const renderTiles = formData[tilesLayoutFieldname].items;
     // const tilesDict = formData[tilesFieldname];
 
