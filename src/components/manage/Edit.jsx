@@ -14,10 +14,10 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import qs from 'query-string';
 
-import MosaicForm from './Form';
 import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
 import { updateContent, getContent, getSchema } from '@plone/volto/actions';
 import { getBaseUrl, hasTilesData } from '@plone/volto/helpers';
+import MosaicForm from './Form';
 
 import saveSVG from '@plone/volto/icons/save.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
@@ -92,6 +92,9 @@ class Edit extends Component {
    */
   constructor(props) {
     super(props);
+    this.state = {
+      visual: false,
+    };
     this.onCancel = this.onCancel.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -115,6 +118,23 @@ class Edit extends Component {
     if (this.props.getRequest.loading && nextProps.getRequest.loaded) {
       this.props.getSchema(nextProps.content['@type']);
     }
+    if (this.props.schemaRequest.loading && nextProps.schemaRequest.loaded) {
+      if (hasTilesData(nextProps.schema.properties)) {
+        this.setState({
+          visual: true,
+        });
+      }
+    }
+    // Hack for make the Plone site editable by Volto Editor without checkings
+    console.log('received props', nextProps);
+    let nextType = nextProps.content && nextProps.content['@type'];
+    let type = this.props.content && this.props.content['@type'];
+
+    if (nextType && (nextType !== type) && nextType === 'Plone Site') {
+      this.setState({
+        visual: true,
+      });
+    }
     if (this.props.updateRequest.loading && nextProps.updateRequest.loaded) {
       this.props.history.push(
         this.props.returnUrl || getBaseUrl(this.props.pathname),
@@ -129,7 +149,6 @@ class Edit extends Component {
    * @returns {undefined}
    */
   onSubmit(data) {
-    console.log('submit data', data);
     this.props.updateContent(getBaseUrl(this.props.pathname), data);
   }
 
@@ -151,13 +170,8 @@ class Edit extends Component {
    */
   render() {
     if (this.props.schemaRequest.loaded && this.props.content) {
-      const visual =
-        hasTilesData(this.props.schema.properties) ||
-        this.props.content['@type'] === 'Plone Site';
-
-      let FormImpl =
-        this.props.content.layout == 'mosaic_tiles_view' ? MosaicForm : Form;
-
+      let FormImpl = this.props.content.layout == 'mosaic_tiles_view' ?
+        MosaicForm : Form;
       return (
         <div id="page-edit">
           <Helmet
@@ -176,7 +190,7 @@ class Edit extends Component {
             onSubmit={this.onSubmit}
             hideActions
             pathname={this.props.pathname}
-            visual={visual}
+            visual={this.state.visual}
             title={this.props.intl.formatMessage(messages.edit, {
               title: this.props.schema.title,
             })}
@@ -217,7 +231,7 @@ class Edit extends Component {
               }
             />
           </Portal>
-          {visual && (
+          {this.state.visual && (
             <Portal node={__CLIENT__ && document.getElementById('sidebar')}>
               <Sidebar />
             </Portal>

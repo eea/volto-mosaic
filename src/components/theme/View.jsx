@@ -1,65 +1,110 @@
-import React, { Component } from "react";
-import _ from "lodash";
-import RGL, { WidthProvider } from "react-grid-layout";
+import React, { Component } from 'react';
+import { Responsive } from 'react-grid-layout';
+// import WidthProvider from './WidthProvider';
+import { tiles } from '~/config'; // settings,
+import { SizeMe } from 'react-sizeme';
 
-const ReactGridLayout = WidthProvider(RGL);
+import {
+  getTilesFieldname,
+  getTilesLayoutFieldname,
+  // hasTilesData,
+} from '@plone/volto/helpers';
+
+const ReactGridLayout = Responsive;
 
 class View extends Component {
   static defaultProps = {
-    className: "layout",
+    className: 'layout',
     isDraggable: false,
     isResizable: false,
     items: 50,
     cols: 12,
     rowHeight: 30,
     margin: [0, 0],
-    onLayoutChange: function() {}
+    onLayoutChange: function() {},
   };
 
   constructor(props) {
     super(props);
 
-    const layout = this.generateLayout();
-    this.state = { layout };
-  }
+    // const layout = this.generateLayout();
+    // this.state = { layout };
 
-  generateDOM() {
-    return _.map(_.range(this.props.items), function(i) {
-      return (
-        <div key={i}>
-          <span className="text">{i}</span>
-        </div>
-      );
-    });
-  }
+    let content = props.content;
+    console.log('content', content);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(content);
+    const layout = content[tilesLayoutFieldname];
 
-  generateLayout() {
-    const p = this.props;
-    return _.map(new Array(p.items), function(item, i) {
-      var y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-      return {
-        x: (i * 2) % 12,
-        y: Math.floor(i / 6) * y,
-        w: 2,
-        h: y,
-        i: i.toString()
+    if (!__SERVER__) {
+      this.state = {
+        mosaic_layout: layout.mosaic_layout,
+        items: layout.items,
       };
+    }
+
+    console.log('This.state in constructor', this.state, content);
+  }
+
+  renderTiles() {
+    console.log('Render tiles', this.state.mosaic_layout);
+    return this.state.mosaic_layout.map((item, i) => {
+      console.log('item', item);
+      return <div key={item.i}>{this.renderTile(item.i)}</div>;
     });
+  }
+
+  renderTile(tileid) {
+    const content = this.props.content;
+    const tilesFieldname = getTilesFieldname(content);
+    const availableTiles = content[tilesFieldname];
+    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
+
+    console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
+
+    let Tile = null;
+    Tile = tiles.tilesConfig[tiletype].view;
+
+    return Tile !== null ? (
+      <div class="tile-container">
+        <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
+      </div>
+    ) : (
+      <div> {JSON.stringify(tiletype)} </div>
+    );
   }
 
   onLayoutChange(layout) {
-    this.props.onLayoutChange(layout);
+    console.log('chaging lauyout');
+    // this.props.onLayoutChange(layout);
   }
 
   render() {
     return (
-      <ReactGridLayout
-        layout={this.state.layout}
-        onLayoutChange={this.onLayoutChange}
-        {...this.props}
-      >
-        {this.generateDOM()}
-      </ReactGridLayout>
+      <SizeMe>
+        {({ size }) => (
+          <ReactGridLayout
+            layout={this.state.mosaic_layout}
+            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            cols={{ lg: 12, md: 12, sm: 6, xs: 2, xxs: 2 }}
+            measureBeforeMount={true}
+            rowHeight={30}
+            margin={[0, 0]}
+            isDraggable={false}
+            isResizable={false}
+            isDroppable={false}
+            layouts={{
+              lg: this.state.mosaic_layout,
+              md: this.state.mosaic_layout,
+              sm: this.state.mosaic_layout,
+              xs: this.state.mosaic_layout,
+              xxs: this.state.mosaic_layout,
+            }}
+            width={size.width || document.querySelector('main').offsetWidth}
+          >
+            {this.renderTiles()}
+          </ReactGridLayout>
+        )}
+      </SizeMe>
     );
   }
 }

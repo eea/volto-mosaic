@@ -1,45 +1,86 @@
+/**
+ * Form component.
+ * @module components/manage/Form/Form
+ */
+
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import React, { Component } from "react";
-import { defineMessages, injectIntl, intlShape } from 'react-intl';
-// GRID STUFF
-import { Responsive } from "react-grid-layout";
-import _ from "lodash";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-
-const ReactGridLayout = Responsive;
-
-import { SizeMe } from 'react-sizeme'
-// TILES STUFF
-import { tiles } from '~/config';
+import { keys, map, mapValues, omit, uniq, without } from 'lodash';
+import move from 'lodash-move';
 import {
   Button,
+  Container,
   Form as UiForm,
   Segment,
-  // Tab,
-  // Message,
-  Select,
+  Tab,
+  Message,
   Modal,
-  Grid,
+  Select,
   Radio,
 } from 'semantic-ui-react';
+import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
-import { Field, Icon } from '@plone/volto/components'; // EditTile,
+
+import { EditTile, Icon, Field } from '@plone/volto/components';
 import {
   getTilesFieldname,
   getTilesLayoutFieldname,
 } from '@plone/volto/helpers';
-import AddNewTile from './Addnewtiles'
-// OTHER STUFF
-import { Resizable, ResizableBox } from 'react-resizable';
+
+import aheadSVG from '@plone/volto/icons/ahead.svg';
+import clearSVG from '@plone/volto/icons/clear.svg';
+
+import _ from 'lodash';
+
+import { Responsive } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+
+import { SizeMe } from 'react-sizeme';
+import { tiles } from '~/config';
+
+import TileEditor from './TileEditor';
+
 import '../css/edit.css';
 import '../css/view.css';
 
+const ReactGridLayout = Responsive;
 
-
-
-
+const messages = defineMessages({
+  addTile: {
+    id: 'Add tile...',
+    defaultMessage: 'Add tile...',
+  },
+  required: {
+    id: 'Required input is missing.',
+    defaultMessage: 'Required input is missing.',
+  },
+  minLength: {
+    id: 'Minimum length is {len}.',
+    defaultMessage: 'Minimum length is {len}.',
+  },
+  uniqueItems: {
+    id: 'Items must be unique.',
+    defaultMessage: 'Items must be unique.',
+  },
+  save: {
+    id: 'Save',
+    defaultMessage: 'Save',
+  },
+  cancel: {
+    id: 'Cancel',
+    defaultMessage: 'Cancel',
+  },
+  error: {
+    id: 'Error',
+    defaultMessage: 'Error',
+  },
+  thereWereSomeErrors: {
+    id: 'There were some errors.',
+    defaultMessage: 'There were some errors.',
+  },
+});
 
 class Form extends Component {
   static propTypes = {
@@ -61,7 +102,7 @@ class Form extends Component {
     onCancel: PropTypes.func,
     submitLabel: PropTypes.string,
     resetAfterSubmit: PropTypes.bool,
-    intl: intlShape,
+    intl: intlShape.isRequired,
     title: PropTypes.string,
     error: PropTypes.shape({
       message: PropTypes.string,
@@ -74,12 +115,6 @@ class Form extends Component {
   };
 
   static defaultProps = {
-    // Grid props
-    className: "layout",
-    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
-    rowHeight: 100,
-    onLayoutChange: () => { },
-    // Tiles props
     formData: null,
     onSubmit: null,
     onCancel: null,
@@ -93,18 +128,26 @@ class Form extends Component {
     visual: false,
     tiles: [],
     pathname: '',
+
+    // Grid props
+    className: 'mosaic-edit-layout',
+    // cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+    cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
+    rowHeight: 30,
+    margin: [0, 0],
+    // onLayoutChange: () => {},
   };
 
+  /**
+   * Constructor
+   * @method constructor
+   * @param {Object} props Component properties
+   * @constructs Form
+   */
   constructor(props) {
     super(props);
-
-
-
-
-
     const ids = {
       title: uuid(),
-      description: uuid(),
       text: uuid(),
     };
     let { formData } = props;
@@ -118,8 +161,7 @@ class Form extends Component {
     // defaults for block editor; should be moved to schema on server side
     if (!formData[tilesLayoutFieldname]) {
       formData[tilesLayoutFieldname] = {
-        items: [ids.title, ids.description, ids.text],
-        layout: null,
+        items: [ids.title, ids.text],
       };
     }
     if (!formData[tilesFieldname]) {
@@ -127,167 +169,197 @@ class Form extends Component {
         [ids.title]: {
           '@type': 'title',
         },
-        [ids.description]: {
-          '@type': 'description',
-        },
         [ids.text]: {
           '@type': 'text',
         },
       };
     }
 
+    let layout =
+      (this.props.formData &&
+        this.props.formData.tiles_layout &&
+        this.props.formData.tiles_layout.mosaic_layout) ||
+      [];
+
     this.state = {
-      layout: [],
-      newCounter: 0,
-      cols: 12,
       formData,
-      preview: false,
-      modals: {}
+      errors: {},
+      modals: {},
+      mosaic_layout: layout,
+      cols: 12,
     };
-    this.onBreakpointChange = this.onBreakpointChange.bind(this);
-    // this.onChangeField = this.onChangeField.bind(this);
-    // this.onChangeTile = this.onChangeTile.bind(this);
+
+    this.onChangeField = this.onChangeField.bind(this);
+    this.onChangeTile = this.onChangeTile.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
     // this.onSelectTile = this.onSelectTile.bind(this);
     // this.onDeleteTile = this.onDeleteTile.bind(this);
     this.onAddTile = this.onAddTile.bind(this);
+    // this.onMoveTile = this.onMoveTile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.setPreview = this.setPreview.bind(this);
+    // this.onFocusPreviousTile = this.onFocusPreviousTile.bind(this);
+    // this.onFocusNextTile = this.onFocusNextTile.bind(this);
+    // this.handleKeyDown = this.handleKeyDown.bind(this);
+
+    this.renderTile = this.renderTile.bind(this);
+    this.createElement = this.createElement.bind(this);
+    this.onLayoutChange = this.onLayoutChange.bind(this);
+
     this.handleOpen = this.handleOpen.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.renderNavBar = this.renderNavBar.bind(this);
-
+    this.handleCloseEditor = this.handleCloseEditor.bind(this);
   }
 
-  renderNavBar() {
-    return (
-      <div className="bp3-navbar bp3-dark">
-        <div className="bp3-navbar-group bp3-button-group">
-
-         
-          <button
-            className="bp3-button bp3-icon-arrow-top-right"
-            onClick={() => this.onAddTile('text', -1, true)}
-          >
-            Add Tile
-          </button>
-        </div>
-      </div>
-    );
+  handleOpen(tileid) {
+    this.setState({ showModal: true, currentTile: tileid });
   }
 
-  onAddTile(type, index) {
-    console.log('doing on add tile');
+  handleCloseEditor(tileData, size) {
+    console.log('got size in closing', size);
+    let tileid = this.state.currentTile;
 
-    const id = uuid();
-    const tilesFieldname = getTilesFieldname(this.state.formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
-    const totalItems = this.state.formData[tilesLayoutFieldname].items.length;
-    const insert = index === -1 ? totalItems : index;
+    if (tileData) {
+      console.log('rowHeight', this.props.rowHeight, size.height);
+      const height = Math.ceil(size.height / this.props.rowHeight);
+      const formData = this.state.formData;
+      const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+      const layout = formData[tilesLayoutFieldname];
+      let mosaic_layout = layout.mosaic_layout;
 
-      // needed hackz. Might change it later
-      console.log("adding", "n" + this.state.newCounter, this.state);
-      this.setState({
-        // Add a new item. It must have a unique key!
-        layout: this.state.layout.concat({
-          i: id,
-          x: 0,
-          y: Infinity, // puts it at the bottom
-          w: this.state.cols || 2,
-          h: 2
+      let ix = mosaic_layout.indexOf(
+        mosaic_layout.find(el => {
+          return el.i === tileid;
         }),
-        // Increment the counter to ensure key is always unique.
-        newCounter: this.state.newCounter + 1
-      });
- 
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        [tilesLayoutFieldname]: {
-          layout: this.state.layout.concat({
-            i: id,
-            x: 0,
-            y: Infinity, // puts it at the bottom
-            w: this.state.cols || 2,
-            h: 2
-          }),
-          items: [
-            ...this.state.formData[tilesLayoutFieldname].items.slice(0, insert),
-           id,
-            ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
-          ],
-          layout: this.state.layout.concat({
-            i: id,
-            x: 0,
-            y: Infinity, // puts it at the bottom
-            w: this.state.cols || 2,
-            h: 2
-          }),
-        },
-        [tilesFieldname]: {
-          ...this.state.formData[tilesFieldname],
-          [id]: {
-            '@type': type,
-          },
-        },
-      },
-      selected: id,
-    });
-    // console.log(id)
-    return id;
-  }
+      );
+      console.log('ix', ix);
+      mosaic_layout[ix].h = height;
 
+      console.log('layout units', height);
+      console.log('mosaic layout', mosaic_layout);
+      console.log('state', this.state);
 
-  
-  onMutateTile(id, value) {
-    const tilesFieldname = getTilesFieldname(this.state.formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
-    const index =
-      this.state.formData[tilesLayoutFieldname].items.indexOf(id) + 1;
-
-    this.setState(
-      {
+      this.setState({
         formData: {
           ...this.state.formData,
-          [tilesFieldname]: {
-            ...this.state.formData[tilesFieldname],
-            [id]: value || null,
+          tiles: {
+            ...this.state.formData.tiles,
+            [tileid]: tileData,
           },
           [tilesLayoutFieldname]: {
-            items: [
-              ...this.state.formData[tilesLayoutFieldname].items.slice(
-                0,
-                index,
-              ),
-              ...this.state.formData[tilesLayoutFieldname].items.slice(index),
-            ],
-            layout: this.state.layout,
+            ...layout,
+            mosaic_layout,
+          },
+        },
+        showModal: false,
+        currentTile: null,
+        mosaic_layout,
+      });
+    } else {
+      this.setState({
+        showModal: false,
+        currentTile: null,
+      });
+    }
+  }
+
+  onLayoutChange(layout) {
+    this.setState(
+      {
+        mosaic_layout: layout,
+        formData: {
+          ...this.state.formData,
+          tiles_layout: {
+            ...this.state.formData.tiles_layout,
+            mosaic_layout: layout,
           },
         },
       },
       () => {
-        console.log('mutated state', this.state);
+        console.log('Set state on change layout', this.state);
       },
     );
   }
 
+  renderTile(tileid) {
+    const content = this.state.formData;
+    const tilesFieldname = getTilesFieldname(content);
+    const availableTiles = content[tilesFieldname];
+    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
 
-  handleOpen = (tileid) => this.setState({ modals: {...this.state.modals, [tileid]: true} })
+    console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
 
-  handleClose = (tileid) => this.setState({ modals: {...this.state.modals, [tileid]: false} })
+    let Tile = null;
+    Tile = tiles.tilesConfig[tiletype].view;
 
-  setPreview() {
-    const newPreviewState = !this.state.preview;
-    const body = document.querySelector('body');
-    if (newPreviewState) {
-      body.classList.add('mosaic-preview-body');
-    } else {
-      body.classList.remove('mosaic-preview-body');
-    }
-    this.setState({ preview: newPreviewState });
+    return Tile !== null ? (
+      <div className="tile-container">
+        <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
+      </div>
+    ) : (
+      <div> {JSON.stringify(tiletype)} </div>
+    );
   }
 
-  onChangeTile(id, value) {
+  createElement(el) {
+    const tileid = el.i;
+
+    console.log('Creating element', el);
+    const removeStyle = {
+      position: 'absolute',
+      right: '2px',
+      top: 0,
+      cursor: 'pointer',
+    };
+    const i = el.add ? '+' : el.i;
+    return (
+      <div key={i} data-grid={el}>
+        {this.state.preview ? (
+          this.renderTile(tileid)
+        ) : (
+          <div>
+            <Button onClick={() => this.handleOpen(tileid)}>Edit</Button>
+          </div>
+        )}
+
+        <button
+          className="remove"
+          style={removeStyle}
+          onClick={this.onRemoveItem.bind(this, i)}
+        >
+          x
+        </button>
+      </div>
+    );
+  }
+
+  onRemoveItem(id) {
+    console.log('removing', id);
+    const tilesFieldname = getTilesFieldname(this.state.formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
+
+    this.setState({
+      mosaic_layout: _.reject(this.state.mosaic_layout, { i: id }),
+      formData: {
+        ...this.state.formData,
+        [tilesLayoutFieldname]: {
+          items: without(this.state.formData[tilesLayoutFieldname].items, id),
+          mosaic_layout: _.reject(this.state.mosaic_layout, { i: id }),
+        },
+        [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
+      },
+    });
+  }
+
+  onChangeField(id, value) {
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [id]: value || null,
+      },
+    });
+  }
+
+  onChangeTile(id, value, size) {
+    // TODO: update this method
     const tilesFieldname = getTilesFieldname(this.state.formData);
     this.setState({
       formData: {
@@ -300,64 +372,87 @@ class Form extends Component {
     });
   }
 
-  createElement(el) {
-    const removeStyle = {
-      position: "absolute",
-      right: "2px",
-      top: 0,
-      cursor: "pointer"
-    };
-    const i = el.add ? "+" : el.i;
-    return (
-      <div key={i} data-grid={el}>
-        assds
-        <span
-          className="remove"
-          style={removeStyle}
-          onClick={this.onRemoveItem.bind(this, i)}
-        >
-          x
-        </span>
-      </div>
-    );
-  }
+  onMutateTile(id, value) {
+    console.log('on mutate tile');
+    // const idTrailingTile = uuid();
+    // const index =
+    //   this.state.formData[tilesLayoutFieldname].items.indexOf(id) + 1;
 
-  // We're using the cols coming back from this to calculate where to add new items.
-  onBreakpointChange(breakpoint, cols) {
-    this.setState({
-      breakpoint: breakpoint,
-      cols: cols
-    });
-  }
-
-  onLayoutChange(layout) {
-    // this.props.onLayoutChange(layout);
-    this.setState({ layout: layout });
-  }
-
-  onRemoveItem(i) {
-    console.log("removing", i);
     const tilesFieldname = getTilesFieldname(this.state.formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
 
     this.setState({
-      layout: _.reject(this.state.layout, { i: i }),
       formData: {
         ...this.state.formData,
-        [tilesLayoutFieldname]: {
-          items: without(this.state.formData[tilesLayoutFieldname].items, id),
-          layout: _.reject(this.state.layout, { i: i }),
+        [tilesFieldname]: {
+          ...this.state.formData[tilesFieldname],
+          [id]: value || null,
         },
-        [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
-      }
+        [tilesLayoutFieldname]: {
+          items: this.state.formData[tilesLayoutFieldname].items,
+          mosaic_layout: this.state.mosaic_layout,
+        },
+      },
     });
   }
 
+  onAddTile(type, index) {
+    console.log('doing on add tile', this.state);
+
+    const id = uuid();
+    const tilesFieldname = getTilesFieldname(this.state.formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
+    const totalItems = this.state.formData[tilesLayoutFieldname].items.length;
+    const insert = index === -1 ? totalItems : index;
+
+    const newTile = {
+      i: id,
+      x: 0,
+      y: Infinity, // puts it at the bottom
+      w: this.state.cols || 2,
+      h: 2,
+    };
+    const layout = this.state.mosaic_layout.concat(newTile);
+
+    this.setState(
+      {
+        // Add a new item. It must have a unique key!
+        mosaic_layout: layout,
+
+        // Increment the counter to ensure key is always unique.
+        formData: {
+          ...this.state.formData,
+          [tilesLayoutFieldname]: {
+            items: [
+              ...this.state.formData[tilesLayoutFieldname].items.slice(
+                0,
+                insert,
+              ),
+              id,
+              ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
+            ],
+            mosaic_layout: layout,
+          },
+          [tilesFieldname]: {
+            ...this.state.formData[tilesFieldname],
+            [id]: {
+              '@type': type,
+            },
+          },
+        },
+      },
+      () => {
+        console.log('After onAdd', this.state);
+      },
+    );
+    return id;
+  }
+
   onSubmit(event) {
+    console.log('doing onsubmit', this.state);
     if (event) {
       event.preventDefault();
     }
-
     const errors = {};
     map(this.props.schema.fieldsets, fieldset =>
       map(fieldset.fields, fieldId => {
@@ -402,33 +497,80 @@ class Form extends Component {
   }
 
   render() {
-    return (
+    const { schema, onCancel, onSubmit } = this.props;
+    const { formData } = this.state;
+    const tilesFieldname = getTilesFieldname(formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    // const renderTiles = formData[tilesLayoutFieldname].items;
+    // const tilesDict = formData[tilesFieldname];
+
+    let node =
+      __CLIENT__ && document.querySelector('#toolbar .toolbar-actions');
+    console.log('toolbar node', node);
+
+    // {map(renderTiles, (tile, index) => (
+    //   <EditTile
+    //     id={tile}
+    //     index={index}
+    //     type={tilesDict[tile]['@type']}
+    //     key={tile}
+    //     handleKeyDown={this.handleKeyDown}
+    //     onAddTile={this.onAddTile}
+    //     onChangeTile={this.onChangeTile}
+    //     onMutateTile={this.onMutateTile}
+    //     onChangeField={this.onChangeField}
+    //     onDeleteTile={this.onDeleteTile}
+    //     onSelectTile={this.onSelectTile}
+    //     onMoveTile={this.onMoveTile}
+    //     onFocusPreviousTile={this.onFocusPreviousTile}
+    //     onFocusNextTile={this.onFocusNextTile}
+    //     properties={formData}
+    //     data={tilesDict[tile]}
+    //     pathname={this.props.pathname}
+    //     tile={tile}
+    //     selected={this.state.selected === tile}
+    //   />
+    // ))}
+
+    console.log('render props', this.props);
+    return this.props.visual ? (
       <div className="ui wrapper">
-        <button onClick={this.onAddTile}>Add Item</button>
         <SizeMe>
-        {({ size }) => 
-         <ReactGridLayout
-         onLayoutChange={this.onLayoutChange}
-         onBreakpointChange={this.onBreakpointChange}
-         width={size.width || document.querySelector('main').offsetWidth}
-         {...this.props}
-       >
-         {_.map(this.state.layout, el => this.createElement(el))}
-        </ReactGridLayout>
-        }
-       
+          {({ size }) => (
+            <ReactGridLayout
+              onLayoutChange={this.onLayoutChange}
+              onBreakpointChange={this.onBreakpointChange}
+              width={size.width || document.querySelector('main').offsetWidth}
+              {...this.props}
+            >
+              {_.map(this.state.mosaic_layout, el => this.createElement(el))}
+            </ReactGridLayout>
+          )}
         </SizeMe>
-        <Portal
-          node={
-            __CLIENT__ && document.querySelector('.toolbar .toolbar-actions')
-          }
-        >
+
+        {this.state.showModal ? (
+          <TileEditor
+            tileid={this.state.currentTile}
+            formData={this.state.formData}
+            onChangeTile={this.onChangeTile}
+            onClose={this.handleCloseEditor}
+          />
+        ) : (
+          ''
+        )}
+
+        <Portal node={node}>
           <div>
             <small>Preview</small>
             <br />
             <Radio toggle onChange={() => this.setPreview()} />
           </div>
+
+          <div>
+            <button onClick={() => this.onAddTile('text')}>Add Item</button>
+          </div>
         </Portal>
+
         <Portal
           node={__CLIENT__ && document.getElementById('sidebar-metadata')}
         >
@@ -438,33 +580,31 @@ class Form extends Component {
             error={keys(this.state.errors).length > 0}
           >
             {map(schema.fieldsets, item => [
-              <React.Fragment key={item}>
-                <Segment secondary attached>
-                  {item.title}
-                </Segment>
-                ,
-                <Segment attached>
-                  {map(item.fields, (field, index) => (
-                    <Field
-                      {...schema.properties[field]}
-                      id={field}
-                      focus={index === 0}
-                      value={this.state.formData[field]}
-                      required={schema.required.indexOf(field) !== -1}
-                      onChange={this.onChangeField}
-                      key={field}
-                      error={this.state.errors[field]}
-                    />
-                  ))}
-                </Segment>
-                ,
-              </React.Fragment>,
+              <Segment secondary attached key={item.title}>
+                {item.title}
+              </Segment>,
+              <Segment attached key={`fieldset-contents-${item.title}`}>
+                {map(item.fields, (field, index) => (
+                  <Field
+                    {...schema.properties[field]}
+                    id={field}
+                    focus={index === 0}
+                    value={this.state.formData[field]}
+                    required={schema.required.indexOf(field) !== -1}
+                    onChange={this.onChangeField}
+                    key={field}
+                    error={this.state.errors[field]}
+                  />
+                ))}
+              </Segment>,
             ])}
           </UiForm>
         </Portal>
       </div>
+    ) : (
+      ''
     );
   }
 }
 
-export default Form;
+export default injectIntl(Form, { withRef: true });

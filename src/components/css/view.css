@@ -1,48 +1,44 @@
 #page-document .mosaic-tile,
 .mosaic-preview-body .mosaic-tile {
-    margin: 0;
+  margin: 0;
 }
 
 #page-document .mosaic-window-toolbar,
 .mosaic-preview-body .mosaic-window-toolbar {
-    display: none!important;
+  display: none!important;
 }
 
 #page-document .mosaic-window-body,
 .mosaic-preview-body .mosaic-window-body {
-    background: none!important;
-    ;
-    border: none!important;
-    ;
+  background: none!important;
+  border: none!important;
 }
 
 #page-document .mosaic-preview,
 .mosaic-preview-body .mosaic-preview {
-    display: none!important;
-    ;
+  display: none!important;
+  ;
 }
 
 #page-document .mosaic-drop-target,
 .mosaic-preview-body .mosaic-drop-target {
-    background: none!important;
-    ;
-    box-shadow: none!important;
-    ;
-    border-radius: 0;
+  background: none!important;
+  box-shadow: none!important;
+  border-radius: 0;
 }
 
 #page-document .mosaic-window-additional-actions-bar,
 .mosaic-preview-body .mosaic-window-additional-actions-bar {
-    display: none!important;
-    ;
+  display: none!important;
+  ;
 }
 
 #page-document .mosaic-split,
 .mosaic-preview-body .mosaic-split {
-    display: none!important;
+  display: none!important;
 }
 
 #page-document .tile-container,
 .mosaic-preview-body .tile-container {
-    height: 100%;
+  height: 100%;
 }
