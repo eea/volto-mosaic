@@ -203,6 +203,7 @@ class Form extends Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.onDragStart = this.onDragStart.bind(this);
+    this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
   }
 
   handleOpen(tileid) {
@@ -381,7 +382,6 @@ class Form extends Component {
   }
 
   onAddTile(type, index) {
-
     const id = uuid();
     const tilesFieldname = getTilesFieldname(this.state.formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
@@ -482,6 +482,10 @@ class Form extends Component {
     console.log(ev);
   }
 
+  handleLayoutToolbar(evType, data) {
+    console.log('handleLayoutToolbar', evType, data);
+  }
+
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
     // const { formData } = this.state;
@@ -519,7 +523,7 @@ class Form extends Component {
 
     return this.props.visual ? (
       <div className="ui wrapper">
-        <LayoutToolbar />
+        <LayoutToolbar dispatchToParent={this.handleLayoutToolbar} />
 
         <SizeMe>
           {({ size }) => (

@@ -80,7 +80,7 @@ class View extends Component {
   }
 
   render() {
-    return (
+    return this.state.mosaic_layout ? (
       <SizeMe>
         {({ size }) => (
           <ReactGridLayout
@@ -106,6 +106,8 @@ class View extends Component {
           </ReactGridLayout>
         )}
       </SizeMe>
+    ) : (
+      ''
     );
   }
 }
