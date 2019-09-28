@@ -1,12 +1,6 @@
-/**
- * Form component.
- * @module components/manage/Form/Form
- */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
-// import move from 'lodash-move';
 import {
   Button,
   // Container,
@@ -28,9 +22,6 @@ import {
   getTilesLayoutFieldname,
 } from '@plone/volto/helpers';
 
-// import aheadSVG from '@plone/volto/icons/ahead.svg';
-// import clearSVG from '@plone/volto/icons/clear.svg';
-
 import _ from 'lodash';
 
 import { Responsive } from 'react-grid-layout';
@@ -41,13 +32,17 @@ import 'react-resizable/css/styles.css';
 import { SizeMe } from 'react-sizeme';
 import { tiles } from '~/config';
 
-import TileEditor from './TileEditor';
-
 import '../css/edit.css';
 import '../css/view.css';
 
 import { rowHeight } from '../../config';
+
+import TileEditor from './TileEditor';
 import LayoutToolbar from './LayoutToolbar';
+
+// import move from 'lodash-move';
+// import aheadSVG from '@plone/volto/icons/ahead.svg';
+// import clearSVG from '@plone/volto/icons/clear.svg';
 
 const ReactGridLayout = Responsive;
 
@@ -190,17 +185,18 @@ class Form extends Component {
       cols: 12,
     };
 
-    this.onChangeField = this.onChangeField.bind(this);
-    this.onChangeTile = this.onChangeTile.bind(this);
-    this.onMutateTile = this.onMutateTile.bind(this);
+    // this.onMoveTile = this.onMoveTile.bind(this);
     // this.onSelectTile = this.onSelectTile.bind(this);
     // this.onDeleteTile = this.onDeleteTile.bind(this);
-    this.onAddTile = this.onAddTile.bind(this);
-    // this.onMoveTile = this.onMoveTile.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
     // this.onFocusPreviousTile = this.onFocusPreviousTile.bind(this);
     // this.onFocusNextTile = this.onFocusNextTile.bind(this);
     // this.handleKeyDown = this.handleKeyDown.bind(this);
+
+    this.onChangeField = this.onChangeField.bind(this);
+    this.onChangeTile = this.onChangeTile.bind(this);
+    this.onMutateTile = this.onMutateTile.bind(this);
+    this.onAddTile = this.onAddTile.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
 
     this.renderTile = this.renderTile.bind(this);
     this.createElement = this.createElement.bind(this);
