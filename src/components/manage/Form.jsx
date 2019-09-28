@@ -140,8 +140,6 @@ class Form extends Component {
   constructor(props) {
     super(props);
 
-    console.log('responsive utils', Responsive.utils);
-
     const ids = {
       title: uuid(),
       text: uuid(),
@@ -212,11 +210,9 @@ class Form extends Component {
   }
 
   handleCloseEditor(tileData, size) {
-    console.log('got size in closing', size);
     let tileid = this.state.currentTile;
 
     if (tileData) {
-      console.log('rowHeight', this.props.rowHeight, size.height);
       const height = Math.ceil(size.height / this.props.rowHeight);
       const formData = this.state.formData;
       const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
@@ -228,12 +224,7 @@ class Form extends Component {
           return el.i === tileid;
         }),
       );
-      console.log('ix', ix);
       mosaic_layout[ix].h = height;
-
-      console.log('layout units', height);
-      console.log('mosaic layout', mosaic_layout);
-      console.log('state', this.state);
 
       this.setState({
         formData: {
@@ -283,8 +274,6 @@ class Form extends Component {
     const availableTiles = content[tilesFieldname];
     const tiletype = availableTiles[tileid]['@type'].toLowerCase();
 
-    console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
-
     let Tile = null;
     Tile = tiles.tilesConfig[tiletype].view;
 
@@ -300,7 +289,6 @@ class Form extends Component {
   createElement(el) {
     const tileid = el.i;
 
-    console.log('Creating element', el);
     const removeStyle = {
       position: 'absolute',
       right: '2px',
@@ -330,7 +318,6 @@ class Form extends Component {
   }
 
   onRemoveItem(id) {
-    console.log('removing', id);
     const tilesFieldname = getTilesFieldname(this.state.formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
 
@@ -371,7 +358,6 @@ class Form extends Component {
   }
 
   onMutateTile(id, value) {
-    console.log('on mutate tile');
     // const idTrailingTile = uuid();
     // const index =
     //   this.state.formData[tilesLayoutFieldname].items.indexOf(id) + 1;
@@ -395,7 +381,6 @@ class Form extends Component {
   }
 
   onAddTile(type, index) {
-    console.log('doing on add tile', this.state);
 
     const id = uuid();
     const tilesFieldname = getTilesFieldname(this.state.formData);
@@ -447,7 +432,6 @@ class Form extends Component {
   }
 
   onSubmit(event) {
-    console.log('doing onsubmit', this.state);
     if (event) {
       event.preventDefault();
     }
@@ -508,7 +492,6 @@ class Form extends Component {
 
     let node =
       __CLIENT__ && document.querySelector('#toolbar .toolbar-actions');
-    console.log('toolbar node', node);
 
     // {map(renderTiles, (tile, index) => (
     //   <EditTile
@@ -534,7 +517,6 @@ class Form extends Component {
     //   />
     // ))}
 
-    console.log('render props', this.props);
     return this.props.visual ? (
       <div className="ui wrapper">
         <LayoutToolbar />
