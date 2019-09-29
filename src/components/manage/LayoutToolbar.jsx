@@ -31,6 +31,9 @@ class LayoutToolbar extends Component {
   }
 
   render() {
+    const showSaveButton = true;
+    const showDeleteButton = true;
+
     return (
       <Grid columns={3}>
         <Grid.Row>
@@ -50,7 +53,8 @@ class LayoutToolbar extends Component {
             />
           </Grid.Column>
           <Grid.Column>
-            <Button>Add (Remove) layout</Button>
+            {showSaveButton ? <Button>Save responsive layout</Button> : ''}
+            {showDeleteButton ? <Button>Delete responsive layout</Button> : ''}
           </Grid.Column>
         </Grid.Row>
       </Grid>
