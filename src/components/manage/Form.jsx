@@ -36,15 +36,21 @@ import '../css/edit.css';
 import '../css/view.css';
 
 import { rowHeight } from '../../config';
+import { breakpoints } from '../../config';
 
 import TileEditor from './TileEditor';
 import LayoutToolbar from './LayoutToolbar';
+import { screenSizes } from '../../config';
 
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
 
 const ReactGridLayout = Responsive;
+
+const screens = Object.keys(screenSizes).map(k => {
+  return { key: k, text: screenSizes[k], value: k };
+});
 
 const messages = defineMessages({
   addTile: {
@@ -134,7 +140,7 @@ class Form extends Component {
     cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
     rowHeight: rowHeight,
     margin: [0, 0],
-    // onLayoutChange: () => {},
+    layoutWidth: null, // preview responsive layout width
   };
 
   constructor(props) {
@@ -484,6 +490,14 @@ class Form extends Component {
 
   handleLayoutToolbar(evType, data) {
     console.log('handleLayoutToolbar', evType, data);
+
+    switch (evType) {
+      case 'PREVIEW_RESPONSIVE':
+        this.setState({ layoutWidth: data ? breakpoints['lg'] : null });
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
@@ -530,7 +544,11 @@ class Form extends Component {
             <ReactGridLayout
               onLayoutChange={this.onLayoutChange}
               onBreakpointChange={this.onBreakpointChange}
-              width={size.width || document.querySelector('main').offsetWidth}
+              width={
+                this.state.layoutWidth ||
+                size.width ||
+                document.querySelector('main').offsetWidth
+              }
               onDragStart={this.onDragStart}
               {...this.props}
             >
@@ -545,6 +563,7 @@ class Form extends Component {
             formData={this.state.formData}
             onChangeTile={this.onChangeTile}
             onClose={this.handleCloseEditor}
+            availableScreens={screens}
           />
         ) : (
           ''
@@ -554,7 +573,7 @@ class Form extends Component {
           <div>
             <small>Preview</small>
             <br />
-            <Radio toggle onChange={() => this.setPreview()} />
+            <Radio toggle onChange={this.setPreview} />
           </div>
 
           <div>

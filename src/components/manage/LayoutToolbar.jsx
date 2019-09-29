@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
-import { screenSizes } from '../../config';
-import { Dropdown } from 'semantic-ui-react';
-// import _ from 'lodash';
-//
-const screens = Object.keys(screenSizes).map(k => {
-  return { key: k, text: screenSizes[k], value: k };
-});
+import { Button, Dropdown, Grid, Radio } from 'semantic-ui-react';
 
 class LayoutToolbar extends Component {
   static defaultProps = {
-    screens,
+    // screens,
   };
 
   constructor(props) {
@@ -19,24 +13,45 @@ class LayoutToolbar extends Component {
       currentScreenSize: 'lg',
     };
 
-    this.onChangeScreenSize = this.onChangeScreenSize.bind(this);
+    this.handleChangeScreenSize = this.handleChangeScreenSize.bind(this);
+    this.handlePreviewResponsive = this.handlePreviewResponsive.bind(this);
   }
 
-  onChangeScreenSize(event, data) {
+  handleChangeScreenSize(event, data) {
     this.setState({ currentScreenSize: data.value }, () =>
       this.props.dispatchToParent('CHANGE_SCREEN_SIZE', data.value),
     );
   }
 
+  handlePreviewResponsive(event, data) {
+    console.log('handle', event, data);
+    this.props.dispatchToParent('PREVIEW_RESPONSIVE', data.checked);
+  }
+
   render() {
     return (
-      <Dropdown
-        placeholder="Select screen size"
-        selection
-        options={this.props.screens}
-        value={this.state.currentScreenSize}
-        onChange={this.onChangeScreenSize}
-      />
+      <Grid columns={3}>
+        <Grid.Row>
+          <Grid.Column>
+            <Radio toggle onChange={this.handlePreviewResponsive} />
+            <span>Preview responsive layout</span>
+          </Grid.Column>
+
+          <Grid.Column>
+            <span>Select screen size</span>
+            <Dropdown
+              inline
+              onChange={this.handleChangeScreenSize}
+              options={this.props.availableScreens}
+              selection
+              value={this.state.currentScreenSize}
+            />
+          </Grid.Column>
+          <Grid.Column>
+            <Button>Add (Remove) layout</Button>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

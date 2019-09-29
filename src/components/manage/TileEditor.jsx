@@ -3,22 +3,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
-import {
-  Button,
-  Modal,
-
-  // Container,
-  // Form as UiForm,
-  // Segment,
-  // Tab,
-  // Message,
-  // Select,
-  // Radio,
-} from 'semantic-ui-react';
-// import {
-//   getTilesFieldname,
-//   // getTilesLayoutFieldname,
-// } from '@plone/volto/helpers';
+import { Button, Modal } from 'semantic-ui-react';
 
 import SelectTileType from './SelectTileType';
 
@@ -125,12 +110,15 @@ class ModalEditor extends Component {
             tile={this.state.tileData}
             onMutateTile={this.onMutateTile}
           />
-          <Button color="green" onClick={this.onSave}>
-            Save
-          </Button>
-          <Button color="red" onClick={this.onCancel}>
-            Cancel
-          </Button>
+          <Button.Group>
+            <Button color="green" onClick={this.onSave}>
+              Save
+            </Button>
+            <Button.Or />
+            <Button color="red" onClick={this.onCancel}>
+              Cancel
+            </Button>
+          </Button.Group>
         </Modal.Actions>
       </Modal>
     );
