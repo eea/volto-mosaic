@@ -141,6 +141,7 @@ class Form extends Component {
     rowHeight: rowHeight,
     margin: [0, 0],
     layoutWidth: null, // preview responsive layout width
+    activeScreenSize: 'lg', // 'desktop' is the default screen size
   };
 
   constructor(props) {
@@ -187,6 +188,7 @@ class Form extends Component {
       modals: {},
       mosaic_layout: layout,
       cols: 12,
+      availableScreens: screens,
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -493,7 +495,15 @@ class Form extends Component {
 
     switch (evType) {
       case 'PREVIEW_RESPONSIVE':
-        this.setState({ layoutWidth: data ? breakpoints['lg'] : null });
+        this.setState({
+          layoutWidth: data ? breakpoints[this.state.activeScreenSize] : null,
+        });
+        break;
+      case 'CHANGE_SCREEN_SIZE':
+        this.setState({
+          activeScreenSize: data,
+          layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
+        });
         break;
       default:
         break;
@@ -535,9 +545,14 @@ class Form extends Component {
     //   />
     // ))}
 
+    console.log('layout width in render', this.state.layoutWidth);
+
     return this.props.visual ? (
       <div className="ui wrapper">
-        <LayoutToolbar dispatchToParent={this.handleLayoutToolbar} />
+        <LayoutToolbar
+          availableScreens={this.state.availableScreens}
+          dispatchToParent={this.handleLayoutToolbar}
+        />
 
         <SizeMe>
           {({ size }) => (
@@ -563,7 +578,6 @@ class Form extends Component {
             formData={this.state.formData}
             onChangeTile={this.onChangeTile}
             onClose={this.handleCloseEditor}
-            availableScreens={screens}
           />
         ) : (
           ''
