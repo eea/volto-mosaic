@@ -176,21 +176,23 @@ class Form extends Component {
       };
     }
 
-    let layout =
+    const activeScreenSize = this.props.activeScreenSize;
+    const layout =
       (this.props.formData &&
         this.props.formData.tiles_layout &&
-        this.props.formData.tiles_layout.mosaic_layout) ||
+        this.props.formData.tiles_layout.mosaic_layout &&
+        this.props.formData.tiles_layout.mosaic_layout[activeScreenSize]) ||
       [];
 
     this.state = {
       formData,
       errors: {},
       modals: {},
-      mosaic_layout: layout,
+      activeMosaicLayout: layout,
       cols: 12,
       availableScreens: screens,
       layoutWidth: this.props.layoutWidth,
-      activeScreenSize: this.props.activeScreenSize,
+      activeScreenSize,
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -223,53 +225,63 @@ class Form extends Component {
   handleCloseEditor(tileData, size) {
     let tileid = this.state.currentTile;
 
-    if (tileData) {
-      const height = Math.ceil(size.height / this.props.rowHeight);
-      const formData = this.state.formData;
-      const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-      const layout = formData[tilesLayoutFieldname];
-      let mosaic_layout = layout.mosaic_layout;
-
-      let ix = mosaic_layout.indexOf(
-        mosaic_layout.find(el => {
-          return el.i === tileid;
-        }),
-      );
-      mosaic_layout[ix].h = height;
-
-      this.setState({
-        formData: {
-          ...this.state.formData,
-          tiles: {
-            ...this.state.formData.tiles,
-            [tileid]: tileData,
-          },
-          [tilesLayoutFieldname]: {
-            ...layout,
-            mosaic_layout,
-          },
-        },
-        showModal: false,
-        currentTile: null,
-        mosaic_layout,
-      });
-    } else {
+    if (!tileData) {
       this.setState({
         showModal: false,
         currentTile: null,
       });
+      return;
     }
+
+    const height = Math.ceil(size.height / this.props.rowHeight);
+    const formData = this.state.formData;
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const layout = formData[tilesLayoutFieldname];
+    const mosaic_layout = layout.mosaic_layout[this.state.activeScreenSize];
+
+    // TODO: this is sily, just apply mutation on filtered items
+    // x.filter().each()
+    let ix = mosaic_layout.indexOf(
+      mosaic_layout.find(el => {
+        return el.i === tileid;
+      }),
+    );
+    mosaic_layout[ix].h = height;
+
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        tiles: {
+          ...this.state.formData.tiles,
+          [tileid]: tileData,
+        },
+        [tilesLayoutFieldname]: {
+          ...layout,
+          mosaic_layout,
+        },
+      },
+      showModal: false,
+      currentTile: null,
+      activeMosaicLayout: mosaic_layout,
+    });
   }
 
-  onLayoutChange(layout) {
+  onLayoutChange(newLayout) {
+    const formData = this.state.formData;
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const layout = formData[tilesLayoutFieldname];
+    const mosaic_layout = layout.mosaic_layout || {};
+
+    mosaic_layout[this.state.activeScreenSize] = newLayout;
+
     this.setState(
       {
-        mosaic_layout: layout,
+        activeMosaicLayout: newLayout,
         formData: {
           ...this.state.formData,
           tiles_layout: {
             ...this.state.formData.tiles_layout,
-            mosaic_layout: layout,
+            mosaic_layout,
           },
         },
       },
@@ -332,13 +344,14 @@ class Form extends Component {
     const tilesFieldname = getTilesFieldname(this.state.formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
 
+    // TODO: this needs to be updated
     this.setState({
-      mosaic_layout: _.reject(this.state.mosaic_layout, { i: id }),
+      activeMosaicLayout: _.reject(this.state.activeMosaicLayout, { i: id }),
       formData: {
         ...this.state.formData,
         [tilesLayoutFieldname]: {
           items: without(this.state.formData[tilesLayoutFieldname].items, id),
-          mosaic_layout: _.reject(this.state.mosaic_layout, { i: id }),
+          mosaic_layout: _.reject(this.state.activeMosaicLayout, { i: id }),
         },
         [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
       },
@@ -385,7 +398,7 @@ class Form extends Component {
         },
         [tilesLayoutFieldname]: {
           items: this.state.formData[tilesLayoutFieldname].items,
-          mosaic_layout: this.state.mosaic_layout,
+          mosaic_layout: this.state.activeMosaicLayout,
         },
       },
     });
@@ -405,12 +418,12 @@ class Form extends Component {
       w: this.state.cols || 2,
       h: 2,
     };
-    const layout = this.state.mosaic_layout.concat(newTile);
+    const layout = this.state.activeMosaicLayout.concat(newTile);
 
     this.setState(
       {
         // Add a new item. It must have a unique key!
-        mosaic_layout: layout,
+        activeMosaicLayout: layout,
 
         // Increment the counter to ensure key is always unique.
         formData: {
@@ -577,7 +590,9 @@ class Form extends Component {
               onDragStart={this.onDragStart}
               {...this.props}
             >
-              {_.map(this.state.mosaic_layout, el => this.createElement(el))}
+              {_.map(this.state.activeMosaicLayout, el =>
+                this.createElement(el),
+              )}
             </ReactGridLayout>
           )}
         </SizeMe>
