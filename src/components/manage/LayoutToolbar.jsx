@@ -17,6 +17,8 @@ class LayoutToolbar extends Component {
 
     this.handleChangeScreenSize = this.handleChangeScreenSize.bind(this);
     this.handlePreviewResponsive = this.handlePreviewResponsive.bind(this);
+    this.deleteLayout = this.deleteLayout.bind(this);
+    this.saveLayout = this.saveLayout.bind(this);
   }
 
   handleChangeScreenSize(event, data) {
@@ -30,9 +32,31 @@ class LayoutToolbar extends Component {
     this.props.dispatchToParent('PREVIEW_RESPONSIVE', data.checked);
   }
 
+  deleteLayout() {
+    this.props.dispatchToParent('DELETE_LAYOUT', this.state.currentScreenSize);
+  }
+  saveLayout() {
+    this.props.dispatchToParent('CREATE_LAYOUT', this.state.currentScreenSize);
+  }
+
   render() {
-    const showSaveButton = true;
-    const showDeleteButton = true;
+    let showSaveButton = true;
+    let showDeleteButton = true;
+
+    const keys = Object.keys(this.props.availableScreens);
+    const isActiveLayout = keys.indexOf(this.currentScreenSize) > -1;
+
+    if (this.state.currentScreenSize === 'lg') {
+      // don't show on desktop
+      showSaveButton = false;
+      showDeleteButton = false;
+    } else if (isActiveLayout) {
+      // current layout exists
+      showSaveButton = false;
+    } else {
+      // new layout can be created
+      showDeleteButton = false;
+    }
 
     return (
       <Grid columns={3}>
@@ -53,8 +77,18 @@ class LayoutToolbar extends Component {
             />
           </Grid.Column>
           <Grid.Column>
-            {showSaveButton ? <Button>Save responsive layout</Button> : ''}
-            {showDeleteButton ? <Button>Delete responsive layout</Button> : ''}
+            {showSaveButton ? (
+              <Button onClick={this.saveLayout}>Save responsive layout</Button>
+            ) : (
+              ''
+            )}
+            {showDeleteButton ? (
+              <Button onClick={this.deleteLayout}>
+                Delete responsive layout
+              </Button>
+            ) : (
+              ''
+            )}
           </Grid.Column>
         </Grid.Row>
       </Grid>

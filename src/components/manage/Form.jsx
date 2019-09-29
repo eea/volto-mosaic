@@ -236,17 +236,18 @@ class Form extends Component {
     const height = Math.ceil(size.height / this.props.rowHeight);
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layout = formData[tilesLayoutFieldname];
-    const mosaic_layout = layout.mosaic_layout[this.state.activeScreenSize];
+    const layoutField = formData[tilesLayoutFieldname];
+    const activeMosaicLayout =
+      layoutField.mosaic_layout[this.state.activeScreenSize];
 
     // TODO: this is sily, just apply mutation on filtered items
     // x.filter().each()
-    let ix = mosaic_layout.indexOf(
-      mosaic_layout.find(el => {
+    let ix = activeMosaicLayout.indexOf(
+      activeMosaicLayout.find(el => {
         return el.i === tileid;
       }),
     );
-    mosaic_layout[ix].h = height;
+    activeMosaicLayout[ix].h = height;
 
     this.setState({
       formData: {
@@ -256,21 +257,20 @@ class Form extends Component {
           [tileid]: tileData,
         },
         [tilesLayoutFieldname]: {
-          ...layout,
-          mosaic_layout,
+          ...layoutField, // changed layout in place
         },
       },
       showModal: false,
       currentTile: null,
-      activeMosaicLayout: mosaic_layout,
+      activeMosaicLayout,
     });
   }
 
   onLayoutChange(newLayout) {
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layout = formData[tilesLayoutFieldname];
-    const mosaic_layout = layout.mosaic_layout || {};
+    const layoutField = formData[tilesLayoutFieldname];
+    const mosaic_layout = layoutField.mosaic_layout || {};
 
     mosaic_layout[this.state.activeScreenSize] = newLayout;
 
@@ -341,17 +341,24 @@ class Form extends Component {
   }
 
   onRemoveItem(id) {
-    const tilesFieldname = getTilesFieldname(this.state.formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
+    const formData = this.state.formData;
+    const tilesFieldname = getTilesFieldname(formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
 
-    // TODO: this needs to be updated
+    const layoutField = formData[tilesLayoutFieldname];
+    const activeMosaicLayout = _.reject(this.state.activeMosaicLayout, {
+      i: id,
+    });
+    let mosaic_layout = layoutField.mosaic_layout || {};
+    mosaic_layout[this.state.activeScreenSize] = activeMosaicLayout;
+
     this.setState({
-      activeMosaicLayout: _.reject(this.state.activeMosaicLayout, { i: id }),
+      activeMosaicLayout,
       formData: {
         ...this.state.formData,
         [tilesLayoutFieldname]: {
           items: without(this.state.formData[tilesLayoutFieldname].items, id),
-          mosaic_layout: _.reject(this.state.activeMosaicLayout, { i: id }),
+          mosaic_layout, // TODO: might need JSON.stringify?
         },
         [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
       },
@@ -368,7 +375,7 @@ class Form extends Component {
   }
 
   onChangeTile(id, value, size) {
-    // TODO: update this method
+    // TODO: update this method. Why?
     const tilesFieldname = getTilesFieldname(this.state.formData);
     this.setState({
       formData: {
@@ -382,12 +389,16 @@ class Form extends Component {
   }
 
   onMutateTile(id, value) {
-    // const idTrailingTile = uuid();
-    // const index =
-    //   this.state.formData[tilesLayoutFieldname].items.indexOf(id) + 1;
+    // TODO: what does this do? Explain
 
-    const tilesFieldname = getTilesFieldname(this.state.formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
+    const formData = this.state.formData;
+    const tilesFieldname = getTilesFieldname(formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+
+    const layoutField = formData[tilesLayoutFieldname];
+    const mosaic_layout = layoutField.mosaic_layout || {};
+    const activeMosaicLayout = this.state.activeMosaicLayout;
+    mosaic_layout[this.state.activeScreenSize] = activeMosaicLayout;
 
     this.setState({
       formData: {
@@ -398,7 +409,7 @@ class Form extends Component {
         },
         [tilesLayoutFieldname]: {
           items: this.state.formData[tilesLayoutFieldname].items,
-          mosaic_layout: this.state.activeMosaicLayout,
+          mosaic_layout,
         },
       },
     });
@@ -406,9 +417,12 @@ class Form extends Component {
 
   onAddTile(type, index) {
     const id = uuid();
-    const tilesFieldname = getTilesFieldname(this.state.formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(this.state.formData);
-    const totalItems = this.state.formData[tilesLayoutFieldname].items.length;
+    const formData = this.state.formData;
+    const tilesFieldname = getTilesFieldname(formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const totalItems = formData[tilesLayoutFieldname].items.length;
+    const layoutField = formData[tilesLayoutFieldname];
+
     const insert = index === -1 ? totalItems : index;
 
     const newTile = {
@@ -418,12 +432,16 @@ class Form extends Component {
       w: this.state.cols || 2,
       h: 2,
     };
-    const layout = this.state.activeMosaicLayout.concat(newTile);
+    const newLayout = this.state.activeMosaicLayout.concat(newTile);
+
+    // TODO: might need JSON.stringify?
+    const mosaic_layout = layoutField.mosaic_layout || {};
+    mosaic_layout[this.state.activeScreenSize] = newLayout;
 
     this.setState(
       {
         // Add a new item. It must have a unique key!
-        activeMosaicLayout: layout,
+        activeMosaicLayout: newLayout,
 
         // Increment the counter to ensure key is always unique.
         formData: {
@@ -437,7 +455,7 @@ class Form extends Component {
               id,
               ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
             ],
-            mosaic_layout: layout,
+            mosaic_layout,
           },
           [tilesFieldname]: {
             ...this.state.formData[tilesFieldname],
