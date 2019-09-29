@@ -26,7 +26,7 @@ class LayoutToolbar extends Component {
   }
 
   handlePreviewResponsive(event, data) {
-    console.log('handle', event, data);
+    console.log('handle preview responsive', event, data);
     this.props.dispatchToParent('PREVIEW_RESPONSIVE', data.checked);
   }
 

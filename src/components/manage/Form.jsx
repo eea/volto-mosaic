@@ -189,6 +189,8 @@ class Form extends Component {
       mosaic_layout: layout,
       cols: 12,
       availableScreens: screens,
+      layoutWidth: this.props.layoutWidth,
+      activeScreenSize: this.props.activeScreenSize,
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -495,8 +497,16 @@ class Form extends Component {
 
     switch (evType) {
       case 'PREVIEW_RESPONSIVE':
+        const layoutWidth = data
+          ? breakpoints[this.state.activeScreenSize]
+          : null;
+        console.log(
+          'New layout width',
+          layoutWidth,
+          this.state.activeScreenSize,
+        );
         this.setState({
-          layoutWidth: data ? breakpoints[this.state.activeScreenSize] : null,
+          layoutWidth,
         });
         break;
       case 'CHANGE_SCREEN_SIZE':
