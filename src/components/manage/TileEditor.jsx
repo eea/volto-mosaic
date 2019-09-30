@@ -3,9 +3,11 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
-import { Button, Modal, Icon, Grid } from 'semantic-ui-react';
+import { Tab, Button, Modal, Icon, Grid } from 'semantic-ui-react';
 
 import SelectTileType from './SelectTileType';
+// import TileDataEditor from './TileDataEditor';
+import TileMetadataEditor from './TileMetadataEditor';
 
 class ModalEditor extends Component {
   constructor(props) {
@@ -25,8 +27,13 @@ class ModalEditor extends Component {
     this.renderEditTile = this.renderEditTile.bind(this);
     this.onSave = this.onSave.bind(this);
     this.onCancel = this.onCancel.bind(this);
+
+    // this is ugly, should reduce number of similar methods
     this.onChangeTile = this.onChangeTile.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
+    this.handleMetadataChange = this.handleMetadataChange.bind(this);
+
+    this.panes = [];
   }
 
   renderEditTile() {
@@ -39,8 +46,6 @@ class ModalEditor extends Component {
     Tile = tiles.tilesConfig[type].edit;
 
     let nop = () => {};
-
-    console.log('render tile type', type);
 
     return (
       <Tile
@@ -67,9 +72,10 @@ class ModalEditor extends Component {
   }
 
   onChangeTile(id, value) {
+    // handles editing inside the actual tile editor
     console.log('Changing tile', value);
     this.setState({
-      tileData: value,
+      tileData: { ...value },
     });
   }
 
@@ -98,6 +104,7 @@ class ModalEditor extends Component {
   }
 
   onMutateTile(type) {
+    // handles changing the tile type. Needed by the <Tile> component?
     console.log('Mutating tile type', type);
     this.setState({
       tileData: {
@@ -107,12 +114,50 @@ class ModalEditor extends Component {
     });
   }
 
+  handleMetadataChange(values) {
+    // handles changes coming from the metadata editor
+
+    let tileData = this.state.tileData;
+    this.setState(
+      {
+        tileData: {
+          ...tileData,
+          ...values,
+        },
+      },
+      () => {
+        console.log('State after handleMetadataChange', this.state);
+      },
+    );
+  }
+
   render() {
     return (
       <Modal closeIcon open={true}>
         {/* <Modal.Header> */}
         {/* </Modal.Header> */}
-        <Modal.Content>{this.renderEditTile()}</Modal.Content>
+        <Modal.Content>
+          <Tab
+            menu={{ fluid: true, tabular: 'top' }}
+            panes={[
+              {
+                menuItem: 'Data',
+                render: () => <Tab.Pane>{this.renderEditTile()}</Tab.Pane>,
+              },
+              {
+                menuItem: 'Metadata',
+                render: () => (
+                  <Tab.Pane>
+                    <TileMetadataEditor
+                      onDataChange={this.handleMetadataChange}
+                      tile={this.state.tileData}
+                    />
+                  </Tab.Pane>
+                ),
+              },
+            ]}
+          />
+        </Modal.Content>
         <Modal.Actions>
           <Grid columns={2}>
             <Grid.Column style={{ textAlign: 'left' }}>
