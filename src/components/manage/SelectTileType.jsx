@@ -25,8 +25,8 @@ class SelectTileType extends Component {
     this.state = {
       selectTiles,
     };
-    console.log('selector selecTiles', selectTiles);
-    console.log('selector props', props);
+    // console.log('selector selecTiles', selectTiles);
+    // console.log('selector props', props);
   }
 
   render() {

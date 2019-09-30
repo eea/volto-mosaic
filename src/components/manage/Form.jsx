@@ -220,7 +220,7 @@ class Form extends Component {
       this,
     );
 
-    console.log('State in constructor', this.state);
+    // console.log('State in constructor', this.state);
   }
 
   handleOpen(tileid) {
@@ -271,6 +271,8 @@ class Form extends Component {
       activeMosaicLayout[ix].h = height;
     }
 
+    // console.log('handleCloseEditor in Form: ', tileData);
+
     this.setState({
       formData: {
         ...this.state.formData,
@@ -312,7 +314,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('Set state on change layout', this.state);
+        // console.log('Set state on change layout', this.state);
       },
     );
   }
@@ -323,17 +325,17 @@ class Form extends Component {
     const layoutField = formData[tilesLayoutFieldname];
     const mosaic_layout =
       layoutField.mosaic_layout[breakpoint] || layoutField.mosaic_layout['lg'];
-    console.log('onchangelayoutscreensize', mosaic_layout);
+    // console.log('onchangelayoutscreensize', mosaic_layout);
     if (!mosaic_layout) return;
     this.setState(
       {
         activeMosaicLayout: mosaic_layout,
       },
       () => {
-        console.log(
-          'Set state on change changeLayoutOnScreenSizeChange',
-          this.state,
-        );
+        // console.log(
+        //   'Set state on change changeLayoutOnScreenSizeChange',
+        //   this.state,
+        // );
       },
     );
   }
@@ -357,7 +359,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('Set state on change layout', this.state);
+        // console.log('Set state on change layout', this.state);
       },
     );
   }
@@ -514,7 +516,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('After onAdd', this.state);
+        // console.log('After onAdd', this.state);
       },
     );
     return id;
@@ -568,11 +570,11 @@ class Form extends Component {
   }
 
   onDragStart(ev) {
-    console.log(ev);
+    // console.log(ev);
   }
 
   handleLayoutToolbar(evType, data) {
-    console.log('handleLayoutToolbar', evType, data);
+    // console.log('handleLayoutToolbar', evType, data);
 
     switch (evType) {
       case 'PREVIEW_TILES':
@@ -593,11 +595,11 @@ class Form extends Component {
         // TODO: this needs to be improved. We want to automatically take
         // size from (<next upper breakpoint> -1)
 
-        console.log(
-          'New layout width',
-          layoutWidth,
-          this.state.activeScreenSize,
-        );
+        // console.log(
+        //   'New layout width',
+        //   layoutWidth,
+        //   this.state.activeScreenSize,
+        // );
         this.setState({
           layoutWidth,
         });
@@ -615,8 +617,9 @@ class Form extends Component {
         this.onAddTile('text');
         break;
       case 'CREATE_LAYOUT':
-        console.log('herere', this.state);
+        // console.log('herere', this.state);
         this.onLayoutSave(null, data);
+        break;
       default:
         break;
     }
@@ -652,8 +655,8 @@ class Form extends Component {
     //   />
     // ))}
 
-    console.log('layout width in render', this.state.layoutWidth);
-    console.log('props in render', this.props);
+    // console.log('layout width in render', this.state.layoutWidth);
+    // console.log('props in render', this.props);
 
     return this.props.visual ? (
       <div className="ui wrapper">

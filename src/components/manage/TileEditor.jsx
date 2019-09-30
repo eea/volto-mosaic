@@ -73,7 +73,7 @@ class ModalEditor extends Component {
 
   onChangeTile(id, value) {
     // handles editing inside the actual tile editor
-    console.log('Changing tile', value);
+    // console.log('Changing tile', value);
     this.setState({
       tileData: { ...value },
     });
@@ -105,7 +105,7 @@ class ModalEditor extends Component {
 
   onMutateTile(type) {
     // handles changing the tile type. Needed by the <Tile> component?
-    console.log('Mutating tile type', type);
+    // console.log('Mutating tile type', type);
     this.setState({
       tileData: {
         ...this.state.tileData,
@@ -126,7 +126,7 @@ class ModalEditor extends Component {
         },
       },
       () => {
-        console.log('State after handleMetadataChange', this.state);
+        // console.log('State after handleMetadataChange', this.state);
       },
     );
   }
@@ -134,8 +134,7 @@ class ModalEditor extends Component {
   render() {
     return (
       <Modal closeIcon open={true}>
-        {/* <Modal.Header> */}
-        {/* </Modal.Header> */}
+        <Modal.Header>{this.state.tileid}</Modal.Header>
         <Modal.Content>
           <Tab
             menu={{ fluid: true, tabular: 'top' }}

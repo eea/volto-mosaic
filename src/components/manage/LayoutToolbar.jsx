@@ -9,7 +9,7 @@ class LayoutToolbar extends Component {
   constructor(props) {
     super(props);
 
-    console.log('Layout toolbar props', props);
+    // console.log('Layout toolbar props', props);
 
     this.state = {
       currentScreenSize: 'lg',

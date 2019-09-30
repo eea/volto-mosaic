@@ -19,14 +19,13 @@ export function renderTile(formData, tileid) {
   const availableTiles = formData[tilesFieldname];
   const tiletype = availableTiles[tileid]['@type'].toLowerCase();
 
-  console.log('Rendering tile:', tileid, tiletype, tilesFieldname, formData);
+  // console.log('Rendering tile:', tileid, tiletype, tilesFieldname, formData);
 
   let Tile = null;
   Tile = tiles.tilesConfig[tiletype].view;
 
-  let style =
-    formData[tilesFieldname][tileid].mosaicBoxStyle || 'default|default-tile';
-  let klass = 'tile-box tile-container' + style.split('|')[1];
+  let style = formData[tilesFieldname][tileid].mosaicBoxStyle || 'default-tile';
+  let klass = 'tile-box tile-container ' + style;
 
   return Tile !== null ? (
     <div className={klass}>
@@ -56,7 +55,7 @@ class View extends Component {
     // this.state = { layout };
 
     let content = props.content;
-    console.log('content', content);
+    // console.log('content', content);
     const tilesLayoutFieldname = getTilesLayoutFieldname(content);
     const layout = content[tilesLayoutFieldname];
 
@@ -67,20 +66,20 @@ class View extends Component {
       };
     }
 
-    console.log('This.state in constructor', this.state, content);
+    // console.log('This.state in constructor', this.state, content);
   }
 
   renderTiles() {
-    console.log('Render tiles', this.state.mosaic_layout);
+    // console.log('Render tiles', this.state.mosaic_layout);
     // TODO: need to take all tiles into consideration
     return this.state.mosaic_layout['lg'].map((item, i) => {
-      console.log('item', item);
+      // console.log('item', item);
       return <div key={item.i}>{renderTile(this.props.content, item.i)}</div>;
     });
   }
 
   onLayoutChange(layout) {
-    console.log('chaging lauyout');
+    // console.log('changing lauyout');
     // this.props.onLayoutChange(layout);
   }
 
