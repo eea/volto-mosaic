@@ -53,20 +53,26 @@ class LayoutToolbar extends Component {
     let showSaveButton = true;
     let showDeleteButton = true;
 
-    const keys = Object.keys(this.props.availableScreens);
-    const isActiveLayout = keys.indexOf(this.currentScreenSize) > -1;
+    const layouts = this.props.layouts;
+    const currentLayout = layouts && layouts[this.state.currentScreenSize];
 
+    // if (this.state.currentScreenSize === 'lg') {
+    //   // don't show on desktop
+    //   showSaveButton = false;
+    //   showDeleteButton = false;
+    // } else if (isActiveLayout) {
+    //   // current layout exists
+    //   showSaveButton = false;
+    // } else {
+    //   // new layout can be created
+    //   showDeleteButton = false;
+    // }
     if (this.state.currentScreenSize === 'lg') {
-      // don't show on desktop
-      showSaveButton = false;
-      showDeleteButton = false;
-    } else if (isActiveLayout) {
-      // current layout exists
-      showSaveButton = false;
-    } else {
-      // new layout can be created
+      showSaveButton = true;
       showDeleteButton = false;
     }
+
+    // console.log('here', this.props)
 
     return (
       <Grid columns={3}>

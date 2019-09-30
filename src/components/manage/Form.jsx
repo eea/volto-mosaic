@@ -259,7 +259,7 @@ class Form extends Component {
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
     const activeMosaicLayout =
-      layoutField.mosaic_layout[this.state.activeScreenSize];
+      layoutField.mosaic_layout[this.state.activeScreenSize || 'lg'];
     if (size) {
       const height = Math.ceil(size.height / this.props.rowHeight);
       // TODO: this is sily, just apply mutation on filtered items
@@ -347,10 +347,35 @@ class Form extends Component {
     const layoutField = formData[tilesLayoutFieldname];
     const mosaic_layout = layoutField.mosaic_layout || {};
 
-    mosaic_layout[breakpoint] = this.state.activeMosaicLayout;
+    mosaic_layout[breakpoint || 'lg'] = this.state.activeMosaicLayout;
 
     this.setState(
       {
+        formData: {
+          ...this.state.formData,
+          tiles_layout: {
+            ...this.state.formData.tiles_layout,
+            mosaic_layout,
+          },
+        },
+      },
+      () => {
+        console.log('Set state on layout save', this.state);
+      },
+    );
+  }
+
+  onLayoutDelete(breakpoint) {
+    const formData = this.state.formData;
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const layoutField = formData[tilesLayoutFieldname];
+    const mosaic_layout = layoutField.mosaic_layout || {};
+
+    delete mosaic_layout[breakpoint];
+
+    this.setState(
+      {
+        activeMosaicLayout: mosaic_layout['lg'],
         formData: {
           ...this.state.formData,
           tiles_layout: {
@@ -367,7 +392,6 @@ class Form extends Component {
 
   createElement(el) {
     const tileid = el.i;
-    console.log(this.state.fomData);
     const hasData = this.state.formData.tiles[el.i]['@type'] !== 'text';
     const removeStyle = {
       position: 'absolute',
@@ -382,7 +406,7 @@ class Form extends Component {
         {this.state.preview ? (
           renderTile(this.state.formData, tileid)
         ) : (
-          <div className={hasData && 'empty'}>
+          <div className={hasData ? 'empty' : ''}>
             <div>
               {el.w} cols x {el.h} rows
             </div>
@@ -613,7 +637,10 @@ class Form extends Component {
         break;
       case 'CREATE_LAYOUT':
         // console.log('herere', this.state);
-        this.onLayoutSave(null, data);
+        this.onLayoutSave(data);
+        break;
+      case 'DELETE_LAYOUT':
+        this.onLayoutDelete(data);
         break;
       default:
         break;
@@ -650,13 +677,14 @@ class Form extends Component {
     //   />
     // ))}
 
-    // console.log('layout width in render', this.state.layoutWidth);
-    // console.log('props in render', this.props);
-
     return this.props.visual ? (
       <div className="ui wrapper">
         <LayoutToolbar
           availableScreens={this.state.availableScreens}
+          layouts={
+            this.state.formData.tiles_layout.mosaic_layout ||
+            this.props.formData.tiles_layout.mosaic_layout
+          }
           dispatchToParent={this.handleLayoutToolbar}
         />
 
