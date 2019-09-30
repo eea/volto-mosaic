@@ -134,6 +134,7 @@ class Form extends Component {
     tiles: [],
     pathname: '',
 
+    preview: false,
     // Grid props
     className: 'mosaic-edit-layout',
     // cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
@@ -201,14 +202,14 @@ class Form extends Component {
     // this.onFocusPreviousTile = this.onFocusPreviousTile.bind(this);
     // this.onFocusNextTile = this.onFocusNextTile.bind(this);
     // this.handleKeyDown = this.handleKeyDown.bind(this);
+    // this.onEditTile = this.onEditTile.bind(this);
 
     this.onChangeField = this.onChangeField.bind(this);
-    this.onChangeTile = this.onChangeTile.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
     this.onAddTile = this.onAddTile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
-    this.renderTile = this.renderTile.bind(this);
+    this.renderTilePreview = this.renderTilePreview.bind(this);
     this.createElement = this.createElement.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
 
@@ -224,6 +225,20 @@ class Form extends Component {
     this.setState({ showModal: true, currentTile: tileid });
   }
 
+  // onEditTile(id, value, size) {
+  //   // Handles editing of tile by the tile editor
+  //   const tilesFieldname = getTilesFieldname(this.state.formData);
+  //   this.setState({
+  //     formData: {
+  //       ...this.state.formData,
+  //       [tilesFieldname]: {
+  //         ...this.state.formData[tilesFieldname],
+  //         [id]: value || null,
+  //       },
+  //     },
+  //   });
+  // }
+
   handleCloseEditor(tileData, size) {
     let tileid = this.state.currentTile;
 
@@ -235,29 +250,34 @@ class Form extends Component {
       return;
     }
 
-    const height = Math.ceil(size.height / this.props.rowHeight);
     const formData = this.state.formData;
 
+    const tilesFieldname = getTilesFieldname(formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
     const activeMosaicLayout =
       layoutField.mosaic_layout[this.state.activeScreenSize];
 
+    // const height = Math.ceil(size.height / this.props.rowHeight);
     // TODO: this is sily, just apply mutation on filtered items
     // x.filter().each()
-    let ix = activeMosaicLayout.indexOf(
-      activeMosaicLayout.find(el => {
-        return el.i === tileid;
-      }),
-    );
-    activeMosaicLayout[ix].h = height;
+    // let ix = activeMosaicLayout.indexOf(
+    //   activeMosaicLayout.find(el => {
+    //     return el.i === tileid;
+    //   }),
+    // );
+    // activeMosaicLayout[ix].h = height;
 
     this.setState({
       formData: {
         ...this.state.formData,
-        tiles: {
-          ...this.state.formData.tiles,
-          [tileid]: tileData,
+        // tiles: {
+        //   ...this.state.formData.tiles,
+        //   [tileid]: tileData,
+        // },
+        [tilesFieldname]: {
+          ...this.state.formData[tilesFieldname],
+          [tileid]: tileData || null,
         },
         [tilesLayoutFieldname]: {
           ...layoutField, // changed layout in place
@@ -294,7 +314,7 @@ class Form extends Component {
     );
   }
 
-  renderTile(tileid) {
+  renderTilePreview(tileid) {
     const content = this.state.formData;
     const tilesFieldname = getTilesFieldname(content);
     const availableTiles = content[tilesFieldname];
@@ -322,10 +342,11 @@ class Form extends Component {
       cursor: 'pointer',
     };
     const i = el.add ? '+' : el.i;
+
     return (
       <div key={i} data-grid={el}>
         {this.state.preview ? (
-          this.renderTile(tileid)
+          this.renderTilePreview(tileid)
         ) : (
           <div>
             <Button onClick={() => this.handleOpen(tileid)}>Edit</Button>
@@ -374,20 +395,6 @@ class Form extends Component {
       formData: {
         ...this.state.formData,
         [id]: value || null,
-      },
-    });
-  }
-
-  onChangeTile(id, value, size) {
-    // Handles editing of tile by the tile editor
-    const tilesFieldname = getTilesFieldname(this.state.formData);
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        [tilesFieldname]: {
-          ...this.state.formData[tilesFieldname],
-          [id]: value || null,
-        },
       },
     });
   }
@@ -573,7 +580,7 @@ class Form extends Component {
     //     key={tile}
     //     handleKeyDown={this.handleKeyDown}
     //     onAddTile={this.onAddTile}
-    //     onChangeTile={this.onChangeTile}
+    //     onEditTile={this.onEditTile}
     //     onMutateTile={this.onMutateTile}
     //     onChangeField={this.onChangeField}
     //     onDeleteTile={this.onDeleteTile}
@@ -618,11 +625,11 @@ class Form extends Component {
           )}
         </SizeMe>
 
+        {/* onChangeTile={this.onEditTile} */}
         {this.state.showModal ? (
           <TileEditor
             tileid={this.state.currentTile}
             formData={this.state.formData}
-            onChangeTile={this.onChangeTile}
             onClose={this.handleCloseEditor}
           />
         ) : (

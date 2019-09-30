@@ -39,6 +39,8 @@ class ModalEditor extends Component {
 
     let nop = () => {};
 
+    console.log('render tile type', type);
+
     return (
       <Tile
         id={this.state.tileid}
