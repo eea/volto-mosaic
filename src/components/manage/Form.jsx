@@ -369,6 +369,7 @@ class Form extends Component {
   }
 
   onChangeField(id, value) {
+    // Handles changes in the normal Volto metadata editor
     this.setState({
       formData: {
         ...this.state.formData,
@@ -378,7 +379,7 @@ class Form extends Component {
   }
 
   onChangeTile(id, value, size) {
-    // TODO: update this method. Why?
+    // Handles editing of tile by the tile editor
     const tilesFieldname = getTilesFieldname(this.state.formData);
     this.setState({
       formData: {
@@ -419,6 +420,7 @@ class Form extends Component {
   }
 
   onAddTile(type, index) {
+    // Handles the creation of a new tile in the layout editor
     const id = uuid();
 
     const formData = this.state.formData;
@@ -439,7 +441,8 @@ class Form extends Component {
     const newLayout = this.state.activeMosaicLayout.concat(newTile);
 
     let mosaic_layout = layoutField.mosaic_layout || {};
-    /// avoid BBB
+
+    /// avoids ugly BBB situation
     if (typeof mosaic_layout === typeof []) mosaic_layout = {};
     mosaic_layout[this.state.activeScreenSize] = newLayout;
 
