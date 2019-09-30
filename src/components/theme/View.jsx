@@ -13,6 +13,26 @@ import {
 
 const ReactGridLayout = Responsive;
 
+export function renderTile(formData, tileid) {
+  // const content = this.props.content;
+  const tilesFieldname = getTilesFieldname(formData);
+  const availableTiles = formData[tilesFieldname];
+  const tiletype = availableTiles[tileid]['@type'].toLowerCase();
+
+  console.log('Rendering tile:', tileid, tiletype, tilesFieldname, formData);
+
+  let Tile = null;
+  Tile = tiles.tilesConfig[tiletype].view;
+
+  return Tile !== null ? (
+    <div class="tile-container">
+      <Tile key={tileid} properties={formData} data={availableTiles[tileid]} />
+    </div>
+  ) : (
+    <div> {JSON.stringify(tiletype)} </div>
+  );
+}
+
 class View extends Component {
   static defaultProps = {
     className: 'layout',
@@ -51,28 +71,10 @@ class View extends Component {
     // TODO: need to take all tiles into consideration
     return this.state.mosaic_layout['lg'].map((item, i) => {
       console.log('item', item);
-      return <div key={item.i}>{this.renderTile(item.i)}</div>;
+      return (
+        <div key={item.i}>{this.renderTile(this.props.content, item.i)}</div>
+      );
     });
-  }
-
-  renderTile(tileid) {
-    const content = this.props.content;
-    const tilesFieldname = getTilesFieldname(content);
-    const availableTiles = content[tilesFieldname];
-    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
-
-    console.log('Rendering tile:', tileid, tiletype, tilesFieldname, content);
-
-    let Tile = null;
-    Tile = tiles.tilesConfig[tiletype].view;
-
-    return Tile !== null ? (
-      <div class="tile-container">
-        <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
-      </div>
-    ) : (
-      <div> {JSON.stringify(tiletype)} </div>
-    );
   }
 
   onLayoutChange(layout) {

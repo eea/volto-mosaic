@@ -10,7 +10,7 @@ import {
   // Message,
   // Modal,
   // Select,
-  Radio,
+  // Radio,
 } from 'semantic-ui-react';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
@@ -30,7 +30,6 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 import { SizeMe } from 'react-sizeme';
-import { tiles } from '~/config';
 
 import '../css/edit.css';
 import '../css/view.css';
@@ -41,7 +40,9 @@ import { breakpoints } from '../../config';
 import TileEditor from './TileEditor';
 import LayoutToolbar from './LayoutToolbar';
 import { screenSizes } from '../../config';
+import { renderTile } from './../theme/View';
 
+// import { tiles } from '~/config';
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -203,13 +204,13 @@ class Form extends Component {
     // this.onFocusNextTile = this.onFocusNextTile.bind(this);
     // this.handleKeyDown = this.handleKeyDown.bind(this);
     // this.onEditTile = this.onEditTile.bind(this);
+    // this.renderTilePreview = this.renderTilePreview.bind(this);
 
     this.onChangeField = this.onChangeField.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
     this.onAddTile = this.onAddTile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
-    this.renderTilePreview = this.renderTilePreview.bind(this);
     this.createElement = this.createElement.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
 
@@ -315,23 +316,23 @@ class Form extends Component {
     );
   }
 
-  renderTilePreview(tileid) {
-    const content = this.state.formData;
-    const tilesFieldname = getTilesFieldname(content);
-    const availableTiles = content[tilesFieldname];
-    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
-
-    let Tile = null;
-    Tile = tiles.tilesConfig[tiletype].view;
-
-    return Tile !== null ? (
-      <div className="tile-container">
-        <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
-      </div>
-    ) : (
-      <div> {JSON.stringify(tiletype)} </div>
-    );
-  }
+  // renderTilePreview(tileid) {
+  //   const content = this.state.formData;
+  //   const tilesFieldname = getTilesFieldname(content);
+  //   const availableTiles = content[tilesFieldname];
+  //   const tiletype = availableTiles[tileid]['@type'].toLowerCase();
+  //
+  //   let Tile = null;
+  //   Tile = tiles.tilesConfig[tiletype].view;
+  //
+  //   return Tile !== null ? (
+  //     <div className="tile-container">
+  //       <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
+  //     </div>
+  //   ) : (
+  //     <div> {JSON.stringify(tiletype)} </div>
+  //   );
+  // }
 
   createElement(el) {
     const tileid = el.i;
@@ -347,7 +348,7 @@ class Form extends Component {
     return (
       <div key={i} data-grid={el}>
         {this.state.preview ? (
-          this.renderTilePreview(tileid)
+          renderTile(this.state.formData, tileid)
         ) : (
           <div>
             <Button onClick={() => this.handleOpen(tileid)}>Edit</Button>
