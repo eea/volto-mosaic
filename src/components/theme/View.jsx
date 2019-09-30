@@ -24,8 +24,12 @@ export function renderTile(formData, tileid) {
   let Tile = null;
   Tile = tiles.tilesConfig[tiletype].view;
 
+  let style =
+    formData[tilesFieldname][tileid].mosaicBoxStyle || 'default|default-tile';
+  let klass = 'tile-box tile-container' + style.split('|')[1];
+
   return Tile !== null ? (
-    <div class="tile-container">
+    <div className={klass}>
       <Tile key={tileid} properties={formData} data={availableTiles[tileid]} />
     </div>
   ) : (
@@ -71,9 +75,7 @@ class View extends Component {
     // TODO: need to take all tiles into consideration
     return this.state.mosaic_layout['lg'].map((item, i) => {
       console.log('item', item);
-      return (
-        <div key={item.i}>{this.renderTile(this.props.content, item.i)}</div>
-      );
+      return <div key={item.i}>{renderTile(this.props.content, item.i)}</div>;
     });
   }
 

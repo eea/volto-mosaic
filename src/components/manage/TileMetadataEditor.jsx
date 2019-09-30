@@ -13,18 +13,18 @@ class TileMetadataEditor extends Component {
 
     this.state = {
       settings: props.settings || [],
-      selectedBoxStyle: props.tile.mosaicBoxStyle || 'Default',
+      selectedBoxStyle: props.tile.mosaicBoxStyle || 'default-tile',
     };
   }
 
-  handleSelectBoxStyle(name) {
+  handleSelectBoxStyle(klass) {
     // TODO: this should be refactored. We should use ids, not titles
     this.setState(
       {
-        selectedBoxStyle: name,
+        selectedBoxStyle: klass,
       },
       () => {
-        this.props.onDataChange({ mosaicBoxStyle: name });
+        this.props.onDataChange({ mosaicBoxStyle: klass });
       },
     );
   }
@@ -34,18 +34,18 @@ class TileMetadataEditor extends Component {
     let [title, id] = bits;
     let klass = 'tile-box preview ' + id;
     let itemStyle =
-      this.state.selectedBoxStyle === title ? { backgroundColor: 'pink' } : {};
+      this.state.selectedBoxStyle === id ? { backgroundColor: 'pink' } : {};
 
     return (
       <Item
         key={key}
-        onClick={() => this.handleSelectBoxStyle(title)}
+        onClick={() => this.handleSelectBoxStyle(id)}
         style={itemStyle}
       >
         <Item.Image>
           <div className={klass}>{}</div>
         </Item.Image>
-        <Item.Header>{id}</Item.Header>
+        <Item.Header>{title}</Item.Header>
         <Item.Content>A box style</Item.Content>
       </Item>
     );
