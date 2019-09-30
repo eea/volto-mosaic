@@ -34,12 +34,10 @@ import { SizeMe } from 'react-sizeme';
 import '../css/edit.css';
 import '../css/view.css';
 
-import { rowHeight } from '../../config';
-import { breakpoints } from '../../config';
+import { rowHeight, breakpoints, screenSizes } from '../../config';
 
 import TileEditor from './TileEditor';
 import LayoutToolbar from './LayoutToolbar';
-import { screenSizes } from '../../config';
 import { renderTile } from './../theme/View';
 
 // import { tiles } from '~/config';
@@ -315,24 +313,6 @@ class Form extends Component {
       },
     );
   }
-
-  // renderTilePreview(tileid) {
-  //   const content = this.state.formData;
-  //   const tilesFieldname = getTilesFieldname(content);
-  //   const availableTiles = content[tilesFieldname];
-  //   const tiletype = availableTiles[tileid]['@type'].toLowerCase();
-  //
-  //   let Tile = null;
-  //   Tile = tiles.tilesConfig[tiletype].view;
-  //
-  //   return Tile !== null ? (
-  //     <div className="tile-container">
-  //       <Tile key={tileid} properties={content} data={availableTiles[tileid]} />
-  //     </div>
-  //   ) : (
-  //     <div> {JSON.stringify(tiletype)} </div>
-  //   );
-  // }
 
   createElement(el) {
     const tileid = el.i;
