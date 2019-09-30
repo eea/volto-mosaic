@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
-import { Button, Modal, Icon, Form } from 'semantic-ui-react';
+import { Button, Modal, Icon, Grid } from 'semantic-ui-react';
 
 import SelectTileType from './SelectTileType';
 
@@ -114,9 +114,11 @@ class ModalEditor extends Component {
         {/* </Modal.Header> */}
         <Modal.Content>{this.renderEditTile()}</Modal.Content>
         <Modal.Actions>
-          <Form>
-            <Form.Group inline floated="left">
-              <Button onClick={() => this.setState({ useRecommendedHeight: true })}>
+          <Grid columns={2}>
+            <Grid.Column style={{ textAlign: 'left' }}>
+              <Button
+                onClick={() => this.setState({ useRecommendedHeight: true })}
+              >
                 Use recommended height
               </Button>
               {this.state.useRecommendedHeight ? <Icon name="check" /> : ''}
@@ -127,17 +129,19 @@ class ModalEditor extends Component {
                 tile={this.state.tileData}
                 onMutateTile={this.onMutateTile}
               />
-            </Form.Group>
-            <Button.Group floated="right">
-              <Button color="green" onClick={this.onSave}>
-                Save
-              </Button>
-              <Button.Or />
-              <Button color="red" onClick={this.onCancel}>
-                Cancel
-              </Button>
-            </Button.Group>
-          </Form>
+            </Grid.Column>
+            <Grid.Column>
+              <Button.Group floated="right">
+                <Button color="green" onClick={this.onSave}>
+                  Save
+                </Button>
+                <Button.Or />
+                <Button color="red" onClick={this.onCancel}>
+                  Cancel
+                </Button>
+              </Button.Group>
+            </Grid.Column>
+          </Grid>
         </Modal.Actions>
       </Modal>
     );

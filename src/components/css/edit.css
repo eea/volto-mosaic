@@ -72,3 +72,7 @@
   background: #ddd;
   border: 1px solid black;
 }
+
+.ui.upward.dropdown > .menu {
+  overflow: auto;
+}
