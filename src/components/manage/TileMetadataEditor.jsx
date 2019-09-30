@@ -12,7 +12,7 @@ class TileMetadataEditor extends Component {
     this.handleSelectBoxStyle = this.handleSelectBoxStyle.bind(this);
 
     this.state = {
-      settings: [],
+      settings: props.settings || [],
       selectedBoxStyle: props.tile.mosaicBoxStyle || 'Default',
     };
   }
@@ -55,7 +55,7 @@ class TileMetadataEditor extends Component {
     let oldSettings = JSON.stringify(this.props.settings);
     let newSettings = JSON.stringify(nextProps.settings);
 
-    if (oldSettings || oldSettings !== newSettings) {
+    if (oldSettings !== newSettings) {
       this.setState({ settings: nextProps.settings });
     }
   }
