@@ -25,7 +25,7 @@ export function renderTile(formData, tileid) {
   Tile = tiles.tilesConfig[tiletype].view;
 
   let style = formData[tilesFieldname][tileid].mosaicBoxStyle || 'default-tile';
-  let klass = 'tile-box tile-container ' + style;
+  let klass = 'tile-container ' + style;
 
   return Tile !== null ? (
     <div className={klass}>
