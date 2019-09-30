@@ -15,28 +15,38 @@ class LayoutToolbar extends Component {
       currentScreenSize: 'lg',
     };
 
-    this.handleChangeScreenSize = this.handleChangeScreenSize.bind(this);
-    this.handlePreviewResponsive = this.handlePreviewResponsive.bind(this);
-    this.deleteLayout = this.deleteLayout.bind(this);
-    this.saveLayout = this.saveLayout.bind(this);
+    this.sendChangeScreenSize = this.sendChangeScreenSize.bind(this);
+    this.sendPreviewResponsive = this.sendPreviewResponsive.bind(this);
+    this.sendAddTile = this.sendAddTile.bind(this);
+    this.sendDeleteLayout = this.sendDeleteLayout.bind(this);
+    this.sendSaveLayout = this.sendSaveLayout.bind(this);
+    this.sendPreviewTiles = this.sendPreviewTiles.bind(this);
   }
 
-  handleChangeScreenSize(event, data) {
+  sendChangeScreenSize(event, data) {
     this.setState({ currentScreenSize: data.value }, () =>
       this.props.dispatchToParent('CHANGE_SCREEN_SIZE', data.value),
     );
   }
 
-  handlePreviewResponsive(event, data) {
-    console.log('handle preview responsive', event, data);
+  sendPreviewResponsive(event, data) {
     this.props.dispatchToParent('PREVIEW_RESPONSIVE', data.checked);
   }
 
-  deleteLayout() {
+  sendDeleteLayout() {
     this.props.dispatchToParent('DELETE_LAYOUT', this.state.currentScreenSize);
   }
-  saveLayout() {
+
+  sendSaveLayout() {
     this.props.dispatchToParent('CREATE_LAYOUT', this.state.currentScreenSize);
+  }
+
+  sendPreviewTiles() {
+    this.props.dispatchToParent('PREVIEW_TILES', null);
+  }
+
+  sendAddTile() {
+    this.props.dispatchToParent('CREATE_TILE', null);
   }
 
   render() {
@@ -62,15 +72,21 @@ class LayoutToolbar extends Component {
       <Grid columns={3}>
         <Grid.Row>
           <Grid.Column>
-            <Radio toggle onChange={this.handlePreviewResponsive} />
-            <span>Preview responsive layout</span>
+            <div>
+              <Radio toggle onChange={this.sendPreviewResponsive} />
+              <small>Preview responsive layout</small>
+            </div>
+            <div>
+              <Radio toggle onChange={this.sendPreviewTiles} />
+              <small>Preview tiles</small>
+            </div>
           </Grid.Column>
 
           <Grid.Column>
             <span>Select screen size</span>
             <Dropdown
               inline
-              onChange={this.handleChangeScreenSize}
+              onChange={this.sendChangeScreenSize}
               options={this.props.availableScreens}
               selection
               value={this.state.currentScreenSize}
@@ -78,17 +94,20 @@ class LayoutToolbar extends Component {
           </Grid.Column>
           <Grid.Column>
             {showSaveButton ? (
-              <Button onClick={this.saveLayout}>Save responsive layout</Button>
+              <Button onClick={this.sendSaveLayout}>
+                Save responsive layout
+              </Button>
             ) : (
               ''
             )}
             {showDeleteButton ? (
-              <Button onClick={this.deleteLayout}>
+              <Button onClick={this.sendDeleteLayout}>
                 Delete responsive layout
               </Button>
             ) : (
               ''
             )}
+            <button onClick={this.sendAddTile}>Add new tile</button>
           </Grid.Column>
         </Grid.Row>
       </Grid>

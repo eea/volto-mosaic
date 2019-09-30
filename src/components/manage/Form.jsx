@@ -542,6 +542,11 @@ class Form extends Component {
     console.log('handleLayoutToolbar', evType, data);
 
     switch (evType) {
+      case 'PREVIEW_TILES':
+        this.setState({
+          preview: true,
+        });
+        break;
       case 'PREVIEW_RESPONSIVE':
         const layoutWidth = data
           ? breakpoints[this.state.activeScreenSize]
@@ -560,6 +565,9 @@ class Form extends Component {
           activeScreenSize: data,
           layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
         });
+        break;
+      case 'ADD_TILE':
+        this.onAddTile('text');
         break;
       default:
         break;
@@ -637,15 +645,9 @@ class Form extends Component {
         )}
 
         <Portal node={node}>
-          <div>
-            <small>Preview</small>
-            <br />
-            <Radio toggle onChange={this.setPreview} />
-          </div>
+          <div />
 
-          <div>
-            <button onClick={() => this.onAddTile('text')}>Add Item</button>
-          </div>
+          <div />
         </Portal>
 
         <Portal
