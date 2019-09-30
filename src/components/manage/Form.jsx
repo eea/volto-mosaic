@@ -350,6 +350,9 @@ class Form extends Component {
         ) : (
           <div>
             <Button onClick={() => this.handleOpen(tileid)}>Edit</Button>
+            <div>
+              {el.w} cols x {el.h} rows
+            </div>
           </div>
         )}
 
@@ -544,13 +547,22 @@ class Form extends Component {
     switch (evType) {
       case 'PREVIEW_TILES':
         this.setState({
-          preview: true,
+          preview: data,
         });
         break;
       case 'PREVIEW_RESPONSIVE':
-        const layoutWidth = data
+        let layoutWidth = data
           ? breakpoints[this.state.activeScreenSize]
           : null;
+
+        if (this.state.activeScreenSize === 'lg') {
+          layoutWidth = null;
+        } else if (this.state.activeScreenSize === 'xxs') {
+          layoutWidth = breakpoints['xs'] - 1;
+        }
+        // TODO: this needs to be improved. We want to automatically take
+        // size from (<next upper breakpoint> -1)
+
         console.log(
           'New layout width',
           layoutWidth,
@@ -566,7 +578,7 @@ class Form extends Component {
           layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
         });
         break;
-      case 'ADD_TILE':
+      case 'CREATE_TILE':
         this.onAddTile('text');
         break;
       default:

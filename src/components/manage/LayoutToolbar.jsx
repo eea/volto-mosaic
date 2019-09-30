@@ -41,8 +41,8 @@ class LayoutToolbar extends Component {
     this.props.dispatchToParent('CREATE_LAYOUT', this.state.currentScreenSize);
   }
 
-  sendPreviewTiles() {
-    this.props.dispatchToParent('PREVIEW_TILES', null);
+  sendPreviewTiles(event, data) {
+    this.props.dispatchToParent('PREVIEW_TILES', data.checked);
   }
 
   sendAddTile() {
