@@ -48,7 +48,8 @@ class View extends Component {
 
   renderTiles() {
     console.log('Render tiles', this.state.mosaic_layout);
-    return this.state.mosaic_layout.map((item, i) => {
+    // TODO: need to take all tiles into consideration
+    return this.state.mosaic_layout['lg'].map((item, i) => {
       console.log('item', item);
       return <div key={item.i}>{this.renderTile(item.i)}</div>;
     });
@@ -84,7 +85,7 @@ class View extends Component {
       <SizeMe>
         {({ size }) => (
           <ReactGridLayout
-            layout={this.state.mosaic_layout}
+            layouts={this.state.mosaic_layout}
             breakpoints={breakpoints}
             cols={{ lg: 12, md: 12, sm: 6, xs: 2, xxs: 2 }}
             measureBeforeMount={true}
@@ -93,13 +94,6 @@ class View extends Component {
             isDraggable={false}
             isResizable={false}
             isDroppable={false}
-            layouts={{
-              lg: this.state.mosaic_layout,
-              md: this.state.mosaic_layout,
-              sm: this.state.mosaic_layout,
-              xs: this.state.mosaic_layout,
-              xxs: this.state.mosaic_layout,
-            }}
             width={size.width || document.querySelector('main').offsetWidth}
           >
             {this.renderTiles()}

@@ -177,7 +177,7 @@ class Form extends Component {
     }
 
     const activeScreenSize = this.props.activeScreenSize;
-    const layout =
+    const activeMosaicLayout =
       (this.props.formData &&
         this.props.formData.tiles_layout &&
         this.props.formData.tiles_layout.mosaic_layout &&
@@ -188,11 +188,11 @@ class Form extends Component {
       formData,
       errors: {},
       modals: {},
-      activeMosaicLayout: layout,
       cols: 12,
       availableScreens: screens,
       layoutWidth: this.props.layoutWidth,
       activeScreenSize,
+      activeMosaicLayout,
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -216,6 +216,8 @@ class Form extends Component {
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.onDragStart = this.onDragStart.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
+
+    console.log('State in constructor', this.state);
   }
 
   handleOpen(tileid) {
@@ -235,6 +237,7 @@ class Form extends Component {
 
     const height = Math.ceil(size.height / this.props.rowHeight);
     const formData = this.state.formData;
+
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
     const activeMosaicLayout =
@@ -417,6 +420,7 @@ class Form extends Component {
 
   onAddTile(type, index) {
     const id = uuid();
+
     const formData = this.state.formData;
     const tilesFieldname = getTilesFieldname(formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
@@ -434,8 +438,9 @@ class Form extends Component {
     };
     const newLayout = this.state.activeMosaicLayout.concat(newTile);
 
-    // TODO: might need JSON.stringify?
-    const mosaic_layout = layoutField.mosaic_layout || {};
+    let mosaic_layout = layoutField.mosaic_layout || {};
+    /// avoid BBB
+    if (typeof mosaic_layout === typeof []) mosaic_layout = {};
     mosaic_layout[this.state.activeScreenSize] = newLayout;
 
     this.setState(
@@ -455,7 +460,7 @@ class Form extends Component {
               id,
               ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
             ],
-            mosaic_layout,
+            mosaic_layout: { ...mosaic_layout },
           },
           [tilesFieldname]: {
             ...this.state.formData[tilesFieldname],
@@ -553,11 +558,6 @@ class Form extends Component {
 
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
-    // const { formData } = this.state;
-    // const tilesFieldname = getTilesFieldname(formData);
-    // const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    // const renderTiles = formData[tilesLayoutFieldname].items;
-    // const tilesDict = formData[tilesFieldname];
 
     let node =
       __CLIENT__ && document.querySelector('#toolbar .toolbar-actions');
