@@ -116,7 +116,9 @@ class ModalEditor extends Component {
         <Modal.Actions>
           <Form>
             <Form.Group inline floated="left">
-              <Button onClick={() => this.setState({ useRecommendedHeight: true })}>
+              <Button
+                onClick={() => this.setState({ useRecommendedHeight: true })}
+              >
                 Use recommended height
               </Button>
               {this.state.useRecommendedHeight ? <Icon name="check" /> : ''}
