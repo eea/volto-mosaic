@@ -24,7 +24,7 @@ import {
 
 import _ from 'lodash';
 
-import { Responsive } from 'react-grid-layout';
+import RGL from 'react-grid-layout';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -44,8 +44,7 @@ import { renderTile } from './../theme/View';
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
-
-const ReactGridLayout = Responsive;
+const ReactGridLayout = RGL;
 
 const screens = Object.keys(screenSizes).map(k => {
   return { key: k, text: screenSizes[k], value: k };
@@ -137,7 +136,8 @@ class Form extends Component {
     // Grid props
     className: 'mosaic-edit-layout',
     // cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
-    cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
+    // cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
+    cols: 12,
     rowHeight: rowHeight,
     margin: [0, 0],
     layoutWidth: null, // preview responsive layout width
@@ -216,6 +216,9 @@ class Form extends Component {
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.onDragStart = this.onDragStart.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
+    this.changeLayoutOnScreenSizeChange = this.changeLayoutOnScreenSizeChange.bind(
+      this,
+    );
 
     console.log('State in constructor', this.state);
   }
@@ -300,6 +303,51 @@ class Form extends Component {
     this.setState(
       {
         activeMosaicLayout: newLayout,
+        formData: {
+          ...this.state.formData,
+          tiles_layout: {
+            ...this.state.formData.tiles_layout,
+            mosaic_layout,
+          },
+        },
+      },
+      () => {
+        console.log('Set state on change layout', this.state);
+      },
+    );
+  }
+
+  changeLayoutOnScreenSizeChange(breakpoint) {
+    const formData = this.state.formData;
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const layoutField = formData[tilesLayoutFieldname];
+    const mosaic_layout =
+      layoutField.mosaic_layout[breakpoint] || layoutField.mosaic_layout['lg'];
+    console.log('onchangelayoutscreensize', mosaic_layout);
+    if (!mosaic_layout) return;
+    this.setState(
+      {
+        activeMosaicLayout: mosaic_layout,
+      },
+      () => {
+        console.log(
+          'Set state on change changeLayoutOnScreenSizeChange',
+          this.state,
+        );
+      },
+    );
+  }
+
+  onLayoutSave(breakpoint) {
+    const formData = this.state.formData;
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const layoutField = formData[tilesLayoutFieldname];
+    const mosaic_layout = layoutField.mosaic_layout || {};
+
+    mosaic_layout[breakpoint] = this.state.activeMosaicLayout;
+
+    this.setState(
+      {
         formData: {
           ...this.state.formData,
           tiles_layout: {
@@ -555,14 +603,20 @@ class Form extends Component {
         });
         break;
       case 'CHANGE_SCREEN_SIZE':
-        this.setState({
-          activeScreenSize: data,
-          layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
-        });
+        this.setState(
+          {
+            activeScreenSize: data,
+            layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
+          },
+          this.changeLayoutOnScreenSizeChange(data),
+        );
         break;
       case 'CREATE_TILE':
         this.onAddTile('text');
         break;
+      case 'CREATE_LAYOUT':
+        console.log('herere', this.state);
+        this.onLayoutSave(null, data);
       default:
         break;
     }
@@ -599,6 +653,7 @@ class Form extends Component {
     // ))}
 
     console.log('layout width in render', this.state.layoutWidth);
+    console.log('props in render', this.props);
 
     return this.props.visual ? (
       <div className="ui wrapper">
@@ -612,6 +667,7 @@ class Form extends Component {
             <ReactGridLayout
               onLayoutChange={this.onLayoutChange}
               onBreakpointChange={this.onBreakpointChange}
+              layout={this.state.activeMosaicLayout}
               width={
                 this.state.layoutWidth ||
                 size.width ||
