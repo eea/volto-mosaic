@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { tiles } from '~/config';
 
-import { Label, Dropdown } from 'semantic-ui-react';
+import { Dropdown } from 'semantic-ui-react';
 
 class SelectTileType extends Component {
   // static propTypes = {
@@ -17,28 +17,27 @@ class SelectTileType extends Component {
     };
 
     const selectTiles = Object.values(availableTiles).map(t => ({
-      key: t.title,
-      value: t.title,
+      key: t.title.toLowerCase(),
+      value: t.title.toLowerCase(),
       text: t.title,
     }));
 
     this.state = {
       selectTiles,
     };
+    console.log('selector selecTiles', selectTiles);
+    console.log('selector props', props);
   }
 
   render() {
     return (
       <Dropdown
         button
-        text="Change tile type"
         labeled
-        floating
-        search
         options={this.state.selectTiles}
         className={'tile-selector'}
         onChange={(event, data) => this.props.onMutateTile(data.value)}
-        defaultValue={this.props.tile['@type']}
+        value={this.props.tile['@type'].toLowerCase()}
       />
     );
   }

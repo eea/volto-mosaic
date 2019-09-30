@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
 import { Button, Modal } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 
 import SelectTileType from './SelectTileType';
 
@@ -107,20 +108,26 @@ class ModalEditor extends Component {
         {/* </Modal.Header> */}
         <Modal.Content>{this.renderEditTile()}</Modal.Content>
         <Modal.Actions>
-          <SelectTileType
-            tiles={this.state.formData.tiles}
-            tile={this.state.tileData}
-            onMutateTile={this.onMutateTile}
-          />
-          <Button.Group>
-            <Button color="green" onClick={this.onSave}>
-              Save
-            </Button>
-            <Button.Or />
-            <Button color="red" onClick={this.onCancel}>
-              Cancel
-            </Button>
-          </Button.Group>
+          <Form>
+            <Form.Group inline floated="left">
+              <label htmlFor="select-tile-type">Set type:</label>
+              <SelectTileType
+                id="select-tile-type"
+                tiles={this.state.formData.tiles}
+                tile={this.state.tileData}
+                onMutateTile={this.onMutateTile}
+              />
+            </Form.Group>
+            <Button.Group floated="right">
+              <Button color="green" onClick={this.onSave}>
+                Save
+              </Button>
+              <Button.Or />
+              <Button color="red" onClick={this.onCancel}>
+                Cancel
+              </Button>
+            </Button.Group>
+          </Form>
         </Modal.Actions>
       </Modal>
     );
