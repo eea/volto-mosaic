@@ -3,8 +3,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
-import { Button, Modal } from 'semantic-ui-react';
-import { Form } from 'semantic-ui-react';
+import { Button, Modal, Icon, Form } from 'semantic-ui-react';
 
 import SelectTileType from './SelectTileType';
 
@@ -18,6 +17,7 @@ class ModalEditor extends Component {
       tileid: props.tileid,
       formData: props.formData,
       tileData: tile,
+      useRecommendedHeight: false,
     };
 
     this.tileRef = React.createRef();
@@ -78,10 +78,16 @@ class ModalEditor extends Component {
     //
     // console.log('height', this.tileRef.current.height);
     // console.log('brect', .getBoundingClientRect());
+    if (!this.state.useRecommendedHeight) {
+      this.props.onClose(this.state.tileData);
+      return;
+    }
+    let type = this.state.tileData['@type'].toLowerCase();
+    const minHeight = tiles.tilesConfig[type].height;
 
     const node = ReactDOM.findDOMNode(this.tileRef.current);
     let size = {
-      height: node.offsetHeight,
+      height: minHeight,
       width: node.offsetWidth,
     };
     this.props.onClose(this.state.tileData, size);
@@ -110,6 +116,10 @@ class ModalEditor extends Component {
         <Modal.Actions>
           <Form>
             <Form.Group inline floated="left">
+              <Button onClick={() => this.setState({ useRecommendedHeight: true })}>
+                Use recommended height
+              </Button>
+              {this.state.useRecommendedHeight ? <Icon name="check" /> : ''}
               <label htmlFor="select-tile-type">Set type:</label>
               <SelectTileType
                 id="select-tile-type"

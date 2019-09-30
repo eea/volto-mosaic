@@ -257,16 +257,17 @@ class Form extends Component {
     const layoutField = formData[tilesLayoutFieldname];
     const activeMosaicLayout =
       layoutField.mosaic_layout[this.state.activeScreenSize];
-
-    // const height = Math.ceil(size.height / this.props.rowHeight);
-    // TODO: this is sily, just apply mutation on filtered items
-    // x.filter().each()
-    // let ix = activeMosaicLayout.indexOf(
-    //   activeMosaicLayout.find(el => {
-    //     return el.i === tileid;
-    //   }),
-    // );
-    // activeMosaicLayout[ix].h = height;
+    if (size) {
+      const height = Math.ceil(size.height / this.props.rowHeight);
+      // TODO: this is sily, just apply mutation on filtered items
+      // x.filter().each()
+      let ix = activeMosaicLayout.indexOf(
+        activeMosaicLayout.find(el => {
+          return el.i === tileid;
+        }),
+      );
+      activeMosaicLayout[ix].h = height;
+    }
 
     this.setState({
       formData: {
