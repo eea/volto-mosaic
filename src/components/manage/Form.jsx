@@ -11,6 +11,7 @@ import {
   // Modal,
   // Select,
   // Radio,
+  Grid,
 } from 'semantic-ui-react';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
@@ -366,7 +367,8 @@ class Form extends Component {
 
   createElement(el) {
     const tileid = el.i;
-
+    console.log(this.state.fomData);
+    const hasData = this.state.formData.tiles[el.i]['@type'] !== 'text';
     const removeStyle = {
       position: 'absolute',
       right: '2px',
@@ -380,21 +382,14 @@ class Form extends Component {
         {this.state.preview ? (
           renderTile(this.state.formData, tileid)
         ) : (
-          <div>
-            <Button onClick={() => this.handleOpen(tileid)}>Edit</Button>
+          <div className={hasData && 'empty'}>
             <div>
               {el.w} cols x {el.h} rows
             </div>
+            <Button onClick={() => this.handleOpen(tileid)}>Edit</Button>
+            <Button onClick={this.onRemoveItem.bind(this, i)}>Delete</Button>
           </div>
         )}
-
-        <button
-          className="remove"
-          style={removeStyle}
-          onClick={this.onRemoveItem.bind(this, i)}
-        >
-          x
-        </button>
       </div>
     );
   }

@@ -69,10 +69,58 @@
 }
 
 .react-grid-item:not(.react-grid-placeholder) {
-  background: #ddd;
-  border: 1px solid black;
+  background: #fafafa;
+  border: 1px solid #ddd;
 }
 
 .ui.upward.dropdown > .menu {
   overflow: auto;
 }
+
+.react-grid-layout.mosaic-edit-layout .ui.grid{
+  margin: 0!important;
+  height: 100%;
+}
+
+.react-grid-layout.mosaic-edit-layout .ui.grid .column {
+  /* border: 1px solid #ddd; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.react-grid-layout.mosaic-edit-layout .ui.grid .row .column:first-child {
+  /* border: 1px solid #ddd; */
+  margin-right: -1px;
+}
+
+
+.react-grid-layout.mosaic-edit-layout .ui.grid > .row {
+  padding: 0;
+}
+
+.react-grid-layout.mosaic-edit-layout .ui.grid > .row:first-child {
+  padding: 0;
+  margin-bottom: -1px;
+}
+
+.column.gridDragColumn {
+  cursor: pointer;
+  transition: background-color 200ms;
+}
+
+.column.gridDragColumn:hover { 
+  background-color: #ddd; 
+}
+
+
+.react-grid-item.react-draggable > div {
+  height: 100%;
+  background-color: rgba(0, 128, 0, 0.1);
+}
+
+.react-grid-item.react-draggable > .empty {
+  background-color: rgba(128,0,0,0.1);
+}
+
