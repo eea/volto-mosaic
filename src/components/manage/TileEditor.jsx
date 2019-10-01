@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
 import { Tab, Input, Button, Modal, Icon, Grid } from 'semantic-ui-react';
+import { Icon as VoltoIcon } from '@plone/volto/components';
 
 import SelectTileType from './SelectTileType';
 import TileMetadataEditor from './TileMetadataEditor';
+
+import showIcon from '@plone/volto/icons/show.svg';
+import hideIcon from '@plone/volto/icons/hide.svg';
 
 // import PropTypes from 'prop-types';
 // import TileDataEditor from './TileDataEditor';
@@ -14,7 +18,15 @@ class ModalEditor extends Component {
   constructor(props) {
     super(props);
 
-    const tile = props.formData['tiles'][props.tileid];
+    const tile = JSON.parse(
+      JSON.stringify(props.formData['tiles'][props.tileid]),
+    );
+
+    if (Object.keys(tile).indexOf('show_tile_title') === -1) {
+      tile.show_tile_title = true;
+      tile.tile_title = null;
+    }
+
     this.state = {
       // tiles: props.tiles,
       tileid: props.tileid,
@@ -34,9 +46,21 @@ class ModalEditor extends Component {
     this.onChangeTile = this.onChangeTile.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
     this.handleMetadataChange = this.handleMetadataChange.bind(this);
-    this.updateMosaicTitle = this.updateMosaicTitle.bind(this);
+    this.updateTileData = this.updateTileData.bind(this);
+    this.toggleShowTitle = this.toggleShowTitle.bind(this);
 
     this.panes = [];
+  }
+
+  toggleShowTitle() {
+    const show_tile_title = !this.state.tileData.show_tile_title;
+
+    this.setState({
+      tileData: {
+        ...this.state.tileData,
+        show_tile_title,
+      },
+    });
   }
 
   renderEditTile() {
@@ -51,26 +75,50 @@ class ModalEditor extends Component {
     let nop = () => {};
 
     return (
-      <Tile
-        id={this.state.tileid}
-        tile={this.state.tileid}
-        data={this.state.tileData}
-        properties={this.state.formData}
-        onAddTile={nop}
-        onChangeTile={this.onChangeTile}
-        onMutateTile={nop}
-        onChangeField={nop}
-        onDeleteTile={nop}
-        onSelectTile={nop}
-        handleKeyDown={nop}
-        pathname={this.props.pathname}
-        onMoveTile={nop}
-        onFocusPreviousTile={nop}
-        onFocusNextTile={nop}
-        selected={true}
-        index={0}
-        ref={this.tileRef}
-      />
+      <div>
+        <label htmlFor="tile-title">Title</label>
+        <Input
+          size="mini"
+          id="tile-title"
+          type="text"
+          defaultValue={this.state.tileData.tile_title || ''}
+          onChange={(e, d) => this.updateTileData('tile_title', d.value)}
+          icon={
+            <Button
+              color={this.state.tileData.show_tile_title ? 'green' : 'red'}
+              circular
+              size="mini"
+              onClick={this.toggleShowTitle}
+            >
+              <VoltoIcon
+                size="10"
+                name={this.state.tileData.show_tile_title ? showIcon : hideIcon}
+              />
+            </Button>
+          }
+        />
+
+        <Tile
+          id={this.state.tileid}
+          tile={this.state.tileid}
+          data={this.state.tileData}
+          properties={this.state.formData}
+          onAddTile={nop}
+          onChangeTile={this.onChangeTile}
+          onMutateTile={nop}
+          onChangeField={nop}
+          onDeleteTile={nop}
+          onSelectTile={nop}
+          handleKeyDown={nop}
+          pathname={this.props.pathname}
+          onMoveTile={nop}
+          onFocusPreviousTile={nop}
+          onFocusNextTile={nop}
+          selected={true}
+          index={0}
+          ref={this.tileRef}
+        />
+      </div>
     );
   }
 
@@ -134,14 +182,14 @@ class ModalEditor extends Component {
     );
   }
 
-  updateMosaicTitle(event, data) {
+  updateTileData(name, data) {
     let tileData = this.state.tileData;
     // TODO: check if this doesn't introduce extra render of tile editor
 
     this.setState({
       tileData: {
         ...tileData,
-        mosaic_title: data.value,
+        [name]: data,
       },
     });
   }
@@ -156,7 +204,7 @@ class ModalEditor extends Component {
             id="mosaic-title"
             type="text"
             defaultValue={this.state.mosaic_title}
-            onChange={this.updateMosaicTitle}
+            onChange={(e, d) => this.updateTileData('mosaic_title', d.value)}
           />
         </Modal.Header>
         <Modal.Content>
