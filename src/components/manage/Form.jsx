@@ -196,7 +196,10 @@ class Form extends Component {
     // this.onDragStart = this.onDragStart.bind(this);
     // this.onDragStop = this.onDragStop.bind(this);
     // this.onDrag = this.onDrag.bind(this);
-    // this.onResize = this.onResize.bind(this);
+
+    this.onResize = this.onResize.bind(this);
+    this.onResizeStart = this.onResizeStart.bind(this);
+    this.onResizeStop = this.onResizeStop.bind(this);
 
     this.onChangeField = this.onChangeField.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
@@ -688,9 +691,8 @@ class Form extends Component {
                 document.querySelector('main').offsetWidth
               }
               onResize={this.onResize}
-              onDrag={this.onDrag}
-              onDragStart={this.onDragStart}
-              onDragStop={this.onDragStop}
+              onResizeStop={this.onResizeStop}
+              onResizeStart={this.onResizeStart}
               {...this.props}
             >
               {_.map(this.state.activeMosaicLayout, el =>
@@ -752,42 +754,54 @@ class Form extends Component {
     );
   }
 
-  // onResize(layout, old, neu, x, e, node) {
-  //   // console.log(
-  //   //   'on resize layout, oldDragItem, l, x, e, node',
-  //   //   layout,
-  //   //   oO, // oldDragItem, the element that was dragged
-  //   //   nO, // new dragged item, the element that became new
-  //   //   x,
-  //   //   e,
-  //   //   node,
-  //   // );
-  //
-  //   let dW = neu.w - old.w;
-  //   let startH = neu.y;
-  //   let endH = neu.y + neu.h;
-  //
-  //   // console.log('resize', layout, old, neu);
-  //   // find all elements that are on the same "row"
-  //
-  //   // increase width of elements only if they are one unit "left behind"
-  //   layout.forEach((el, i) => {
-  //     if (el.i === neu.i) return;
-  //
-  //     if (el.x + dW === neu.x + neu.w) {
-  //       // resized original to left
-  //       console.log('resizeToLeft w x', dW, el.w, el.x);
-  //       el.x += dW;
-  //       el.w -= dW;
-  //     } else if (el.x - dW === neu.x + neu.w) {
-  //       // resized original to left
-  //       console.log('resizeToRight w x', dW, el.w, el.x);
-  //       el.x -= dW;
-  //       el.w += dW;
-  //     }
-  //   });
-  // }
-  //
+  onResize(layout, old, neu, x, e, node) {
+    // console.log(
+    //   'on resize layout, oldDragItem, l, x, e, node',
+    //   layout,
+    //   oO, // oldDragItem, the element that was dragged
+    //   nO, // new dragged item, the element that became new
+    //   x,
+    //   e,
+    //   node,
+    // );
+    // let startH = neu.y;
+    // let endH = neu.y + neu.h;
+    // console.log('resize', layout, old, neu);
+    // TODO: find all elements that are on the same "row"
+    // change width of elements only if they are dW units "left behind"
+    console.log('on resize');
+  }
+
+  onResizeStart(layout, oldDragItem, l, x, e, node) {
+    console.log('on resize start'); //, layout, oldDragItem, l, x, e, node);
+  }
+
+  onResizeStop(layout, old, neu, x, e, node) {
+    console.log('on resize stop'); //, layout, oldDragItem, l, x, e, node);
+
+    let dW = neu.w - old.w; // negative if size made smaller
+    layout.forEach((el, i) => {
+      if (el.i === neu.i) return;
+
+      if (el.x === old.x + old.w) {
+        // dragged from right side, to left
+        console.log('resizeToLeft w x', dW, el.w, el.x);
+        el.x = neu.x + neu.w;
+        el.w -= neu.w - old.w;
+      }
+      // else if (el.x - dW === neu.x + neu.w) {
+      //   // resized original to left
+      //   console.log('resizeToRight w x', dW, el.w, el.x);
+      //   el.x -= dW;
+      //   el.w += dW;
+      // }
+    });
+  }
+
+  onDragStop(layout, old, neu, x, e, node) {
+    console.log('on drag stop'); // , layout, oldDragItem, l, x, e, node);
+  }
+
   // onDrag(layout, oldDragItem, l, x, e, node) {
   //   // console.log(
   //   //   'on drag layout, oldDragItem, l, x, e, node',
@@ -799,14 +813,9 @@ class Form extends Component {
   //   //   node,
   //   // );
   // }
-  //
+
   // onDragStart(layout, oldDragItem, l, x, e, node) {
-  //   // console.log('on drag start', layout, oldDragItem, l, x, e, node);
-  // }
-  //
-  // onDragStop(layout, oldDragItem, l, x, e, node) {
-  //   // console.log(ev);
-  //   // console.log('on drag stop', layout, oldDragItem, l, x, e, node);
+  //   console.log('on drag start'); //, layout, oldDragItem, l, x, e, node);
   // }
 }
 
