@@ -136,13 +136,13 @@ class ModalEditor extends Component {
 
   updateMosaicTitle(event, data) {
     let tileData = this.state.tileData;
-    tileData.mosaic_title = data.value; // we don't want setState
-    // this.setState({
-    //   tileData: {
-    //     ...tileData,
-    //     mosaic_title: data.value,
-    //   },
-    // });
+
+    this.setState({
+      tileData: {
+        ...tileData,
+        mosaic_title: data.value,
+      },
+    });
   }
 
   render() {
