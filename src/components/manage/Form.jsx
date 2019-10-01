@@ -6,7 +6,7 @@ import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
 
-import { Field } from '@plone/volto/components'; // EditTile, Icon,
+import { Field, Icon } from '@plone/volto/components'; // EditTile
 import {
   getTilesFieldname,
   getTilesLayoutFieldname,
@@ -29,6 +29,9 @@ import { rowHeight, breakpoints, screenSizes } from '../../config';
 import TileEditor from './TileEditor';
 import LayoutToolbar from './LayoutToolbar';
 import { renderTile } from './../theme/View';
+
+import deleteIcon from '@plone/volto/icons/delete.svg';
+import editIcon from '@plone/volto/icons/editing.svg';
 
 // import { tiles } from '~/config';
 // import move from 'lodash-move';
@@ -405,8 +408,24 @@ class Form extends Component {
             <div>
               {el.w} cols x {el.h} rows
             </div>
-            <Button onClick={() => this.handleOpen(tileid)}>Edit</Button>
-            <Button onClick={this.onRemoveItem.bind(this, i)}>Delete</Button>
+            <Button.Group size="mini">
+              <Button
+                size="mini"
+                icon
+                color="green"
+                onClick={() => this.handleOpen(tileid)}
+              >
+                <Icon name={editIcon} size="10" />
+              </Button>
+              <Button
+                size="mini"
+                icon
+                color="red"
+                onClick={this.onRemoveItem.bind(this, i)}
+              >
+                <Icon name={deleteIcon} size="10" />
+              </Button>
+            </Button.Group>
           </div>
         )}
       </div>
@@ -774,6 +793,7 @@ class Form extends Component {
 
   onResizeStart(layout, oldDragItem, l, x, e, node) {
     console.log('on resize start'); //, layout, oldDragItem, l, x, e, node);
+    // TODO: identify affected tiles, keep them in state, update their size
   }
 
   onResizeStop(layout, old, neu, x, e, node) {
