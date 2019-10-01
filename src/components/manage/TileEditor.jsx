@@ -136,6 +136,7 @@ class ModalEditor extends Component {
 
   updateMosaicTitle(event, data) {
     let tileData = this.state.tileData;
+    // TODO: check if this doesn't introduce extra render of tile editor
 
     this.setState({
       tileData: {
