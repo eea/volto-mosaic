@@ -297,33 +297,50 @@ class Form extends Component {
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
-    const mosaic_layout = layoutField.mosaic_layout || {};
 
-    mosaic_layout[this.state.activeScreenSize] = newLayout;
-
-    this.setState(
-      {
-        activeMosaicLayout: newLayout,
-        formData: {
-          ...this.state.formData,
-          tiles_layout: {
-            ...this.state.formData.tiles_layout,
-            mosaic_layout,
+    if(this.state.activeScreenSize === 'lg') {
+      const mosaic_layout = layoutField.mosaic_layout || {};
+      
+      mosaic_layout[this.state.activeScreenSize] = newLayout;
+      this.setState(
+        {
+          activeMosaicLayout: newLayout,
+          formData: {
+            ...this.state.formData,
+            tiles_layout: {
+              ...this.state.formData.tiles_layout,
+              mosaic_layout,
+            },
           },
         },
-      },
-      () => {
-        // console.log('Set state on change layout', this.state);
-      },
-    );
+        () => {
+          console.log('Set state on change layout');
+        },
+      );
+    } else {
+      this.setState(
+        {
+          activeMosaicLayout: newLayout,
+          formData: {
+            ...this.state.formData,
+            tiles_layout: {
+              ...this.state.formData.tiles_layout,
+            },
+          },
+        },
+        () => {
+          console.log('Set state on change layout');
+        },
+      );
+    }
   }
 
   changeLayoutOnScreenSizeChange(breakpoint) {
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layoutField = formData[tilesLayoutFieldname];
+    const layoutField = JSON.parse(JSON.stringify(formData[tilesLayoutFieldname]));
     const mosaic_layout =
-      layoutField.mosaic_layout[breakpoint] || layoutField.mosaic_layout['lg'];
+    layoutField.mosaic_layout[breakpoint] && JSON.parse(JSON.stringify(layoutField.mosaic_layout[breakpoint])) || JSON.parse(JSON.stringify(layoutField.mosaic_layout['lg']));
     // console.log('onchangelayoutscreensize', mosaic_layout);
     if (!mosaic_layout) return;
     this.setState(
@@ -331,10 +348,9 @@ class Form extends Component {
         activeMosaicLayout: mosaic_layout,
       },
       () => {
-        // console.log(
-        //   'Set state on change changeLayoutOnScreenSizeChange',
-        //   this.state,
-        // );
+        console.log(
+          'Set state on change changeLayoutOnScreenSizeChange'
+        );
       },
     );
   }
@@ -345,10 +361,11 @@ class Form extends Component {
     const layoutField = formData[tilesLayoutFieldname];
     const mosaic_layout = layoutField.mosaic_layout || {};
 
-    mosaic_layout[breakpoint || 'lg'] = this.state.activeMosaicLayout;
+    mosaic_layout[breakpoint ? breakpoint : 'lg'] = this.state.activeMosaicLayout;
 
     this.setState(
-      {
+      { 
+        // activeMosaicLayout: mosaic_layout,
         formData: {
           ...this.state.formData,
           tiles_layout: {
@@ -475,7 +492,7 @@ class Form extends Component {
         ...this.state.formData,
         [id]: value || null,
       },
-    });
+    }, ()=> {console.log('change state in onChangeField')});
   }
 
   onMutateTile(id, value) {
@@ -502,7 +519,7 @@ class Form extends Component {
           mosaic_layout,
         },
       },
-    });
+    }, ()=> {console.log('change state in onMutateTile')});
   }
 
   onAddTile(type, index) {
@@ -560,7 +577,7 @@ class Form extends Component {
         },
       },
       () => {
-        // console.log('After onAdd', this.state);
+        console.log('After onAdd');
       },
     );
     return id;
@@ -706,6 +723,7 @@ class Form extends Component {
             this.state.formData.tiles_layout.mosaic_layout ||
             this.props.formData.tiles_layout.mosaic_layout
           }
+          activeMosaicLayout={this.state.activeMosaicLayout}
           dispatchToParent={this.handleLayoutToolbar}
         />
 
