@@ -110,8 +110,8 @@
   transition: background-color 200ms;
 }
 
-.column.gridDragColumn:hover { 
-  background-color: #ddd; 
+.column.gridDragColumn:hover {
+  background-color: #ddd;
 }
 
 
@@ -124,3 +124,10 @@
   background-color: rgba(128,0,0,0.1);
 }
 
+.tile-info-data {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}

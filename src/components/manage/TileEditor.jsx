@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
-import { Tab, Button, Modal, Icon, Grid } from 'semantic-ui-react';
+import { Tab, Input, Button, Modal, Icon, Grid } from 'semantic-ui-react';
 
 import SelectTileType from './SelectTileType';
-// import TileDataEditor from './TileDataEditor';
 import TileMetadataEditor from './TileMetadataEditor';
+
+// import PropTypes from 'prop-types';
+// import TileDataEditor from './TileDataEditor';
 
 class ModalEditor extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class ModalEditor extends Component {
       formData: props.formData,
       tileData: tile,
       useRecommendedHeight: false,
+      mosaic_title: tile.mosaic_title || tile['@type'],
     };
 
     this.tileRef = React.createRef();
@@ -32,6 +34,7 @@ class ModalEditor extends Component {
     this.onChangeTile = this.onChangeTile.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
     this.handleMetadataChange = this.handleMetadataChange.bind(this);
+    this.updateMosaicTitle = this.updateMosaicTitle.bind(this);
 
     this.panes = [];
   }
@@ -131,10 +134,30 @@ class ModalEditor extends Component {
     );
   }
 
+  updateMosaicTitle(event, data) {
+    let tileData = this.state.tileData;
+    tileData.mosaic_title = data.value; // we don't want setState
+    // this.setState({
+    //   tileData: {
+    //     ...tileData,
+    //     mosaic_title: data.value,
+    //   },
+    // });
+  }
+
   render() {
     return (
       <Modal closeIcon open={true}>
-        <Modal.Header>{this.state.tileid}</Modal.Header>
+        <Modal.Header>
+          <label htmlFor="mosaic-title">Tile name:</label>
+          <Input
+            size="mini"
+            id="mosaic-title"
+            type="text"
+            defaultValue={this.state.mosaic_title}
+            onChange={this.updateMosaicTitle}
+          />
+        </Modal.Header>
         <Modal.Content>
           <Tab
             menu={{ fluid: true, tabular: 'top' }}

@@ -390,7 +390,13 @@ class Form extends Component {
 
   createElement(el) {
     const tileid = el.i;
-    const hasData = this.state.formData.tiles[el.i]['@type'] !== 'text';
+
+    const formData = this.state.formData;
+    const tilesFieldname = getTilesFieldname(formData);
+
+    let tile = formData[tilesFieldname][tileid];
+    const hasData = tile['@type'] !== 'text';
+
     // const removeStyle = {
     //   position: 'absolute',
     //   right: '2px',
@@ -405,27 +411,32 @@ class Form extends Component {
           renderTile(this.state.formData, tileid)
         ) : (
           <div className={hasData ? 'empty' : ''}>
-            <div>
-              {el.w} cols x {el.h} rows
+            <div className="tile-info-data">
+              <div>
+                <h4>{tile.mosaic_title || tile['@type']}</h4>
+                <div>
+                  {el.w} cols x {el.h} rows
+                </div>
+                <Button.Group size="mini">
+                  <Button
+                    size="mini"
+                    icon
+                    color="green"
+                    onClick={() => this.handleOpen(tileid)}
+                  >
+                    <Icon name={editIcon} size="10" />
+                  </Button>
+                  <Button
+                    size="mini"
+                    icon
+                    color="red"
+                    onClick={this.onRemoveItem.bind(this, i)}
+                  >
+                    <Icon name={deleteIcon} size="10" />
+                  </Button>
+                </Button.Group>
+              </div>
             </div>
-            <Button.Group size="mini">
-              <Button
-                size="mini"
-                icon
-                color="green"
-                onClick={() => this.handleOpen(tileid)}
-              >
-                <Icon name={editIcon} size="10" />
-              </Button>
-              <Button
-                size="mini"
-                icon
-                color="red"
-                onClick={this.onRemoveItem.bind(this, i)}
-              >
-                <Icon name={deleteIcon} size="10" />
-              </Button>
-            </Button.Group>
           </div>
         )}
       </div>
