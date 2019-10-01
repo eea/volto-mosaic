@@ -113,7 +113,7 @@ class LayoutToolbar extends Component {
             ) : (
               ''
             )}
-            <button onClick={this.sendAddTile}>Add new tile</button>
+            <Button onClick={this.sendAddTile}>Add new tile</Button>
           </Grid.Column>
         </Grid.Row>
       </Grid>

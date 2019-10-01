@@ -202,7 +202,6 @@ class ModalEditor extends Component {
                 <Button color="green" onClick={this.onSave}>
                   Save
                 </Button>
-                <Button.Or />
                 <Button color="red" onClick={this.onCancel}>
                   Cancel
                 </Button>
