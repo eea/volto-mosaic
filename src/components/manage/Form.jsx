@@ -290,7 +290,7 @@ class Form extends Component {
       showModal: false,
       currentTile: null,
       activeMosaicLayout,
-    });
+    }, () => {console.log('state after handleCloseEditor', this.state)});
   }
 
   onLayoutChange(newLayout) {
@@ -314,7 +314,7 @@ class Form extends Component {
           },
         },
         () => {
-          console.log('Set state on change layout');
+          console.log('Set state on change layout', this.state);
         },
       );
     } else {
@@ -329,7 +329,7 @@ class Form extends Component {
           },
         },
         () => {
-          console.log('Set state on change layout');
+          console.log('Set state on change layout', this.state);
         },
       );
     }
@@ -400,7 +400,7 @@ class Form extends Component {
         },
       },
       () => {
-        // console.log('Set state on change layout', this.state);
+        console.log('Set state on change layout', this.state);
       },
     );
   }
@@ -482,7 +482,7 @@ class Form extends Component {
         },
         [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
       },
-    });
+    }, () => {console.log('state on removeitem', this.state)});
   }
 
   onChangeField(id, value) {
@@ -492,7 +492,7 @@ class Form extends Component {
         ...this.state.formData,
         [id]: value || null,
       },
-    }, ()=> {console.log('change state in onChangeField')});
+    }, ()=> {console.log('change state in onChangeField', this.state)});
   }
 
   onMutateTile(id, value) {
@@ -519,7 +519,7 @@ class Form extends Component {
           mosaic_layout,
         },
       },
-    }, ()=> {console.log('change state in onMutateTile')});
+    }, ()=> {console.log('change state in onMutateTile', this.state)});
   }
 
   onAddTile(type, index) {
@@ -559,12 +559,8 @@ class Form extends Component {
           ...this.state.formData,
           [tilesLayoutFieldname]: {
             items: [
-              ...this.state.formData[tilesLayoutFieldname].items.slice(
-                0,
-                insert,
-              ),
+              ...this.state.formData[tilesLayoutFieldname].items,
               id,
-              ...this.state.formData[tilesLayoutFieldname].items.slice(insert),
             ],
             mosaic_layout: { ...mosaic_layout },
           },
@@ -577,7 +573,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('After onAdd');
+        console.log('After onAdd', this.state);
       },
     );
     return id;
