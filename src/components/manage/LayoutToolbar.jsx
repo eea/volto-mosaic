@@ -57,21 +57,25 @@ class LayoutToolbar extends Component {
     const currentLayout = layouts && layouts[this.state.currentScreenSize];
     const activeMosaicLayout = this.props.activeMosaicLayout
 
+    const currentLayoutNormalized = currentLayout && currentLayout.map(({i, w, h, x, y}) => {i, w, h, x, y})
+    const activeMosaicLayoutNormalized = activeMosaicLayout && activeMosaicLayout.map(({i, w, h, x, y}) => {i, w, h, x, y})
+
+
     if (this.state.currentScreenSize === 'lg') {
       showSaveButton = false;
       showDeleteButton = false;
     } else if (!currentLayout) {
       showSaveButton = true;
       showDeleteButton = false;
-    } else if (currentLayout && (JSON.stringify(currentLayout) !== JSON.stringify(activeMosaicLayout))) {
+    } else if (currentLayout && (JSON.stringify(currentLayoutNormalized) !== JSON.stringify(activeMosaicLayoutNormalized))) {
+      console.log('asdf', currentLayout, activeMosaicLayout)
       showSaveButton = true;
       showDeleteButton = false;
-    } else if (currentLayout && (JSON.stringify(currentLayout) === JSON.stringify(activeMosaicLayout))) { 
+    } else if (currentLayout && (JSON.stringify(currentLayoutNormalized) === JSON.stringify(activeMosaicLayoutNormalized))) { 
       showSaveButton = false;
       showDeleteButton = true;
     }
 
-    console.log('herere', showSaveButton, showDeleteButton)
 
     return (
       <Grid columns={3}>

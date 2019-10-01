@@ -90,7 +90,7 @@ class View extends Component {
           <ReactGridLayout
             layouts={this.state.mosaic_layout}
             breakpoints={breakpoints}
-            cols={{ lg: 12, md: 12, sm: 6, xs: 2, xxs: 2 }}
+            cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
             measureBeforeMount={true}
             rowHeight={rowHeight}
             margin={[0, 0]}

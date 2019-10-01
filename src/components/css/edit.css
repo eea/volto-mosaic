@@ -68,10 +68,13 @@
   height: 200px;
 }
 
-.react-grid-item:not(.react-grid-placeholder) {
+
+.view-editview .react-grid-item:not(.react-grid-placeholder) {
   background: #fafafa;
   border: 1px solid #ddd;
+  overflow: auto;
 }
+
 
 .ui.upward.dropdown > .menu {
   overflow: auto;
