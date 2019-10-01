@@ -1,18 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
-import {
-  Button,
-  // Container,
-  Form as UiForm,
-  Segment,
-  // Tab,
-  // Message,
-  // Modal,
-  // Select,
-  // Radio,
-  Grid,
-} from 'semantic-ui-react';
+import { Button, Form as UiForm, Segment } from 'semantic-ui-react';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
@@ -204,6 +193,10 @@ class Form extends Component {
     // this.handleKeyDown = this.handleKeyDown.bind(this);
     // this.onEditTile = this.onEditTile.bind(this);
     // this.renderTilePreview = this.renderTilePreview.bind(this);
+    // this.onDragStart = this.onDragStart.bind(this);
+    // this.onDragStop = this.onDragStop.bind(this);
+    // this.onDrag = this.onDrag.bind(this);
+    // this.onResize = this.onResize.bind(this);
 
     this.onChangeField = this.onChangeField.bind(this);
     this.onMutateTile = this.onMutateTile.bind(this);
@@ -215,7 +208,6 @@ class Form extends Component {
 
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
-    this.onDragStart = this.onDragStart.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
     this.changeLayoutOnScreenSizeChange = this.changeLayoutOnScreenSizeChange.bind(
       this,
@@ -393,12 +385,12 @@ class Form extends Component {
   createElement(el) {
     const tileid = el.i;
     const hasData = this.state.formData.tiles[el.i]['@type'] !== 'text';
-    const removeStyle = {
-      position: 'absolute',
-      right: '2px',
-      top: 0,
-      cursor: 'pointer',
-    };
+    // const removeStyle = {
+    //   position: 'absolute',
+    //   right: '2px',
+    //   top: 0,
+    //   cursor: 'pointer',
+    // };
     const i = el.add ? '+' : el.i;
 
     return (
@@ -588,10 +580,6 @@ class Form extends Component {
     }
   }
 
-  onDragStart(ev) {
-    // console.log(ev);
-  }
-
   handleLayoutToolbar(evType, data) {
     // console.log('handleLayoutToolbar', evType, data);
 
@@ -699,7 +687,10 @@ class Form extends Component {
                 size.width ||
                 document.querySelector('main').offsetWidth
               }
+              onResize={this.onResize}
+              onDrag={this.onDrag}
               onDragStart={this.onDragStart}
+              onDragStop={this.onDragStop}
               {...this.props}
             >
               {_.map(this.state.activeMosaicLayout, el =>
@@ -760,6 +751,63 @@ class Form extends Component {
       ''
     );
   }
+
+  // onResize(layout, old, neu, x, e, node) {
+  //   // console.log(
+  //   //   'on resize layout, oldDragItem, l, x, e, node',
+  //   //   layout,
+  //   //   oO, // oldDragItem, the element that was dragged
+  //   //   nO, // new dragged item, the element that became new
+  //   //   x,
+  //   //   e,
+  //   //   node,
+  //   // );
+  //
+  //   let dW = neu.w - old.w;
+  //   let startH = neu.y;
+  //   let endH = neu.y + neu.h;
+  //
+  //   // console.log('resize', layout, old, neu);
+  //   // find all elements that are on the same "row"
+  //
+  //   // increase width of elements only if they are one unit "left behind"
+  //   layout.forEach((el, i) => {
+  //     if (el.i === neu.i) return;
+  //
+  //     if (el.x + dW === neu.x + neu.w) {
+  //       // resized original to left
+  //       console.log('resizeToLeft w x', dW, el.w, el.x);
+  //       el.x += dW;
+  //       el.w -= dW;
+  //     } else if (el.x - dW === neu.x + neu.w) {
+  //       // resized original to left
+  //       console.log('resizeToRight w x', dW, el.w, el.x);
+  //       el.x -= dW;
+  //       el.w += dW;
+  //     }
+  //   });
+  // }
+  //
+  // onDrag(layout, oldDragItem, l, x, e, node) {
+  //   // console.log(
+  //   //   'on drag layout, oldDragItem, l, x, e, node',
+  //   //   layout,
+  //   //   oldDragItem,
+  //   //   l,
+  //   //   x,
+  //   //   e,
+  //   //   node,
+  //   // );
+  // }
+  //
+  // onDragStart(layout, oldDragItem, l, x, e, node) {
+  //   // console.log('on drag start', layout, oldDragItem, l, x, e, node);
+  // }
+  //
+  // onDragStop(layout, oldDragItem, l, x, e, node) {
+  //   // console.log(ev);
+  //   // console.log('on drag stop', layout, oldDragItem, l, x, e, node);
+  // }
 }
 
 export default injectIntl(Form, { withRef: true });
