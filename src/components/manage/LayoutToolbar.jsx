@@ -104,7 +104,7 @@ class LayoutToolbar extends Component {
           <Grid.Column>
             {showSaveButton ? (
               <Button onClick={this.sendSaveLayout}>
-                Save responsive layout
+                Create responsive layout
               </Button>
             ) : (
               ''

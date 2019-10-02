@@ -185,7 +185,7 @@ class Form extends Component {
       layoutWidth: this.props.layoutWidth,
       activeScreenSize,
       activeMosaicLayout,
-      dirtyLayout: false,
+      // dirtyLayout: false,
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -316,28 +316,6 @@ class Form extends Component {
     );
   }
 
-  // changeLayoutOnScreenSizeChange(breakpoint) {
-  //   const formData = this.state.formData;
-  //   const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-  //   const layoutField = JSON.parse(
-  //     JSON.stringify(formData[tilesLayoutFieldname]),
-  //   );
-  //   const mosaic_layout =
-  //     (layoutField.mosaic_layout[breakpoint] &&
-  //       JSON.parse(JSON.stringify(layoutField.mosaic_layout[breakpoint]))) ||
-  //     JSON.parse(JSON.stringify(layoutField.mosaic_layout['lg']));
-  //   // console.log('onchangelayoutscreensize', mosaic_layout);
-  //   if (!mosaic_layout) return;
-  //   this.setState(
-  //     {
-  //       activeMosaicLayout: mosaic_layout,
-  //     },
-  //     () => {
-  //       console.log('Set state on change changeLayoutOnScreenSizeChange');
-  //     },
-  //   );
-  // }
-  //
   onLayoutSave(breakpoint) {
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
@@ -669,7 +647,7 @@ class Form extends Component {
         this.setState(
           {
             activeMosaicLayout,
-            dirtyLayout: false,
+            // dirtyLayout: false,
             activeScreenSize: data,
             layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
           },
@@ -798,16 +776,16 @@ class Form extends Component {
       //   el.w += dW;
       // }
     });
-    this.setState({
-      dirtyLayout: true,
-    });
+    // this.setState({
+    //   dirtyLayout: true,
+    // });
   }
 
   onDragStop(layout, old, neu, x, e, node) {
     console.log('on drag stop'); // , layout, oldDragItem, l, x, e, node);
-    this.setState({
-      dirtyLayout: true,
-    });
+    // this.setState({
+    //   dirtyLayout: true,
+    // });
   }
 
   // onResize(layout, old, neu, x, e, node) {
