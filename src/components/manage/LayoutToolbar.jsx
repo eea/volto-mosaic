@@ -50,46 +50,57 @@ class LayoutToolbar extends Component {
   }
 
   render() {
-    let showSaveButton = true;
-    let showDeleteButton = true;
-
     const layouts = this.props.layouts;
-    const currentLayout = layouts && layouts[this.state.currentScreenSize];
-    const activeMosaicLayout = this.props.activeMosaicLayout;
+    const currentScreenSize = this.state.currentScreenSize;
 
-    const currentLayoutNormalized =
-      currentLayout &&
-      currentLayout.map(({ i, w, h, x, y }) => {
-        return { i, w, h, x, y };
-      });
-    const activeMosaicLayoutNormalized =
-      activeMosaicLayout &&
-      activeMosaicLayout.map(({ i, w, h, x, y }) => {
-        return { i, w, h, x, y };
-      });
+    const has = Object.keys(layouts).indexOf(currentScreenSize) > -1;
 
-    if (this.state.currentScreenSize === 'lg') {
+    let showSaveButton;
+    let showDeleteButton;
+
+    if (currentScreenSize === 'lg') {
       showSaveButton = false;
       showDeleteButton = false;
-    } else if (!currentLayout) {
-      showSaveButton = true;
-      showDeleteButton = false;
-    } else if (
-      currentLayout &&
-      JSON.stringify(currentLayoutNormalized) !==
-        JSON.stringify(activeMosaicLayoutNormalized)
-    ) {
-      console.log('asdf', currentLayout, activeMosaicLayout);
-      showSaveButton = true;
-      showDeleteButton = false;
-    } else if (
-      currentLayout &&
-      JSON.stringify(currentLayoutNormalized) ===
-        JSON.stringify(activeMosaicLayoutNormalized)
-    ) {
-      showSaveButton = false;
-      showDeleteButton = true;
+    } else {
+      showSaveButton = has ? false : true;
+      showDeleteButton = has ? true : false;
     }
+
+    // const currentLayout = layouts && layouts[this.state.currentScreenSize];
+    // const activeMosaicLayout = this.props.activeMosaicLayout;
+    // const currentLayoutNormalized =
+    //   currentLayout &&
+    //   currentLayout.map(({ i, w, h, x, y }) => {
+    //     return { i, w, h, x, y };
+    //   });
+    // const activeMosaicLayoutNormalized =
+    //   activeMosaicLayout &&
+    //   activeMosaicLayout.map(({ i, w, h, x, y }) => {
+    //     return { i, w, h, x, y };
+    //   });
+    //
+    // if (this.state.currentScreenSize === 'lg') {
+    //   showSaveButton = false;
+    //   showDeleteButton = false;
+    // } else if (!currentLayout) {
+    //   showSaveButton = true;
+    //   showDeleteButton = false;
+    // } else if (
+    //   currentLayout &&
+    //   JSON.stringify(currentLayoutNormalized) !==
+    //     JSON.stringify(activeMosaicLayoutNormalized)
+    // ) {
+    //   console.log('asdf', currentLayout, activeMosaicLayout);
+    //   showSaveButton = true;
+    //   showDeleteButton = false;
+    // } else if (
+    //   currentLayout &&
+    //   JSON.stringify(currentLayoutNormalized) ===
+    //     JSON.stringify(activeMosaicLayoutNormalized)
+    // ) {
+    //   showSaveButton = false;
+    //   showDeleteButton = true;
+    // }
 
     return (
       <Grid columns={3}>

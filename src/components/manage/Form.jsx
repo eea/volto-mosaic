@@ -272,25 +272,30 @@ class Form extends Component {
 
     // console.log('handleCloseEditor in Form: ', tileData);
 
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        // tiles: {
-        //   ...this.state.formData.tiles,
-        //   [tileid]: tileData,
-        // },
-        [tilesFieldname]: {
-          ...this.state.formData[tilesFieldname],
-          [tileid]: tileData || null,
+    this.setState(
+      {
+        formData: {
+          ...this.state.formData,
+          // tiles: {
+          //   ...this.state.formData.tiles,
+          //   [tileid]: tileData,
+          // },
+          [tilesFieldname]: {
+            ...this.state.formData[tilesFieldname],
+            [tileid]: tileData || null,
+          },
+          [tilesLayoutFieldname]: {
+            ...layoutField, // changed layout in place
+          },
         },
-        [tilesLayoutFieldname]: {
-          ...layoutField, // changed layout in place
-        },
+        showModal: false,
+        currentTile: null,
+        activeMosaicLayout,
       },
-      showModal: false,
-      currentTile: null,
-      activeMosaicLayout,
-    }, () => {console.log('state after handleCloseEditor', this.state)});
+      () => {
+        console.log('state after handleCloseEditor', this.state);
+      },
+    );
   }
 
   onLayoutChange(newLayout) {
@@ -298,9 +303,9 @@ class Form extends Component {
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
 
-    if(this.state.activeScreenSize === 'lg') {
+    if (this.state.activeScreenSize === 'lg') {
       const mosaic_layout = layoutField.mosaic_layout || {};
-      
+
       mosaic_layout[this.state.activeScreenSize] = newLayout;
       this.setState(
         {
@@ -338,9 +343,13 @@ class Form extends Component {
   changeLayoutOnScreenSizeChange(breakpoint) {
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layoutField = JSON.parse(JSON.stringify(formData[tilesLayoutFieldname]));
+    const layoutField = JSON.parse(
+      JSON.stringify(formData[tilesLayoutFieldname]),
+    );
     const mosaic_layout =
-    layoutField.mosaic_layout[breakpoint] && JSON.parse(JSON.stringify(layoutField.mosaic_layout[breakpoint])) || JSON.parse(JSON.stringify(layoutField.mosaic_layout['lg']));
+      (layoutField.mosaic_layout[breakpoint] &&
+        JSON.parse(JSON.stringify(layoutField.mosaic_layout[breakpoint]))) ||
+      JSON.parse(JSON.stringify(layoutField.mosaic_layout['lg']));
     // console.log('onchangelayoutscreensize', mosaic_layout);
     if (!mosaic_layout) return;
     this.setState(
@@ -348,9 +357,7 @@ class Form extends Component {
         activeMosaicLayout: mosaic_layout,
       },
       () => {
-        console.log(
-          'Set state on change changeLayoutOnScreenSizeChange'
-        );
+        console.log('Set state on change changeLayoutOnScreenSizeChange');
       },
     );
   }
@@ -361,10 +368,12 @@ class Form extends Component {
     const layoutField = formData[tilesLayoutFieldname];
     const mosaic_layout = layoutField.mosaic_layout || {};
 
-    mosaic_layout[breakpoint ? breakpoint : 'lg'] = this.state.activeMosaicLayout;
+    mosaic_layout[
+      breakpoint ? breakpoint : 'lg'
+    ] = this.state.activeMosaicLayout;
 
     this.setState(
-      { 
+      {
         // activeMosaicLayout: mosaic_layout,
         formData: {
           ...this.state.formData,
@@ -472,27 +481,37 @@ class Form extends Component {
     let mosaic_layout = layoutField.mosaic_layout || {};
     mosaic_layout[this.state.activeScreenSize] = activeMosaicLayout;
 
-    this.setState({
-      activeMosaicLayout,
-      formData: {
-        ...this.state.formData,
-        [tilesLayoutFieldname]: {
-          items: without(this.state.formData[tilesLayoutFieldname].items, id),
-          mosaic_layout, // TODO: might need JSON.stringify?
+    this.setState(
+      {
+        activeMosaicLayout,
+        formData: {
+          ...this.state.formData,
+          [tilesLayoutFieldname]: {
+            items: without(this.state.formData[tilesLayoutFieldname].items, id),
+            mosaic_layout, // TODO: might need JSON.stringify?
+          },
+          [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
         },
-        [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),
       },
-    }, () => {console.log('state on removeitem', this.state)});
+      () => {
+        console.log('state on removeitem', this.state);
+      },
+    );
   }
 
   onChangeField(id, value) {
     // Handles changes in the normal Volto metadata editor
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        [id]: value || null,
+    this.setState(
+      {
+        formData: {
+          ...this.state.formData,
+          [id]: value || null,
+        },
       },
-    }, ()=> {console.log('change state in onChangeField', this.state)});
+      () => {
+        console.log('change state in onChangeField', this.state);
+      },
+    );
   }
 
   onMutateTile(id, value) {
@@ -507,19 +526,24 @@ class Form extends Component {
     const activeMosaicLayout = this.state.activeMosaicLayout;
     mosaic_layout[this.state.activeScreenSize] = activeMosaicLayout;
 
-    this.setState({
-      formData: {
-        ...this.state.formData,
-        [tilesFieldname]: {
-          ...this.state.formData[tilesFieldname],
-          [id]: value || null,
-        },
-        [tilesLayoutFieldname]: {
-          items: this.state.formData[tilesLayoutFieldname].items,
-          mosaic_layout,
+    this.setState(
+      {
+        formData: {
+          ...this.state.formData,
+          [tilesFieldname]: {
+            ...this.state.formData[tilesFieldname],
+            [id]: value || null,
+          },
+          [tilesLayoutFieldname]: {
+            items: this.state.formData[tilesLayoutFieldname].items,
+            mosaic_layout,
+          },
         },
       },
-    }, ()=> {console.log('change state in onMutateTile', this.state)});
+      () => {
+        console.log('change state in onMutateTile', this.state);
+      },
+    );
   }
 
   onAddTile(type, index) {
@@ -558,10 +582,7 @@ class Form extends Component {
         formData: {
           ...this.state.formData,
           [tilesLayoutFieldname]: {
-            items: [
-              ...this.state.formData[tilesLayoutFieldname].items,
-              id,
-            ],
+            items: [...this.state.formData[tilesLayoutFieldname].items, id],
             mosaic_layout: { ...mosaic_layout },
           },
           [tilesFieldname]: {
