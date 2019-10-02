@@ -49,7 +49,7 @@ class LayoutToolbar extends Component {
   }
 
   getAvailableScreens() {
-    const layouts = this.props.layouts;
+    const layouts = this.props.layouts || {};
     const screens = this.props.availableScreens.map(el => {
       const res = Object.assign({}, el);
       const has = Object.keys(layouts).indexOf(el.value) > -1;
@@ -61,7 +61,7 @@ class LayoutToolbar extends Component {
   }
 
   render() {
-    const layouts = this.props.layouts;
+    const layouts = this.props.layouts  || {};
     const currentScreenSize = this.state.currentScreenSize;
 
     const has = Object.keys(layouts).indexOf(currentScreenSize) > -1;
