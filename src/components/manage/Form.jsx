@@ -302,42 +302,32 @@ class Form extends Component {
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
+    const mosaic_layout = layoutField.mosaic_layout || {};
 
-    if (this.state.activeScreenSize === 'lg') {
-      const mosaic_layout = layoutField.mosaic_layout || {};
+    const size = this.state.activeScreenSize;
 
-      mosaic_layout[this.state.activeScreenSize] = newLayout;
-      this.setState(
-        {
-          activeMosaicLayout: newLayout,
-          formData: {
-            ...this.state.formData,
-            tiles_layout: {
-              ...this.state.formData.tiles_layout,
-              mosaic_layout,
-            },
-          },
-        },
-        () => {
-          console.log('Set state on change layout', this.state);
-        },
-      );
-    } else {
-      this.setState(
-        {
-          activeMosaicLayout: newLayout,
-          formData: {
-            ...this.state.formData,
-            tiles_layout: {
-              ...this.state.formData.tiles_layout,
-            },
-          },
-        },
-        () => {
-          console.log('Set state on change layout', this.state);
-        },
-      );
+    if (Object.keys(mosaic_layout).indexOf(size) === -1) {
+      return;
     }
+
+    this.setState(
+      {
+        activeMosaicLayout: newLayout,
+        formData: {
+          ...this.state.formData,
+          [tilesLayoutFieldname]: {
+            ...this.state.formData.tiles_layout,
+            mosaic_layout: {
+              ...mosaic_layout,
+              [size]: newLayout,
+            },
+          },
+        },
+      },
+      () => {
+        console.log('Set state on change layout ' + size, this.state);
+      },
+    );
   }
 
   changeLayoutOnScreenSizeChange(breakpoint) {
