@@ -116,7 +116,11 @@ class LayoutToolbar extends Component {
             ) : (
               ''
             )}
-            <Button onClick={this.sendAddTile}>Add new tile</Button>
+            {this.state.currentScreenSize === 'lg' ? (
+              <Button onClick={this.sendAddTile}>Add new tile</Button>
+            ) : (
+              ''
+            )}
           </Grid.Column>
         </Grid.Row>
       </Grid>
