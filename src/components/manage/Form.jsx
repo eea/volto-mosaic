@@ -180,12 +180,12 @@ class Form extends Component {
     this.state = {
       formData,
       errors: {},
-      modals: {},
       cols: 12,
       availableScreens: screens,
       layoutWidth: this.props.layoutWidth,
       activeScreenSize,
       activeMosaicLayout,
+      dirtyLayout: false,
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -197,11 +197,11 @@ class Form extends Component {
     // this.onEditTile = this.onEditTile.bind(this);
     // this.renderTilePreview = this.renderTilePreview.bind(this);
     // this.onDragStart = this.onDragStart.bind(this);
-    // this.onDragStop = this.onDragStop.bind(this);
+    this.onDragStop = this.onDragStop.bind(this);
     // this.onDrag = this.onDrag.bind(this);
+    // this.onResize = this.onResize.bind(this);
+    // this.onResizeStart = this.onResizeStart.bind(this);
 
-    this.onResize = this.onResize.bind(this);
-    this.onResizeStart = this.onResizeStart.bind(this);
     this.onResizeStop = this.onResizeStop.bind(this);
 
     this.onChangeField = this.onChangeField.bind(this);
@@ -215,30 +215,14 @@ class Form extends Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
-    this.changeLayoutOnScreenSizeChange = this.changeLayoutOnScreenSizeChange.bind(
-      this,
-    );
-
-    // console.log('State in constructor', this.state);
+    // this.changeLayoutOnScreenSizeChange = this.changeLayoutOnScreenSizeChange.bind(
+    //   this,
+    // );
   }
 
   handleOpen(tileid) {
     this.setState({ showModal: true, currentTile: tileid });
   }
-
-  // onEditTile(id, value, size) {
-  //   // Handles editing of tile by the tile editor
-  //   const tilesFieldname = getTilesFieldname(this.state.formData);
-  //   this.setState({
-  //     formData: {
-  //       ...this.state.formData,
-  //       [tilesFieldname]: {
-  //         ...this.state.formData[tilesFieldname],
-  //         [id]: value || null,
-  //       },
-  //     },
-  //   });
-  // }
 
   handleCloseEditor(tileData, size) {
     let tileid = this.state.currentTile;
@@ -270,8 +254,6 @@ class Form extends Component {
       activeMosaicLayout[ix].h = height;
     }
 
-    // console.log('handleCloseEditor in Form: ', tileData);
-
     this.setState(
       {
         formData: {
@@ -299,6 +281,7 @@ class Form extends Component {
   }
 
   onLayoutChange(newLayout) {
+    console.log('on layout change');
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
@@ -307,6 +290,9 @@ class Form extends Component {
     const size = this.state.activeScreenSize;
 
     if (Object.keys(mosaic_layout).indexOf(size) === -1) {
+      this.setState({
+        activeMosaicLayout: newLayout,
+      });
       return;
     }
 
@@ -330,28 +316,28 @@ class Form extends Component {
     );
   }
 
-  changeLayoutOnScreenSizeChange(breakpoint) {
-    const formData = this.state.formData;
-    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layoutField = JSON.parse(
-      JSON.stringify(formData[tilesLayoutFieldname]),
-    );
-    const mosaic_layout =
-      (layoutField.mosaic_layout[breakpoint] &&
-        JSON.parse(JSON.stringify(layoutField.mosaic_layout[breakpoint]))) ||
-      JSON.parse(JSON.stringify(layoutField.mosaic_layout['lg']));
-    // console.log('onchangelayoutscreensize', mosaic_layout);
-    if (!mosaic_layout) return;
-    this.setState(
-      {
-        activeMosaicLayout: mosaic_layout,
-      },
-      () => {
-        console.log('Set state on change changeLayoutOnScreenSizeChange');
-      },
-    );
-  }
-
+  // changeLayoutOnScreenSizeChange(breakpoint) {
+  //   const formData = this.state.formData;
+  //   const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+  //   const layoutField = JSON.parse(
+  //     JSON.stringify(formData[tilesLayoutFieldname]),
+  //   );
+  //   const mosaic_layout =
+  //     (layoutField.mosaic_layout[breakpoint] &&
+  //       JSON.parse(JSON.stringify(layoutField.mosaic_layout[breakpoint]))) ||
+  //     JSON.parse(JSON.stringify(layoutField.mosaic_layout['lg']));
+  //   // console.log('onchangelayoutscreensize', mosaic_layout);
+  //   if (!mosaic_layout) return;
+  //   this.setState(
+  //     {
+  //       activeMosaicLayout: mosaic_layout,
+  //     },
+  //     () => {
+  //       console.log('Set state on change changeLayoutOnScreenSizeChange');
+  //     },
+  //   );
+  // }
+  //
   onLayoutSave(breakpoint) {
     const formData = this.state.formData;
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
@@ -543,10 +529,10 @@ class Form extends Component {
     const formData = this.state.formData;
     const tilesFieldname = getTilesFieldname(formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const totalItems = formData[tilesLayoutFieldname].items.length;
     const layoutField = formData[tilesLayoutFieldname];
 
-    const insert = index === -1 ? totalItems : index;
+    // const totalItems = formData[tilesLayoutFieldname].items.length;
+    // const insert = index === -1 ? totalItems : index;
 
     const newTile = {
       i: id,
@@ -669,12 +655,25 @@ class Form extends Component {
         });
         break;
       case 'CHANGE_SCREEN_SIZE':
+        const formData = this.state.formData;
+        const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+        const layoutField = formData[tilesLayoutFieldname];
+        const layouts = layoutField.mosaic_layout || {};
+
+        let fallback = layouts['lg']
+          ? JSON.parse(JSON.stringify(layouts['lg']))
+          : [];
+
+        console.log('Change screen', data, layouts);
+        const activeMosaicLayout = layouts[data] || fallback;
         this.setState(
           {
+            activeMosaicLayout,
+            dirtyLayout: false,
             activeScreenSize: data,
             layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
           },
-          this.changeLayoutOnScreenSizeChange(data),
+          // this.changeLayoutOnScreenSizeChange(data),
         );
         break;
       case 'CREATE_TILE':
@@ -695,32 +694,8 @@ class Form extends Component {
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
 
-    let node =
-      __CLIENT__ && document.querySelector('#toolbar .toolbar-actions');
-
-    // {map(renderTiles, (tile, index) => (
-    //   <EditTile
-    //     id={tile}
-    //     index={index}
-    //     type={tilesDict[tile]['@type']}
-    //     key={tile}
-    //     handleKeyDown={this.handleKeyDown}
-    //     onAddTile={this.onAddTile}
-    //     onEditTile={this.onEditTile}
-    //     onMutateTile={this.onMutateTile}
-    //     onChangeField={this.onChangeField}
-    //     onDeleteTile={this.onDeleteTile}
-    //     onSelectTile={this.onSelectTile}
-    //     onMoveTile={this.onMoveTile}
-    //     onFocusPreviousTile={this.onFocusPreviousTile}
-    //     onFocusNextTile={this.onFocusNextTile}
-    //     properties={formData}
-    //     data={tilesDict[tile]}
-    //     pathname={this.props.pathname}
-    //     tile={tile}
-    //     selected={this.state.selected === tile}
-    //   />
-    // ))}
+    // let node =
+    //   __CLIENT__ && document.querySelector('#toolbar .toolbar-actions');
 
     return this.props.visual ? (
       <div className="ui wrapper">
@@ -768,12 +743,6 @@ class Form extends Component {
           ''
         )}
 
-        <Portal node={node}>
-          <div />
-
-          <div />
-        </Portal>
-
         <Portal
           node={__CLIENT__ && document.getElementById('sidebar-metadata')}
         >
@@ -809,29 +778,6 @@ class Form extends Component {
     );
   }
 
-  onResize(layout, old, neu, x, e, node) {
-    // console.log(
-    //   'on resize layout, oldDragItem, l, x, e, node',
-    //   layout,
-    //   oO, // oldDragItem, the element that was dragged
-    //   nO, // new dragged item, the element that became new
-    //   x,
-    //   e,
-    //   node,
-    // );
-    // let startH = neu.y;
-    // let endH = neu.y + neu.h;
-    // console.log('resize', layout, old, neu);
-    // TODO: find all elements that are on the same "row"
-    // change width of elements only if they are dW units "left behind"
-    console.log('on resize');
-  }
-
-  onResizeStart(layout, oldDragItem, l, x, e, node) {
-    console.log('on resize start'); //, layout, oldDragItem, l, x, e, node);
-    // TODO: identify affected tiles, keep them in state, update their size
-  }
-
   onResizeStop(layout, old, neu, x, e, node) {
     console.log('on resize stop'); //, layout, oldDragItem, l, x, e, node);
 
@@ -852,11 +798,40 @@ class Form extends Component {
       //   el.w += dW;
       // }
     });
+    this.setState({
+      dirtyLayout: true,
+    });
   }
 
   onDragStop(layout, old, neu, x, e, node) {
     console.log('on drag stop'); // , layout, oldDragItem, l, x, e, node);
+    this.setState({
+      dirtyLayout: true,
+    });
   }
+
+  // onResize(layout, old, neu, x, e, node) {
+  // console.log(
+  //   'on resize layout, oldDragItem, l, x, e, node',
+  //   layout,
+  //   oO, // oldDragItem, the element that was dragged
+  //   nO, // new dragged item, the element that became new
+  //   x,
+  //   e,
+  //   node,
+  // );
+  // let startH = neu.y;
+  // let endH = neu.y + neu.h;
+  // console.log('resize', layout, old, neu);
+  // TODO: find all elements that are on the same "row"
+  // change width of elements only if they are dW units "left behind"
+  // console.log('on resize');
+  // }
+
+  // onResizeStart(layout, oldDragItem, l, x, e, node) {
+  //   console.log('on resize start'); //, layout, oldDragItem, l, x, e, node);
+  //   // TODO: identify affected tiles, keep them in state, update their size
+  // }
 
   // onDrag(layout, oldDragItem, l, x, e, node) {
   //   // console.log(
@@ -872,6 +847,20 @@ class Form extends Component {
 
   // onDragStart(layout, oldDragItem, l, x, e, node) {
   //   console.log('on drag start'); //, layout, oldDragItem, l, x, e, node);
+  // }
+
+  // onEditTile(id, value, size) {
+  //   // Handles editing of tile by the tile editor
+  //   const tilesFieldname = getTilesFieldname(this.state.formData);
+  //   this.setState({
+  //     formData: {
+  //       ...this.state.formData,
+  //       [tilesFieldname]: {
+  //         ...this.state.formData[tilesFieldname],
+  //         [id]: value || null,
+  //       },
+  //     },
+  //   });
   // }
 }
 

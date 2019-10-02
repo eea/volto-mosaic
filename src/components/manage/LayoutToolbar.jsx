@@ -9,18 +9,17 @@ class LayoutToolbar extends Component {
   constructor(props) {
     super(props);
 
-    // console.log('Layout toolbar props', props);
-
     this.state = {
       currentScreenSize: 'lg',
     };
 
-    this.sendChangeScreenSize = this.sendChangeScreenSize.bind(this);
-    this.sendPreviewResponsive = this.sendPreviewResponsive.bind(this);
+    this.getAvailableScreens = this.getAvailableScreens.bind(this);
     this.sendAddTile = this.sendAddTile.bind(this);
+    this.sendChangeScreenSize = this.sendChangeScreenSize.bind(this);
     this.sendDeleteLayout = this.sendDeleteLayout.bind(this);
-    this.sendSaveLayout = this.sendSaveLayout.bind(this);
+    this.sendPreviewResponsive = this.sendPreviewResponsive.bind(this);
     this.sendPreviewTiles = this.sendPreviewTiles.bind(this);
+    this.sendSaveLayout = this.sendSaveLayout.bind(this);
   }
 
   sendChangeScreenSize(event, data) {
@@ -49,6 +48,18 @@ class LayoutToolbar extends Component {
     this.props.dispatchToParent('CREATE_TILE', null);
   }
 
+  getAvailableScreens() {
+    const layouts = this.props.layouts;
+    const screens = this.props.availableScreens.map(el => {
+      const res = Object.assign({}, el);
+      const has = Object.keys(layouts).indexOf(el.value) > -1;
+      // TODO: use appropriate icons, load fontawesome, something
+      if (has) res.icon = 'check';
+      return res;
+    });
+    return screens;
+  }
+
   render() {
     const layouts = this.props.layouts;
     const currentScreenSize = this.state.currentScreenSize;
@@ -65,42 +76,6 @@ class LayoutToolbar extends Component {
       showSaveButton = has ? false : true;
       showDeleteButton = has ? true : false;
     }
-
-    // const currentLayout = layouts && layouts[this.state.currentScreenSize];
-    // const activeMosaicLayout = this.props.activeMosaicLayout;
-    // const currentLayoutNormalized =
-    //   currentLayout &&
-    //   currentLayout.map(({ i, w, h, x, y }) => {
-    //     return { i, w, h, x, y };
-    //   });
-    // const activeMosaicLayoutNormalized =
-    //   activeMosaicLayout &&
-    //   activeMosaicLayout.map(({ i, w, h, x, y }) => {
-    //     return { i, w, h, x, y };
-    //   });
-    //
-    // if (this.state.currentScreenSize === 'lg') {
-    //   showSaveButton = false;
-    //   showDeleteButton = false;
-    // } else if (!currentLayout) {
-    //   showSaveButton = true;
-    //   showDeleteButton = false;
-    // } else if (
-    //   currentLayout &&
-    //   JSON.stringify(currentLayoutNormalized) !==
-    //     JSON.stringify(activeMosaicLayoutNormalized)
-    // ) {
-    //   console.log('asdf', currentLayout, activeMosaicLayout);
-    //   showSaveButton = true;
-    //   showDeleteButton = false;
-    // } else if (
-    //   currentLayout &&
-    //   JSON.stringify(currentLayoutNormalized) ===
-    //     JSON.stringify(activeMosaicLayoutNormalized)
-    // ) {
-    //   showSaveButton = false;
-    //   showDeleteButton = true;
-    // }
 
     return (
       <Grid columns={3}>
@@ -121,7 +96,7 @@ class LayoutToolbar extends Component {
             <Dropdown
               inline
               onChange={this.sendChangeScreenSize}
-              options={this.props.availableScreens}
+              options={this.getAvailableScreens()}
               selection
               value={this.state.currentScreenSize}
             />
