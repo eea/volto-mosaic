@@ -78,6 +78,50 @@ const messages = defineMessages({
   },
 });
 
+function fallbackLayoutFromData(formData, ids) {
+  // create a default layout based on existing tiles
+
+  const tilesFieldname = getTilesFieldname(formData);
+  const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+
+  const order = formData[tilesLayoutFieldname].items;
+  const data = formData[tilesFieldname];
+
+  const fallbackLayout = [
+    {
+      // provide default tile for title
+      h: 1,
+      i: ids.title,
+      w: 12,
+      x: 0,
+      y: 0,
+    },
+    {
+      // provide default tile for text
+      h: 3,
+      i: ids.text,
+      w: 12,
+      x: 0,
+      y: 1,
+    },
+  ];
+
+  const validIds = order.filter(i => {
+    return Object.keys(data).indexOf(i) > -1;
+  });
+  const res = validIds.map((el, ix) => {
+    return {
+      w: 12,
+      h: ix === 0 ? 2 : 4,
+      x: 0,
+      y: ix === 0 ? 0 : 2 + (ix - 1) * 4,
+      i: el,
+    };
+  });
+
+  return res || fallbackLayout;
+}
+
 class Form extends Component {
   static propTypes = {
     schema: PropTypes.shape({
@@ -162,20 +206,29 @@ class Form extends Component {
       formData[tilesFieldname] = {
         [ids.title]: {
           '@type': 'title',
+          mosaic_tile_title: 'title tile',
         },
         [ids.text]: {
           '@type': 'text',
+          mosaic_tile_title: 'text tile',
         },
       };
     }
 
     const activeScreenSize = this.props.activeScreenSize;
+    // TODO: rewrite with ? operator
     const activeMosaicLayout =
       (this.props.formData &&
         this.props.formData.tiles_layout &&
         this.props.formData.tiles_layout.mosaic_layout &&
         this.props.formData.tiles_layout.mosaic_layout[activeScreenSize]) ||
-      [];
+      fallbackLayoutFromData(formData, ids);
+
+    if (!formData[tilesLayoutFieldname].mosaic_layout) {
+      formData[tilesLayoutFieldname].mosaic_layout = {
+        lg: activeMosaicLayout,
+      };
+    }
 
     this.state = {
       formData,
@@ -197,11 +250,11 @@ class Form extends Component {
     // this.onEditTile = this.onEditTile.bind(this);
     // this.renderTilePreview = this.renderTilePreview.bind(this);
     // this.onDragStart = this.onDragStart.bind(this);
-    this.onDragStop = this.onDragStop.bind(this);
     // this.onDrag = this.onDrag.bind(this);
     // this.onResize = this.onResize.bind(this);
     // this.onResizeStart = this.onResizeStart.bind(this);
 
+    this.onDragStop = this.onDragStop.bind(this);
     this.onResizeStop = this.onResizeStop.bind(this);
 
     this.onChangeField = this.onChangeField.bind(this);
@@ -610,28 +663,6 @@ class Form extends Component {
           preview: data,
         });
         break;
-      case 'PREVIEW_RESPONSIVE':
-        let layoutWidth = data
-          ? breakpoints[this.state.activeScreenSize]
-          : null;
-
-        if (this.state.activeScreenSize === 'lg') {
-          layoutWidth = null;
-        } else if (this.state.activeScreenSize === 'xxs') {
-          layoutWidth = breakpoints['xs'] - 1;
-        }
-        // TODO: this needs to be improved. We want to automatically take
-        // size from (<next upper breakpoint> -1)
-
-        // console.log(
-        //   'New layout width',
-        //   layoutWidth,
-        //   this.state.activeScreenSize,
-        // );
-        this.setState({
-          layoutWidth,
-        });
-        break;
       case 'CHANGE_SCREEN_SIZE':
         const formData = this.state.formData;
         const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
@@ -642,14 +673,24 @@ class Form extends Component {
           ? JSON.parse(JSON.stringify(layouts['lg']))
           : [];
 
-        console.log('Change screen', data, layouts);
         const activeMosaicLayout = layouts[data] || fallback;
+        let layoutWidth = breakpoints[data];
+        if (data === 'lg') {
+          layoutWidth = null;
+        } else if (data === 'xxs') {
+          layoutWidth = breakpoints['xs'] - 20;
+        }
+        console.log('Change screen', data, layoutWidth, layouts);
+        // TODO: this needs to be improved. We want to automatically take
+        // size from (<next upper breakpoint> -1)
+
         this.setState(
           {
             activeMosaicLayout,
-            // dirtyLayout: false,
+            // dirtyLayout: false,    // This could be used to show that layout
+            // will be saved
             activeScreenSize: data,
-            layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
+            layoutWidth,
           },
           // this.changeLayoutOnScreenSizeChange(data),
         );
