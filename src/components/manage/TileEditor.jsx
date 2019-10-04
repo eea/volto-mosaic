@@ -76,9 +76,8 @@ class ModalEditor extends Component {
 
     return (
       <div>
-        <label htmlFor="tile-title">Title</label>
+        <label htmlFor="tile-title">Title:</label>
         <Input
-          size="mini"
           id="tile-title"
           type="text"
           defaultValue={this.state.tileData.tile_title || ''}
@@ -86,12 +85,10 @@ class ModalEditor extends Component {
           icon={
             <Button
               color={this.state.tileData.show_tile_title ? 'green' : 'red'}
-              circular
-              size="mini"
               onClick={this.toggleShowTitle}
             >
               <VoltoIcon
-                size="10"
+                size="20"
                 name={this.state.tileData.show_tile_title ? showIcon : hideIcon}
               />
             </Button>
@@ -200,7 +197,6 @@ class ModalEditor extends Component {
         <Modal.Header>
           <label htmlFor="mosaic-title">Tile name:</label>
           <Input
-            size="mini"
             id="mosaic-title"
             type="text"
             defaultValue={this.state.mosaic_title}

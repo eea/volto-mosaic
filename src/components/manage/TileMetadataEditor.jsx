@@ -42,11 +42,15 @@ class TileMetadataEditor extends Component {
         onClick={() => this.handleSelectBoxStyle(id)}
         style={itemStyle}
       >
-        <Item.Image>
+        <Item.Image size='tiny'>
           <div className={klass}>{}</div>
         </Item.Image>
-        <Item.Header>{title}</Item.Header>
-        <Item.Content>A box style</Item.Content>
+        <Item.Content verticalAlign='middle'>
+          <Item.Header>{title}</Item.Header>
+            <Item.Description>
+            <p>A box style</p>
+          </Item.Description>
+        </Item.Content>
       </Item>
     );
   }
