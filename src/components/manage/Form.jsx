@@ -663,28 +663,6 @@ class Form extends Component {
           preview: data,
         });
         break;
-      case 'PREVIEW_RESPONSIVE':
-        let layoutWidth = data
-          ? breakpoints[this.state.activeScreenSize]
-          : null;
-
-        if (this.state.activeScreenSize === 'lg') {
-          layoutWidth = null;
-        } else if (this.state.activeScreenSize === 'xxs') {
-          layoutWidth = breakpoints['xs'] - 1;
-        }
-        // TODO: this needs to be improved. We want to automatically take
-        // size from (<next upper breakpoint> -1)
-
-        // console.log(
-        //   'New layout width',
-        //   layoutWidth,
-        //   this.state.activeScreenSize,
-        // );
-        this.setState({
-          layoutWidth,
-        });
-        break;
       case 'CHANGE_SCREEN_SIZE':
         const formData = this.state.formData;
         const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
@@ -695,15 +673,24 @@ class Form extends Component {
           ? JSON.parse(JSON.stringify(layouts['lg']))
           : [];
 
-        console.log('Change screen', data, layouts);
         const activeMosaicLayout = layouts[data] || fallback;
+        let layoutWidth = breakpoints[data];
+        if (data === 'lg') {
+          layoutWidth = null;
+        } else if (data === 'xxs') {
+          layoutWidth = breakpoints['xs'] - 20;
+        }
+        console.log('Change screen', data, layoutWidth, layouts);
+        // TODO: this needs to be improved. We want to automatically take
+        // size from (<next upper breakpoint> -1)
+
         this.setState(
           {
             activeMosaicLayout,
             // dirtyLayout: false,    // This could be used to show that layout
             // will be saved
             activeScreenSize: data,
-            layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
+            layoutWidth,
           },
           // this.changeLayoutOnScreenSizeChange(data),
         );

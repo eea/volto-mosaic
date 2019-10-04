@@ -61,7 +61,7 @@ class LayoutToolbar extends Component {
   }
 
   render() {
-    const layouts = this.props.layouts  || {};
+    const layouts = this.props.layouts || {};
     const currentScreenSize = this.state.currentScreenSize;
 
     const has = Object.keys(layouts).indexOf(currentScreenSize) > -1;
@@ -81,10 +81,6 @@ class LayoutToolbar extends Component {
       <Grid columns={3}>
         <Grid.Row>
           <Grid.Column>
-            <div>
-              <Radio toggle onChange={this.sendPreviewResponsive} />
-              <small>Preview responsive layout</small>
-            </div>
             <div>
               <Radio toggle onChange={this.sendPreviewTiles} />
               <small>Preview tiles</small>
