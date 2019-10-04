@@ -216,6 +216,7 @@ class Form extends Component {
     }
 
     const activeScreenSize = this.props.activeScreenSize;
+    // TODO: rewrite with ? operator
     const activeMosaicLayout =
       (this.props.formData &&
         this.props.formData.tiles_layout &&
@@ -249,11 +250,11 @@ class Form extends Component {
     // this.onEditTile = this.onEditTile.bind(this);
     // this.renderTilePreview = this.renderTilePreview.bind(this);
     // this.onDragStart = this.onDragStart.bind(this);
-    this.onDragStop = this.onDragStop.bind(this);
     // this.onDrag = this.onDrag.bind(this);
     // this.onResize = this.onResize.bind(this);
     // this.onResizeStart = this.onResizeStart.bind(this);
 
+    this.onDragStop = this.onDragStop.bind(this);
     this.onResizeStop = this.onResizeStop.bind(this);
 
     this.onChangeField = this.onChangeField.bind(this);
@@ -699,7 +700,8 @@ class Form extends Component {
         this.setState(
           {
             activeMosaicLayout,
-            // dirtyLayout: false,
+            // dirtyLayout: false,    // This could be used to show that layout
+            // will be saved
             activeScreenSize: data,
             layoutWidth: this.state.layoutWidth ? breakpoints[data] : null,
           },
