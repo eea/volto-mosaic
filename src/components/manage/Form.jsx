@@ -78,6 +78,50 @@ const messages = defineMessages({
   },
 });
 
+function fallbackLayoutFromData(formData, ids) {
+  // create a default layout based on existing tiles
+
+  const tilesFieldname = getTilesFieldname(formData);
+  const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+
+  const order = formData[tilesLayoutFieldname].items;
+  const data = formData[tilesFieldname];
+
+  const fallbackLayout = [
+    {
+      // provide default tile for title
+      h: 1,
+      i: ids.title,
+      w: 12,
+      x: 0,
+      y: 0,
+    },
+    {
+      // provide default tile for text
+      h: 3,
+      i: ids.text,
+      w: 12,
+      x: 0,
+      y: 1,
+    },
+  ];
+
+  const validIds = order.filter(i => {
+    return Object.keys(data).indexOf(i) > -1;
+  });
+  const res = validIds.map((el, ix) => {
+    return {
+      w: 12,
+      h: ix === 0 ? 2 : 4,
+      x: 0,
+      y: ix === 0 ? 0 : 2 + (ix - 1) * 4,
+      i: el,
+    };
+  });
+
+  return res || fallbackLayout;
+}
+
 class Form extends Component {
   static propTypes = {
     schema: PropTypes.shape({
@@ -162,9 +206,11 @@ class Form extends Component {
       formData[tilesFieldname] = {
         [ids.title]: {
           '@type': 'title',
+          mosaic_tile_title: 'title tile',
         },
         [ids.text]: {
           '@type': 'text',
+          mosaic_tile_title: 'text tile',
         },
       };
     }
@@ -175,7 +221,13 @@ class Form extends Component {
         this.props.formData.tiles_layout &&
         this.props.formData.tiles_layout.mosaic_layout &&
         this.props.formData.tiles_layout.mosaic_layout[activeScreenSize]) ||
-      [];
+      fallbackLayoutFromData(formData, ids);
+
+    if (!formData[tilesLayoutFieldname].mosaic_layout) {
+      formData[tilesLayoutFieldname].mosaic_layout = {
+        lg: activeMosaicLayout,
+      };
+    }
 
     this.state = {
       formData,
