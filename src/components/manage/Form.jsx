@@ -772,6 +772,26 @@ class Form extends Component {
         )}
 
         <Portal
+          node={__CLIENT__ && document.getElementById('sidebar-properties')}
+        >
+          <UiForm>
+            <Segment secondary attached>
+              Layout properties
+            </Segment>
+            <Segment attached>
+              <Field
+                id="layout-css"
+                title="CSS Overrides"
+                description="Custom css for this layout page"
+                type="textarea"
+                required={false}
+                onChange={() => {}}
+              />
+            </Segment>
+          </UiForm>
+        </Portal>
+
+        <Portal
           node={__CLIENT__ && document.getElementById('sidebar-metadata')}
         >
           <UiForm
