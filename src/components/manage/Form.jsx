@@ -459,14 +459,18 @@ class Form extends Component {
                   >
                     <Icon name={editIcon} size="10" />
                   </Button>
-                  <Button
-                    size="mini"
-                    icon
-                    color="red"
-                    onClick={this.onRemoveItem.bind(this, i)}
-                  >
-                    <Icon name={deleteIcon} size="10" />
-                  </Button>
+                  {this.state.activeScreenSize === 'lg' ? (
+                    <Button
+                      size="mini"
+                      icon
+                      color="red"
+                      onClick={this.onRemoveItem.bind(this, i)}
+                    >
+                      <Icon name={deleteIcon} size="10" />
+                    </Button>
+                  ) : (
+                    ''
+                  )}
                 </Button.Group>
               </div>
             </div>
@@ -482,11 +486,16 @@ class Form extends Component {
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
 
     const layoutField = formData[tilesLayoutFieldname];
+    const mosaic_layout = layoutField.mosaic_layout || {};
+
     const activeMosaicLayout = _.reject(this.state.activeMosaicLayout, {
       i: id,
     });
-    let mosaic_layout = layoutField.mosaic_layout || {};
-    mosaic_layout[this.state.activeScreenSize] = activeMosaicLayout;
+
+    // mosaic_layout[this.state.activeScreenSize] = activeMosaicLayout;
+    Object.keys(mosaic_layout).forEach(k => {
+      mosaic_layout[k] = _.reject(mosaic_layout[k], { i: id });
+    });
 
     this.setState(
       {
@@ -494,7 +503,7 @@ class Form extends Component {
         formData: {
           ...this.state.formData,
           [tilesLayoutFieldname]: {
-            items: without(this.state.formData[tilesLayoutFieldname].items, id),
+            items: without(layoutField.items, id),
             mosaic_layout, // TODO: might need JSON.stringify?
           },
           [tilesFieldname]: omit(this.state.formData[tilesFieldname], [id]),

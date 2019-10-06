@@ -193,7 +193,7 @@ class ModalEditor extends Component {
 
   render() {
     return (
-      <Modal closeIcon open={true}>
+      <Modal open={true}>
         <Modal.Header>
           <label htmlFor="mosaic-title">Tile name:</label>
           <Input
