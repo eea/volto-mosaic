@@ -20,6 +20,17 @@
   border-radius: 4px;
 }
 
+.ui.modal .ui.vertical.menu .item {
+  display: flex;
+  margin: 0;
+}
+
+.ui.modal .ui.vertical.menu .item:hover,
+.ui.modal .ui.vertical.menu .active.item {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #020;
+}
+
 .modal .tile {
   min-height: 400px;
   margin-top: 1em;

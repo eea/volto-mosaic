@@ -91,11 +91,11 @@ class View extends Component {
             layouts={this.state.mosaic_layout}
             breakpoints={breakpoints}
             cols={{
-              lg: 12, 
-              md: this.state.mosaic_layout.md ? 12 : 10, 
-              sm: this.state.mosaic_layout.sm ? 12 : 8, 
-              xs:this.state.mosaic_layout.xs ? 12 : 2, 
-              xxs:this.state.mosaic_layout.xxs ? 12 : 2 
+              lg: 12,
+              md: this.state.mosaic_layout.md ? 12 : 10,
+              sm: this.state.mosaic_layout.sm ? 12 : 8,
+              xs:this.state.mosaic_layout.xs ? 12 : 2,
+              xxs:this.state.mosaic_layout.xxs ? 12 : 2
             }}
             measureBeforeMount={true}
             rowHeight={rowHeight}
