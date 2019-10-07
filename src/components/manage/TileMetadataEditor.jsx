@@ -39,45 +39,6 @@ class TileMetadataEditor extends Component {
     // this.handleSelectBoxStyle = this.handleSelectBoxStyle.bind(this);
   }
 
-  // handleSelectBoxStyle(klass) {
-  //   // TODO: this should be refactored. We should use ids, not titles
-  //   this.setState(
-  //     {
-  //       selectedBoxStyle: klass,
-  //     },
-  //     () => {
-  //       this.props.onDataChange({ mosaicBoxStyle: klass });
-  //     },
-  //   );
-  // }
-
-  // getCard(style, key) {
-  //   let bits = style.split('|');
-  //   let [title, id] = bits;
-  //   let klass = 'tile-box preview ' + id;
-  //   let itemStyle =
-  //     this.state.selectedBoxStyle === id ? { backgroundColor: 'pink' } : {};
-  //
-  //   return (
-  //     <Item
-  //       key={key}
-  //       onClick={() => this.handleSelectBoxStyle(id)}
-  //       style={itemStyle}
-  //     >
-  //       <Item.Image size="tiny">
-  //         <div className={klass}>{}</div>
-  //       </Item.Image>
-  //       <Item.Content verticalAlign="middle">
-  //         <Item.Header>{title}</Item.Header>
-  //         <Item.Description>
-  //           {/* TODO: get descriptions */}
-  //           <p>A box style</p>
-  //         </Item.Description>
-  //       </Item.Content>
-  //     </Item>
-  //   );
-  // }
-
   componentWillReceiveProps(nextProps) {
     let oldSettings = JSON.stringify(this.props.settings);
     let newSettings = JSON.stringify(nextProps.settings);
