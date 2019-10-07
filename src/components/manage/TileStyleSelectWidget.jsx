@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Form as UiForm, Grid } from 'semantic-ui-react';
+import { Menu, Form as UiForm, Grid, Item } from 'semantic-ui-react';
 
 class TileStyleSelectWidget extends Component {
   constructor(props) {
@@ -28,19 +28,27 @@ class TileStyleSelectWidget extends Component {
               <label htmlFor={`field-${id}`}>{title}</label>
             </Grid.Column>
             <Grid.Column width="8">
-              <Menu vertical>
+              <Menu fluid vertical>
+                <Item.Group>
                 {this.props.options.map(style => {
                   const [opttitle, optid] = style.split('|');
+                  const klass = 'tile-box preview ' + optid;
                   return (
                     <Menu.Item
                       name={optid}
                       active={optid === this.state.value}
                       onClick={this.handleClick}
                     >
-                      {opttitle}
+                      <Item.Image size='tiny'>
+                        <div className={klass}/>
+                      </Item.Image>
+                      <Item.Content verticalAlign='middle'>
+                        {opttitle}
+                      </Item.Content>
                     </Menu.Item>
                   );
                 })}
+                </Item.Group>
               </Menu>
             </Grid.Column>
           </Grid.Row>
