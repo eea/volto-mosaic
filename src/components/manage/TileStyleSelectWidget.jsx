@@ -36,6 +36,7 @@ class TileStyleSelectWidget extends Component {
                       name={optid}
                       active={optid === this.state.value}
                       onClick={this.handleClick}
+                      key={optid}
                     >
                       {opttitle}
                     </Menu.Item>

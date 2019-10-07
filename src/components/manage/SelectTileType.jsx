@@ -16,8 +16,8 @@ class SelectTileType extends Component {
       ...tiles.tilesConfig,
     };
 
-    const selectTiles = Object.values(availableTiles).map(t => ({
-      key: t.title.toLowerCase(),
+    const selectTiles = Object.values(availableTiles).map((t, i) => ({
+      key: `${t.title.toLowerCase()}-${i}`,
       value: t.title.toLowerCase(),
       text: t.title,
     }));
@@ -25,8 +25,6 @@ class SelectTileType extends Component {
     this.state = {
       selectTiles,
     };
-    // console.log('selector selecTiles', selectTiles);
-    // console.log('selector props', props);
   }
 
   render() {

@@ -446,7 +446,7 @@ class Form extends Component {
           <div className={hasData ? 'empty' : ''}>
             <div className="tile-info-data">
               <div>
-                <h4>{tile.mosaic_title || tile['@type']}</h4>
+                <h4>{tile.mosaic_tile_title || tile['@type']}</h4>
                 <div>
                   {el.w} cols x {el.h} rows
                 </div>
@@ -459,7 +459,7 @@ class Form extends Component {
                   >
                     <Icon name={editIcon} size="10" />
                   </Button>
-                  {this.state.activeScreenSize === 'lg' ? (
+                  {this.state.activeScreenSize === 'lg' && (
                     <Button
                       size="mini"
                       icon
@@ -468,8 +468,6 @@ class Form extends Component {
                     >
                       <Icon name={deleteIcon} size="10" />
                     </Button>
-                  ) : (
-                    ''
                   )}
                 </Button.Group>
               </div>

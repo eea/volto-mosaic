@@ -145,15 +145,15 @@ class TileMetadataEditor extends Component {
           title="Tile name"
           type="text"
           description="Identifier for this tile"
-          defaultValue={this.state.mosaic_title}
+          value={this.state.mosaic_tile_title}
           required={false}
-          onChange={(e, d) => this.updateData({ mosaic_title: d.value })}
+          onChange={(e, d) => this.updateData({ mosaic_tile_title: d })}
         />
 
         <TileStyleSelectWidget
           title="Tile style"
           description="Select a style to apply to this tile"
-          value={this.state.mosaicBoxStyle}
+          value={this.state.selectedBoxStyle}
           options={styles}
           id="tile-style-select"
           onChange={(name, selection) =>
