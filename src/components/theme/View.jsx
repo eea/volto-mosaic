@@ -85,30 +85,39 @@ class View extends Component {
 
   render() {
     return this.state.mosaic_layout ? (
-      <SizeMe>
-        {({ size }) => (
-          <ReactGridLayout
-            layouts={this.state.mosaic_layout}
-            breakpoints={breakpoints}
-            cols={{
-              lg: 12,
-              md: this.state.mosaic_layout.md ? 12 : 10,
-              sm: this.state.mosaic_layout.sm ? 12 : 8,
-              xs:this.state.mosaic_layout.xs ? 12 : 2,
-              xxs:this.state.mosaic_layout.xxs ? 12 : 2
+      <div>
+        <SizeMe>
+          {({ size }) => (
+            <ReactGridLayout
+              layouts={this.state.mosaic_layout}
+              breakpoints={breakpoints}
+              cols={{
+                lg: 12,
+                md: this.state.mosaic_layout.md ? 12 : 9, // is this a good default?
+                sm: this.state.mosaic_layout.sm ? 12 : 6,
+                xs: this.state.mosaic_layout.xs ? 12 : 3,
+                xxs: this.state.mosaic_layout.xxs ? 12 : 2,
+              }}
+              measureBeforeMount={true}
+              rowHeight={rowHeight}
+              margin={[0, 0]}
+              isDraggable={false}
+              isResizable={false}
+              isDroppable={false}
+              width={size.width || document.querySelector('main').offsetWidth}
+            >
+              {this.renderTiles()}
+            </ReactGridLayout>
+          )}
+        </SizeMe>
+        {this.state.mosaic_layout.mosaic_css_override && (
+          <style
+            dangerouslySetInnerHTML={{
+              __html: this.state.mosaic_layout.mosaic_css_override,
             }}
-            measureBeforeMount={true}
-            rowHeight={rowHeight}
-            margin={[0, 0]}
-            isDraggable={false}
-            isResizable={false}
-            isDroppable={false}
-            width={size.width || document.querySelector('main').offsetWidth}
-          >
-            {this.renderTiles()}
-          </ReactGridLayout>
+          />
         )}
-      </SizeMe>
+      </div>
     ) : (
       ''
     );

@@ -30,25 +30,25 @@ class TileStyleSelectWidget extends Component {
             <Grid.Column width="8">
               <Menu fluid vertical>
                 <Item.Group>
-                {this.props.options.map(style => {
-                  const [opttitle, optid] = style.split('|');
-                  const klass = 'tile-box preview ' + optid;
-                  return (
-                    <Menu.Item
-                      name={optid}
-                      active={optid === this.state.value}
-                      onClick={this.handleClick}
-                      key={optid}
-                    >
-                      <Item.Image size='tiny'>
-                        <div className={klass}/>
-                      </Item.Image>
-                      <Item.Content verticalAlign='middle'>
-                        {opttitle}
-                      </Item.Content>
-                    </Menu.Item>
-                  );
-                })}
+                  {this.props.options.map(style => {
+                    const [opttitle, optid] = style.split('|');
+                    const klass = 'tile-box preview ' + optid;
+                    return (
+                      <Menu.Item
+                        name={optid}
+                        active={optid === this.state.value}
+                        onClick={this.handleClick}
+                        key={optid}
+                      >
+                        <Item.Image size="tiny">
+                          <div className={klass} />
+                        </Item.Image>
+                        <Item.Content verticalAlign="middle">
+                          {opttitle}
+                        </Item.Content>
+                      </Menu.Item>
+                    );
+                  })}
                 </Item.Group>
               </Menu>
             </Grid.Column>

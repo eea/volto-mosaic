@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Button, Item, Form as UiForm, Input } from 'semantic-ui-react';
+import { Grid, Button, Form as UiForm, Input } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { getMosaicSettings } from '../../actions';
 import { Field } from '@plone/volto/components'; // EditTile

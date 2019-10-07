@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
 import { Tab, Button, Modal, Icon, Grid } from 'semantic-ui-react';
+import { Icon as VoltoIcon } from '@plone/volto/components';
 
 import SelectTileType from './SelectTileType';
 import TileMetadataEditor from './TileMetadataEditor';
+
+import penIcon from '@plone/volto/icons/pen.svg';
+import clearIcon from '@plone/volto/icons/clear.svg';
 
 // import PropTypes from 'prop-types';
 // import TileDataEditor from './TileDataEditor';
@@ -195,11 +199,11 @@ class ModalEditor extends Component {
             </Grid.Column>
             <Grid.Column>
               <Button.Group floated="right">
-                <Button color="green" onClick={this.onSave}>
-                  Save
+                <Button icon basic onClick={this.onSave}>
+                  <VoltoIcon name={penIcon} color="green" className="circled" />
                 </Button>
-                <Button color="red" onClick={this.onCancel}>
-                  Cancel
+                <Button icon basic onClick={this.onCancel}>
+                  <VoltoIcon color="red" name={clearIcon} className="circled" />
                 </Button>
               </Button.Group>
             </Grid.Column>

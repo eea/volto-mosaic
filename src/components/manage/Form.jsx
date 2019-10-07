@@ -785,7 +785,7 @@ class Form extends Component {
                     ?.mosaic_css_override || ''
                 }
                 description="Custom css for this layout page"
-                type="textarea"
+                widget="textarea"
                 required={false}
                 onChange={(id, value) => {
                   this.setState({
