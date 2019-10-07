@@ -19,13 +19,11 @@ export function renderTile(formData, tileid) {
   const availableTiles = formData[tilesFieldname];
   const tiletype = availableTiles[tileid]['@type'].toLowerCase();
 
-  // console.log('Rendering tile:', tileid, tiletype, tilesFieldname, formData);
-
   let Tile = null;
   Tile = tiles.tilesConfig[tiletype].view;
   const tileData = formData[tilesFieldname][tileid];
 
-  let style = tileData.mosaicBoxStyle || 'default-tile';
+  let style = tileData.mosaic_box_style || 'default-tile';
   let klass = 'tile-container ' + style;
 
   return Tile !== null ? (
@@ -74,17 +72,10 @@ class View extends Component {
   }
 
   renderTiles() {
-    // console.log('Render tiles', this.state.mosaic_layout);
     // TODO: need to take all tiles into consideration
     return this.state.mosaic_layout['lg'].map((item, i) => {
-      // console.log('item', item);
       return <div key={item.i}>{renderTile(this.props.content, item.i)}</div>;
     });
-  }
-
-  onLayoutChange(layout) {
-    // console.log('changing lauyout');
-    // this.props.onLayoutChange(layout);
   }
 
   render() {

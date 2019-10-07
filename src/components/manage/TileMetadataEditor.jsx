@@ -11,6 +11,12 @@ import hideIcon from '@plone/volto/icons/hide.svg';
 import TileStyleSelectWidget from './TileStyleSelectWidget';
 
 // import PropTypes from 'prop-types';
+export const SIZING_POLICY_CHOICES = [
+  ['fit-content', 'Fit content'],
+  ['min-height', 'Minimum height'],
+  ['fill-space', 'Fill space'],
+  ['manual', 'Manual'],
+];
 
 class TileMetadataEditor extends Component {
   constructor(props) {
@@ -26,7 +32,7 @@ class TileMetadataEditor extends Component {
 
     this.state = {
       settings: props.settings,
-      selectedBoxStyle: tile.mosaicBoxStyle || 'default-tile',
+      selectedBoxStyle: tile.mosaic_box_style || 'default-tile',
 
       mosaic_tile_title: tile.mosaic_tile_title,
       tile_title: tile.tile_title,
@@ -118,8 +124,18 @@ class TileMetadataEditor extends Component {
           options={styles}
           id="tile-style-select"
           onChange={(name, selection) =>
-            this.updateData({ mosaicBoxStyle: selection })
+            this.updateData({ mosaic_box_style: selection })
           }
+        />
+
+        <Field
+          id="sizing-policy"
+          title="Sizing policy"
+          description="How the tile size should behave"
+          onChange={(e, d) => {
+            this.updateData({ mosaic_box_sizing: d });
+          }}
+          choices={SIZING_POLICY_CHOICES}
         />
       </UiForm>
     );

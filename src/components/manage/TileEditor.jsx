@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
-import { Tab, Button, Modal, Icon, Grid } from 'semantic-ui-react';
+import { Tab, Button, Modal, Grid } from 'semantic-ui-react';
 import { Icon as VoltoIcon } from '@plone/volto/components';
 
 import SelectTileType from './SelectTileType';
@@ -88,18 +88,17 @@ class ModalEditor extends Component {
   }
 
   onSave() {
-    // const node = ReactDOM.findDOMNode(this);
-    //
-    // console.log('height', this.tileRef.current.height);
-    // console.log('brect', .getBoundingClientRect());
     if (!this.state.useRecommendedHeight) {
       this.props.onClose(this.state.tileData);
       return;
     }
+
     let type = this.state.tileData['@type'].toLowerCase();
     const minHeight = tiles.tilesConfig[type].height;
-
     const node = ReactDOM.findDOMNode(this.tileRef.current);
+
+    // console.log('height', this.tileRef.current.height);
+    // console.log('brect', .getBoundingClientRect());
     let size = {
       height: minHeight,
       width: node.offsetWidth,
@@ -152,7 +151,7 @@ class ModalEditor extends Component {
 
   render() {
     return (
-      <Modal open={true}>
+      <Modal open={true} size="fullscreen">
         <Modal.Content scrolling>
           <Tab
             menu={{
@@ -183,13 +182,7 @@ class ModalEditor extends Component {
         <Modal.Actions>
           <Grid columns={2}>
             <Grid.Column style={{ textAlign: 'left' }}>
-              <Button
-                onClick={() => this.setState({ useRecommendedHeight: true })}
-              >
-                Use recommended height
-              </Button>
-              {this.state.useRecommendedHeight ? <Icon name="check" /> : ''}
-              <label htmlFor="select-tile-type">Set type:</label>
+              {/* <label htmlFor="select-tile-type">Set type:</label> */}
               <SelectTileType
                 id="select-tile-type"
                 tiles={this.state.formData.tiles}
