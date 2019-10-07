@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Item, Form as UiForm, Input } from 'semantic-ui-react';
+import { Grid, Button, Item, Form as UiForm, Input } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { getMosaicSettings } from '../../actions';
 import { Field } from '@plone/volto/components'; // EditTile
@@ -98,28 +98,43 @@ class TileMetadataEditor extends Component {
     let styles = (this.state.settings && this.state.settings.styles) || [];
     return (
       <UiForm>
-        <label htmlFor="tile-title">Title:</label>
-        <Input
-          id="tile-title"
-          type="text"
-          defaultValue={this.state.tile_title || ''}
-          onChange={(e, d) => this.updateData({ tile_title: d.value })}
-          icon={
-            <Button
-              color={this.state.show_tile_title ? 'green' : 'red'}
-              onClick={() =>
-                this.updateData({
-                  show_tile_title: !this.state.show_tile_title,
-                })
-              }
-            >
-              <VoltoIcon
-                size="20"
-                name={this.state.show_tile_title ? showIcon : hideIcon}
-              />
-            </Button>
-          }
-        />
+        <UiForm.Field
+          inline
+          required={false}
+          className="help tile-title"
+          id="field-tile-title"
+        >
+          <Grid>
+            <Grid.Row stretched>
+              <Grid.Column width="4">
+                <label htmlFor="tile-title">Title:</label>
+              </Grid.Column>
+              <Grid.Column width="8">
+                <Input
+                  id="tile-title"
+                  type="text"
+                  defaultValue={this.state.tile_title || ''}
+                  onChange={(e, d) => this.updateData({ tile_title: d.value })}
+                  icon={
+                    <Button
+                      color={this.state.show_tile_title ? 'green' : 'red'}
+                      onClick={() =>
+                        this.updateData({
+                          show_tile_title: !this.state.show_tile_title,
+                        })
+                      }
+                    >
+                      <VoltoIcon
+                        size="20"
+                        name={this.state.show_tile_title ? showIcon : hideIcon}
+                      />
+                    </Button>
+                  }
+                />
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </UiForm.Field>
 
         <Field
           id="mosaic-title"
