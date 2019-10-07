@@ -13,29 +13,54 @@ import {
 
 const ReactGridLayout = Responsive;
 
-export function renderTile(formData, tileid, ref) {
-  // const content = this.props.content;
-  const tilesFieldname = getTilesFieldname(formData);
-  const availableTiles = formData[tilesFieldname];
-  const tiletype = availableTiles[tileid]['@type'].toLowerCase();
+export class TileViewWrapper extends Component {
+  render() {
+    const formData = this.props.formData;
+    const tileid = this.props.tileid;
 
-  let Tile = null;
-  Tile = tiles.tilesConfig[tiletype].view;
-  const tileData = formData[tilesFieldname][tileid];
+    // const content = this.props.content;
+    const tilesFieldname = getTilesFieldname(formData);
+    const availableTiles = formData[tilesFieldname];
+    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
 
-  let style = tileData.mosaic_box_style || 'default-tile';
-  let klass = 'tile-container ' + style;
+    let Tile = null;
+    Tile = tiles.tilesConfig[tiletype].view;
+    const tileData = formData[tilesFieldname][tileid];
 
-  return Tile !== null ? (
-    <div className={klass} ref={ref}>
-      {tileData.tile_title && tileData.show_tile_title && (
-        <div className="title-title">{tileData.tile_title}</div>
-      )}
-      <Tile key={tileid} properties={formData} data={availableTiles[tileid]} />
-    </div>
-  ) : (
-    <div> {JSON.stringify(tiletype)} </div>
-  );
+    let style = tileData.mosaic_box_style || 'default-tile';
+    let klass = 'tile-container ' + style;
+
+    return Tile !== null ? (
+      <div className={klass} ref={this.props.useref}>
+        {tileData.tile_title && tileData.show_tile_title && (
+          <div className="title-title">{tileData.tile_title}</div>
+        )}
+        <Tile
+          key={tileid}
+          properties={formData}
+          data={availableTiles[tileid]}
+        />
+      </div>
+    ) : (
+      <div> {JSON.stringify(tiletype)} </div>
+    );
+  }
+
+  componentDidUpdate(prevProps) {
+    console.log('comp did update', this.props, prevProps);
+    if (!this.props.useref) return; // don't need this on View
+    const tileid = this.props.tileid;
+    const formData = this.props.formData;
+    const tilesFieldname = getTilesFieldname(formData);
+
+    this.props.onUpdate(this.props.useref);
+
+    // const tileData = formData[tilesFieldname][tileid];
+    // const prevData = prevProps && prevProps.formData[tilesFieldname][tileid];
+    // if (!prevData || JSON.stringify(tileData) !== JSON.stringify(prevData)) {
+    //   this.props.onUpdate(this.props.useref);
+    // }
+  }
 }
 
 class View extends Component {
@@ -67,7 +92,15 @@ class View extends Component {
 
   renderTiles() {
     return this.state.mosaic_layout['lg'].map((item, i) => {
-      return <div key={item.i}>{renderTile(this.props.content, item.i)}</div>;
+      return (
+        <div key={item.i}>
+          <TileViewWrapper
+            tileid={item.i}
+            formData={this.props.content}
+            onUpdate={this.props.onUpdate}
+          />
+        </div>
+      );
     });
   }
 

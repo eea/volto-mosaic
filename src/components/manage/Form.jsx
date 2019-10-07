@@ -29,7 +29,7 @@ import { rowHeight, breakpoints, screenSizes } from '../../config';
 
 import TileEditor from './TileEditor';
 import LayoutToolbar from './LayoutToolbar';
-import { renderTile } from './../theme/View';
+import { TileViewWrapper } from './../theme/View';
 
 import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
@@ -275,6 +275,7 @@ class Form extends Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
+    this.onShowTile = this.onShowTile.bind(this);
   }
 
   handleOpen(tileid) {
@@ -299,6 +300,16 @@ class Form extends Component {
     }
   }
 
+  onShowTile(tileRef) {
+    let height;
+    // const current = tileRef && tileRef.current;
+    console.log('after show', tileRef);
+    const node = ReactDOM.findDOMNode(tileRef.current);
+    // const size = node.getBoundingClientRect();
+    height = node.scrollHeight;
+    console.log('height of node on show tile', height, node);
+  }
+
   updateAfterClose(tileData) {
     const tileid = this.state.currentTile;
     const formData = this.state.formData;
@@ -309,39 +320,39 @@ class Form extends Component {
     const activeMosaicLayout =
       layoutField.mosaic_layout[this.state.activeScreenSize || 'lg'];
 
-    const sizing = tileData.mosaic_box_sizing || 'fit-content';
-    let height;
-
-    switch (sizing) {
-      case 'fit-content':
-        const tileRef = this.state.refs[tileid];
-        const current = tileRef && tileRef.current;
-        console.log('tileref', tileRef);
-        if (!current) break;
-        const node = ReactDOM.findDOMNode(tileRef.current);
-        // const size = node.getBoundingClientRect();
-        height = node.scrollHeight;
-        console.log('height of node', height, node);
-        break;
-      case 'min-height':
-        // TODO: get minimum tile height from settings, trigger layout update
-        const type = formData['@type'].toLowerCase();
-        const minHeight = tiles.tilesConfig[type].height || 100;
-        height = Math.ceil(minHeight / this.props.rowHeight);
-        const ix = activeMosaicLayout.indexOf(
-          activeMosaicLayout.find(el => {
-            return el.i === tileid;
-          }),
-        );
-        activeMosaicLayout[ix].h = height;
-        break;
-      case 'fill-space':
-        break;
-      case 'manual':
-        break;
-      default:
-        break;
-    }
+    // const sizing = tileData.mosaic_box_sizing || 'fit-content';
+    // let height;
+    //
+    // switch (sizing) {
+    //   case 'fit-content':
+    //     const tileRef = this.state.refs[tileid];
+    //     const current = tileRef && tileRef.current;
+    //     console.log('tileref', tileRef);
+    //     if (!current) break;
+    //     const node = ReactDOM.findDOMNode(tileRef.current);
+    //     // const size = node.getBoundingClientRect();
+    //     height = node.scrollHeight;
+    //     console.log('height of node', height, node);
+    //     break;
+    //   case 'min-height':
+    //     // TODO: get minimum tile height from settings, trigger layout update
+    //     const type = formData['@type'].toLowerCase();
+    //     const minHeight = tiles.tilesConfig[type].height || 100;
+    //     height = Math.ceil(minHeight / this.props.rowHeight);
+    //     const ix = activeMosaicLayout.indexOf(
+    //       activeMosaicLayout.find(el => {
+    //         return el.i === tileid;
+    //       }),
+    //     );
+    //     activeMosaicLayout[ix].h = height;
+    //     break;
+    //   case 'fill-space':
+    //     break;
+    //   case 'manual':
+    //     break;
+    //   default:
+    //     break;
+    // }
 
     this.setState(
       {
@@ -479,7 +490,12 @@ class Form extends Component {
     return (
       <div key={i} data-grid={el}>
         {this.state.preview ? (
-          renderTile(this.state.formData, tileid, ref)
+          <TileViewWrapper
+            useref={ref}
+            formData={this.state.formData}
+            tileid={tileid}
+            onUpdate={this.onShowTile}
+          />
         ) : (
           <div className={hasData ? 'empty' : ''}>
             <div className="tile-info-data">
