@@ -1,20 +1,39 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
-import { Item, Form as UiForm } from 'semantic-ui-react';
+import { Button, Item, Form as UiForm, Input } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { getMosaicSettings } from '../../actions';
+import { Field } from '@plone/volto/components'; // EditTile
+import { Icon as VoltoIcon } from '@plone/volto/components';
+
+import showIcon from '@plone/volto/icons/show.svg';
+import hideIcon from '@plone/volto/icons/hide.svg';
+
+// import PropTypes from 'prop-types';
 
 class TileMetadataEditor extends Component {
   constructor(props) {
     super(props);
+    console.log('props in tilemetadateeditor', props);
+
+    const tile = JSON.parse(JSON.stringify(props.tileData));
+    let show_tile_title = tile.show_tile_title;
+
+    if (Object.keys(tile).indexOf('show_tile_title') === -1) {
+      show_tile_title = true;
+    }
+
+    this.state = {
+      settings: props.settings,
+      selectedBoxStyle: tile.mosaicBoxStyle || 'default-tile',
+
+      mosaic_tile_title: tile.mosaic_tile_title,
+      tile_title: tile.tile_title,
+      show_tile_title,
+    };
 
     this.getCard = this.getCard.bind(this);
     this.handleSelectBoxStyle = this.handleSelectBoxStyle.bind(this);
-
-    this.state = {
-      settings: props.settings || [],
-      selectedBoxStyle: props.tile.mosaicBoxStyle || 'default-tile',
-    };
+    this.updateData = this.updateData.bind(this);
   }
 
   handleSelectBoxStyle(klass) {
@@ -42,12 +61,13 @@ class TileMetadataEditor extends Component {
         onClick={() => this.handleSelectBoxStyle(id)}
         style={itemStyle}
       >
-        <Item.Image size='tiny'>
+        <Item.Image size="tiny">
           <div className={klass}>{}</div>
         </Item.Image>
-        <Item.Content verticalAlign='middle'>
+        <Item.Content verticalAlign="middle">
           <Item.Header>{title}</Item.Header>
-            <Item.Description>
+          <Item.Description>
+            {/* TODO: get descriptions */}
             <p>A box style</p>
           </Item.Description>
         </Item.Content>
@@ -68,10 +88,48 @@ class TileMetadataEditor extends Component {
     this.props.getMosaicSettings();
   }
 
+  updateData(obj) {
+    this.setState(obj, () => {
+      this.props.onDataChange(obj);
+    });
+  }
+
   render() {
     let styles = (this.state.settings && this.state.settings.styles) || [];
     return (
       <UiForm>
+        <label htmlFor="tile-title">Title:</label>
+        <Input
+          id="tile-title"
+          type="text"
+          defaultValue={this.state.tile_title || ''}
+          onChange={(e, d) => this.updateData({ tile_title: d.value })}
+          icon={
+            <Button
+              color={this.state.show_tile_title ? 'green' : 'red'}
+              onClick={() =>
+                this.updateData({
+                  show_tile_title: !this.state.show_tile_title,
+                })
+              }
+            >
+              <VoltoIcon
+                size="20"
+                name={this.state.show_tile_title ? showIcon : hideIcon}
+              />
+            </Button>
+          }
+        />
+
+        <Field
+          id="mosaic-title"
+          title="Tile name"
+          type="text"
+          description="Identifier for this tile"
+          defaultValue={this.state.mosaic_title}
+          required={false}
+          onChange={(e, d) => this.updateData({ mosaic_title: d.value })}
+        />
         <Item.Group>{styles ? styles.map(this.getCard) : ''}</Item.Group>
       </UiForm>
     );

@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
-import { Tab, Input, Button, Modal, Icon, Grid } from 'semantic-ui-react';
-import { Icon as VoltoIcon } from '@plone/volto/components';
+import { Tab, Button, Modal, Icon, Grid } from 'semantic-ui-react';
 
 import SelectTileType from './SelectTileType';
 import TileMetadataEditor from './TileMetadataEditor';
-
-import showIcon from '@plone/volto/icons/show.svg';
-import hideIcon from '@plone/volto/icons/hide.svg';
 
 // import PropTypes from 'prop-types';
 // import TileDataEditor from './TileDataEditor';
@@ -22,18 +18,12 @@ class ModalEditor extends Component {
       JSON.stringify(props.formData['tiles'][props.tileid]),
     );
 
-    if (Object.keys(tile).indexOf('show_tile_title') === -1) {
-      tile.show_tile_title = true;
-      tile.tile_title = null;
-    }
-
     this.state = {
       // tiles: props.tiles,
       tileid: props.tileid,
       formData: props.formData,
       tileData: tile,
       useRecommendedHeight: false,
-      mosaic_title: tile.mosaic_title || tile['@type'],
     };
 
     this.tileRef = React.createRef();
@@ -47,20 +37,8 @@ class ModalEditor extends Component {
     this.onMutateTile = this.onMutateTile.bind(this);
     this.handleMetadataChange = this.handleMetadataChange.bind(this);
     this.updateTileData = this.updateTileData.bind(this);
-    this.toggleShowTitle = this.toggleShowTitle.bind(this);
 
     this.panes = [];
-  }
-
-  toggleShowTitle() {
-    const show_tile_title = !this.state.tileData.show_tile_title;
-
-    this.setState({
-      tileData: {
-        ...this.state.tileData,
-        show_tile_title,
-      },
-    });
   }
 
   renderEditTile() {
@@ -75,53 +53,31 @@ class ModalEditor extends Component {
     let nop = () => {};
 
     return (
-      <div>
-        <label htmlFor="tile-title">Title:</label>
-        <Input
-          id="tile-title"
-          type="text"
-          defaultValue={this.state.tileData.tile_title || ''}
-          onChange={(e, d) => this.updateTileData('tile_title', d.value)}
-          icon={
-            <Button
-              color={this.state.tileData.show_tile_title ? 'green' : 'red'}
-              onClick={this.toggleShowTitle}
-            >
-              <VoltoIcon
-                size="20"
-                name={this.state.tileData.show_tile_title ? showIcon : hideIcon}
-              />
-            </Button>
-          }
-        />
-
-        <Tile
-          id={this.state.tileid}
-          tile={this.state.tileid}
-          data={this.state.tileData}
-          properties={this.state.formData}
-          onAddTile={nop}
-          onChangeTile={this.onChangeTile}
-          onMutateTile={nop}
-          onChangeField={nop}
-          onDeleteTile={nop}
-          onSelectTile={nop}
-          handleKeyDown={nop}
-          pathname={this.props.pathname}
-          onMoveTile={nop}
-          onFocusPreviousTile={nop}
-          onFocusNextTile={nop}
-          selected={true}
-          index={0}
-          ref={this.tileRef}
-        />
-      </div>
+      <Tile
+        id={this.state.tileid}
+        tile={this.state.tileid}
+        data={this.state.tileData}
+        properties={this.state.formData}
+        onAddTile={nop}
+        onChangeTile={this.onChangeTile}
+        onMutateTile={nop}
+        onChangeField={nop}
+        onDeleteTile={nop}
+        onSelectTile={nop}
+        handleKeyDown={nop}
+        pathname={this.props.pathname}
+        onMoveTile={nop}
+        onFocusPreviousTile={nop}
+        onFocusNextTile={nop}
+        selected={true}
+        index={0}
+        ref={this.tileRef}
+      />
     );
   }
 
   onChangeTile(id, value) {
-    // handles editing inside the actual tile editor
-    // console.log('Changing tile', value);
+    // handles editing inside the actual tile editor (ex: TinyMCE)
     this.setState({
       tileData: { ...value },
     });
@@ -153,7 +109,6 @@ class ModalEditor extends Component {
 
   onMutateTile(type) {
     // handles changing the tile type. Needed by the <Tile> component?
-    // console.log('Mutating tile type', type);
     this.setState({
       tileData: {
         ...this.state.tileData,
@@ -194,18 +149,14 @@ class ModalEditor extends Component {
   render() {
     return (
       <Modal open={true}>
-        <Modal.Header>
-          <label htmlFor="mosaic-title">Tile name:</label>
-          <Input
-            id="mosaic-title"
-            type="text"
-            defaultValue={this.state.mosaic_title}
-            onChange={(e, d) => this.updateTileData('mosaic_title', d.value)}
-          />
-        </Modal.Header>
-        <Modal.Content>
+        <Modal.Content scrolling>
           <Tab
-            menu={{ fluid: true, tabular: 'top' }}
+            menu={{
+              secondary: true,
+              pointing: true,
+              attached: true,
+              tabular: true,
+            }}
             panes={[
               {
                 menuItem: 'Data',
@@ -217,7 +168,7 @@ class ModalEditor extends Component {
                   <Tab.Pane>
                     <TileMetadataEditor
                       onDataChange={this.handleMetadataChange}
-                      tile={this.state.tileData}
+                      tileData={this.state.tileData}
                     />
                   </Tab.Pane>
                 ),

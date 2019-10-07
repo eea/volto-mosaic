@@ -782,10 +782,28 @@ class Form extends Component {
               <Field
                 id="layout-css"
                 title="CSS Overrides"
+                value={
+                  this.state.formData.tiles_layout?.mosaic_layout
+                    ?.mosaic_css_override || ''
+                }
                 description="Custom css for this layout page"
                 type="textarea"
                 required={false}
-                onChange={() => {}}
+                onChange={(id, value) => {
+                  this.setState({
+                    formData: {
+                      ...this.state.formData,
+                      tiles_layout: {
+                        ...this.state.formData.tiles_layout,
+                        mosaic_layout: {
+                          ...(this.state.formData.tiles_layout?.mosaic_layout ||
+                            {}),
+                          mosaic_css_override: value,
+                        },
+                      },
+                    },
+                  });
+                }}
               />
             </Segment>
           </UiForm>
