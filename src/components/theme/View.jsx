@@ -23,12 +23,16 @@ export function renderTile(formData, tileid) {
 
   let Tile = null;
   Tile = tiles.tilesConfig[tiletype].view;
+  const tileData = formData[tilesFieldname][tileid];
 
-  let style = formData[tilesFieldname][tileid].mosaicBoxStyle || 'default-tile';
+  let style = tileData.mosaicBoxStyle || 'default-tile';
   let klass = 'tile-container ' + style;
 
   return Tile !== null ? (
     <div className={klass}>
+      {tileData.tile_title && tileData.show_tile_title && (
+        <div className="title-title">{tileData.tile_title}</div>
+      )}
       <Tile key={tileid} properties={formData} data={availableTiles[tileid]} />
     </div>
   ) : (
