@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
@@ -33,7 +34,7 @@ import { renderTile } from './../theme/View';
 import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
 
-// import { tiles } from '~/config';
+import { tiles } from '~/config';
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -230,6 +231,11 @@ class Form extends Component {
       };
     }
 
+    const refs = formData[tilesLayoutFieldname].items.map(id => [
+      id,
+      React.createRef(),
+    ]);
+
     this.state = {
       formData,
       errors: {},
@@ -239,6 +245,7 @@ class Form extends Component {
       activeScreenSize,
       activeMosaicLayout,
       // dirtyLayout: false,
+      refs: Object.fromEntries(refs),
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -264,13 +271,10 @@ class Form extends Component {
 
     this.createElement = this.createElement.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
-
+    this.updateAfterClose = this.updateAfterClose.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
-    // this.changeLayoutOnScreenSizeChange = this.changeLayoutOnScreenSizeChange.bind(
-    //   this,
-    // );
   }
 
   handleOpen(tileid) {
@@ -278,8 +282,6 @@ class Form extends Component {
   }
 
   handleCloseEditor(tileData, size) {
-    let tileid = this.state.currentTile;
-
     if (!tileData) {
       this.setState({
         showModal: false,
@@ -288,6 +290,17 @@ class Form extends Component {
       return;
     }
 
+    if (!this.state.preview) {
+      this.setState({ preview: true }, () => {
+        this.updateAfterClose(tileData);
+      });
+    } else {
+      this.updateAfterClose(tileData);
+    }
+  }
+
+  updateAfterClose(tileData) {
+    const tileid = this.state.currentTile;
     const formData = this.state.formData;
 
     const tilesFieldname = getTilesFieldname(formData);
@@ -295,32 +308,56 @@ class Form extends Component {
     const layoutField = formData[tilesLayoutFieldname];
     const activeMosaicLayout =
       layoutField.mosaic_layout[this.state.activeScreenSize || 'lg'];
-    if (size) {
-      const height = Math.ceil(size.height / this.props.rowHeight);
-      // TODO: this is sily, just apply mutation on filtered items
-      // x.filter().each()
-      let ix = activeMosaicLayout.indexOf(
-        activeMosaicLayout.find(el => {
-          return el.i === tileid;
-        }),
-      );
-      activeMosaicLayout[ix].h = height;
+
+    const sizing = tileData.mosaic_box_sizing || 'fit-content';
+    let height;
+
+    switch (sizing) {
+      case 'fit-content':
+        const tileRef = this.state.refs[tileid];
+        const current = tileRef && tileRef.current;
+        console.log('tileref', tileRef);
+        if (!current) break;
+        const node = ReactDOM.findDOMNode(tileRef.current);
+        // const size = node.getBoundingClientRect();
+        height = node.scrollHeight;
+        console.log('height of node', height, node);
+        break;
+      case 'min-height':
+        // TODO: get minimum tile height from settings, trigger layout update
+        const type = formData['@type'].toLowerCase();
+        const minHeight = tiles.tilesConfig[type].height || 100;
+        height = Math.ceil(minHeight / this.props.rowHeight);
+        const ix = activeMosaicLayout.indexOf(
+          activeMosaicLayout.find(el => {
+            return el.i === tileid;
+          }),
+        );
+        activeMosaicLayout[ix].h = height;
+        break;
+      case 'fill-space':
+        break;
+      case 'manual':
+        break;
+      default:
+        break;
     }
 
     this.setState(
       {
         formData: {
           ...this.state.formData,
-          // tiles: {
-          //   ...this.state.formData.tiles,
-          //   [tileid]: tileData,
-          // },
           [tilesFieldname]: {
             ...this.state.formData[tilesFieldname],
             [tileid]: tileData || null,
           },
           [tilesLayoutFieldname]: {
             ...layoutField, // changed layout in place
+            mosaic_layout: {
+              // TODO: just added, needs to be tested
+              [this.activeScreenSize]: activeMosaicLayout,
+              ...layoutField.mosaic_layout,
+            },
           },
         },
         showModal: false,
@@ -437,11 +474,12 @@ class Form extends Component {
     //   cursor: 'pointer',
     // };
     const i = el.add ? '+' : el.i;
+    const ref = this.state.refs[tileid];
 
     return (
       <div key={i} data-grid={el}>
         {this.state.preview ? (
-          renderTile(this.state.formData, tileid)
+          renderTile(this.state.formData, tileid, ref)
         ) : (
           <div className={hasData ? 'empty' : ''}>
             <div className="tile-info-data">
@@ -592,6 +630,10 @@ class Form extends Component {
         // Add a new item. It must have a unique key!
         activeMosaicLayout: newLayout,
 
+        refs: {
+          ...this.state.refs,
+          [id]: React.createRef(),
+        },
         // Increment the counter to ensure key is always unique.
         formData: {
           ...this.state.formData,
@@ -720,9 +762,6 @@ class Form extends Component {
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
 
-    // let node =
-    //   __CLIENT__ && document.querySelector('#toolbar .toolbar-actions');
-
     return this.props.visual ? (
       <div className="ui wrapper">
         <LayoutToolbar
@@ -731,6 +770,7 @@ class Form extends Component {
             this.state.formData.tiles_layout.mosaic_layout ||
             this.props.formData.tiles_layout.mosaic_layout
           }
+          preview={this.state.preview}
           activeMosaicLayout={this.state.activeMosaicLayout}
           dispatchToParent={this.handleLayoutToolbar}
         />

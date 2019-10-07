@@ -12,10 +12,10 @@ import TileStyleSelectWidget from './TileStyleSelectWidget';
 
 // import PropTypes from 'prop-types';
 export const SIZING_POLICY_CHOICES = [
-  ['fit-content', 'Fit content'],
-  ['min-height', 'Minimum height'],
-  ['fill-space', 'Fill space'],
-  ['manual', 'Manual'],
+  ['fit-content', 'Shrink fit to content'],
+  ['min-height', 'Minimum tile height (specific to each tile type)'],
+  ['fill-space', 'Fill available space'],
+  ['manual', 'Resized manually'],
 ];
 
 class TileMetadataEditor extends Component {
@@ -35,6 +35,7 @@ class TileMetadataEditor extends Component {
       selectedBoxStyle: tile.mosaic_box_style || 'default-tile',
 
       mosaic_tile_title: tile.mosaic_tile_title,
+      mosaic_box_sizing: this.mosaic_box_sizing || 'fit-content',
       tile_title: tile.tile_title,
       show_tile_title,
     };
@@ -130,8 +131,9 @@ class TileMetadataEditor extends Component {
 
         <Field
           id="sizing-policy"
-          title="Sizing policy"
-          description="How the tile size should behave"
+          title="Height sizing policy"
+          description="Set the default sizing policy for this tile"
+          value={this.state.mosaic_box_sizing}
           onChange={(e, d) => {
             this.updateData({ mosaic_box_sizing: d });
           }}

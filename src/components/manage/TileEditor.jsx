@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 
 import { tiles } from '~/config';
 import { Tab, Button, Modal, Grid } from 'semantic-ui-react';
@@ -33,8 +32,6 @@ class ModalEditor extends Component {
     this.tileRef = React.createRef();
 
     this.renderEditTile = this.renderEditTile.bind(this);
-    this.onSave = this.onSave.bind(this);
-    this.onCancel = this.onCancel.bind(this);
 
     // this is ugly, should reduce number of similar methods
     this.onChangeTile = this.onChangeTile.bind(this);
@@ -85,29 +82,6 @@ class ModalEditor extends Component {
     this.setState({
       tileData: { ...value },
     });
-  }
-
-  onSave() {
-    if (!this.state.useRecommendedHeight) {
-      this.props.onClose(this.state.tileData);
-      return;
-    }
-
-    let type = this.state.tileData['@type'].toLowerCase();
-    const minHeight = tiles.tilesConfig[type].height;
-    const node = ReactDOM.findDOMNode(this.tileRef.current);
-
-    // console.log('height', this.tileRef.current.height);
-    // console.log('brect', .getBoundingClientRect());
-    let size = {
-      height: minHeight,
-      width: node.offsetWidth,
-    };
-    this.props.onClose(this.state.tileData, size);
-  }
-
-  onCancel() {
-    this.props.onClose();
   }
 
   onMutateTile(type) {
@@ -192,10 +166,14 @@ class ModalEditor extends Component {
             </Grid.Column>
             <Grid.Column>
               <Button.Group floated="right">
-                <Button icon basic onClick={this.onSave}>
+                <Button
+                  icon
+                  basic
+                  onClick={() => this.props.onClose(this.state.tileData)}
+                >
                   <VoltoIcon name={penIcon} color="green" className="circled" />
                 </Button>
-                <Button icon basic onClick={this.onCancel}>
+                <Button icon basic onClick={() => this.props.onClose()}>
                   <VoltoIcon color="red" name={clearIcon} className="circled" />
                 </Button>
               </Button.Group>

@@ -13,7 +13,7 @@ import {
 
 const ReactGridLayout = Responsive;
 
-export function renderTile(formData, tileid) {
+export function renderTile(formData, tileid, ref) {
   // const content = this.props.content;
   const tilesFieldname = getTilesFieldname(formData);
   const availableTiles = formData[tilesFieldname];
@@ -27,7 +27,7 @@ export function renderTile(formData, tileid) {
   let klass = 'tile-container ' + style;
 
   return Tile !== null ? (
-    <div className={klass}>
+    <div className={klass} ref={ref}>
       {tileData.tile_title && tileData.show_tile_title && (
         <div className="title-title">{tileData.tile_title}</div>
       )}
@@ -53,11 +53,7 @@ class View extends Component {
   constructor(props) {
     super(props);
 
-    // const layout = this.generateLayout();
-    // this.state = { layout };
-
-    let content = props.content;
-    // console.log('content', content);
+    const content = props.content;
     const tilesLayoutFieldname = getTilesLayoutFieldname(content);
     const layout = content[tilesLayoutFieldname];
 
@@ -67,12 +63,9 @@ class View extends Component {
         items: layout.items,
       };
     }
-
-    // console.log('This.state in constructor', this.state, content);
   }
 
   renderTiles() {
-    // TODO: need to take all tiles into consideration
     return this.state.mosaic_layout['lg'].map((item, i) => {
       return <div key={item.i}>{renderTile(this.props.content, item.i)}</div>;
     });

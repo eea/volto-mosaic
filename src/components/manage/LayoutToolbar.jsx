@@ -82,7 +82,11 @@ class LayoutToolbar extends Component {
         <Grid.Row>
           <Grid.Column>
             <div>
-              <Radio toggle onChange={this.sendPreviewTiles} />
+              <Radio
+                toggle
+                checked={this.props.preview}
+                onChange={this.sendPreviewTiles}
+              />
               <small>Preview tiles</small>
             </div>
           </Grid.Column>
