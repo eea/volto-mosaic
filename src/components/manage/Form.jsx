@@ -513,10 +513,14 @@ class Form extends Component {
           >
             <div className={this.getTileClass(tile)}>
               <div>
-                <h4>{tile.mosaic_tile_title || tile['@type']}</h4>
-                <div>
-                  {el.w} cols x {el.h} rows
-                </div>
+                {el.h > 2 && (
+                  <div>
+                    <h4>{tile.mosaic_tile_title || tile['@type']}</h4>
+                    <div>
+                      {el.w} cols x {el.h} rows
+                    </div>
+                  </div>
+                )}
                 <Button.Group size="mini">
                   <Button
                     size="mini"
