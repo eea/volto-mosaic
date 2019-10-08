@@ -152,7 +152,7 @@
 }
 
 
-.react-grid-item.react-draggable > div {
+.react-grid-item.react-draggable > .tile-edit-wrapper {
   height: 100%;
   background-color: rgba(0, 128, 0, 0.1);
 }

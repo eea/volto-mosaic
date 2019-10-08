@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
@@ -180,6 +180,8 @@ class Form extends Component {
     margin: [25, 25],
     layoutWidth: null, // preview responsive layout width
     activeScreenSize: 'lg', // 'desktop' is the default screen size
+
+    payload: null, // tiledata that will be saved
   };
 
   constructor(props) {
@@ -246,6 +248,7 @@ class Form extends Component {
       activeMosaicLayout,
       // dirtyLayout: false,
       refs: Object.fromEntries(refs),
+      tileHeights: {},
     };
 
     // this.onMoveTile = this.onMoveTile.bind(this);
@@ -271,7 +274,7 @@ class Form extends Component {
 
     this.createElement = this.createElement.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
-    this.updateAfterClose = this.updateAfterClose.bind(this);
+    // this.updateAfterClose = this.updateAfterClose.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
@@ -279,10 +282,10 @@ class Form extends Component {
   }
 
   handleOpen(tileid) {
-    this.setState({ showModal: true, currentTile: tileid });
+    this.setState({ showModal: true, currentTile: tileid, tileHeights: {} });
   }
 
-  handleCloseEditor(tileData, size) {
+  handleCloseEditor(tileData) {
     if (!tileData) {
       this.setState({
         showModal: false,
@@ -291,68 +294,10 @@ class Form extends Component {
       return;
     }
 
-    if (!this.state.preview) {
-      this.setState({ preview: true }, () => {
-        this.updateAfterClose(tileData);
-      });
-    } else {
-      this.updateAfterClose(tileData);
-    }
-  }
-
-  onShowTile(tileRef) {
-    let height;
-    // const current = tileRef && tileRef.current;
-    console.log('after show', tileRef);
-    const node = ReactDOM.findDOMNode(tileRef.current);
-    // const size = node.getBoundingClientRect();
-    height = node.scrollHeight;
-    console.log('height of node on show tile', height, node);
-
-    // const sizing = tileData.mosaic_box_sizing || 'fit-content';
-    // let height;
-    //
-    // switch (sizing) {
-    //   case 'fit-content':
-    //     const tileRef = this.state.refs[tileid];
-    //     const current = tileRef && tileRef.current;
-    //     console.log('tileref', tileRef);
-    //     if (!current) break;
-    //     const node = ReactDOM.findDOMNode(tileRef.current);
-    //     // const size = node.getBoundingClientRect();
-    //     height = node.scrollHeight;
-    //     console.log('height of node', height, node);
-    //     break;
-    //   case 'min-height':
-    //     // TODO: get minimum tile height from settings, trigger layout update
-    //     const type = formData['@type'].toLowerCase();
-    //     const minHeight = tiles.tilesConfig[type].height || 100;
-    //     height = Math.ceil(minHeight / this.props.rowHeight);
-    //     const ix = activeMosaicLayout.indexOf(
-    //       activeMosaicLayout.find(el => {
-    //         return el.i === tileid;
-    //       }),
-    //     );
-    //     activeMosaicLayout[ix].h = height;
-    //     break;
-    //   case 'fill-space':
-    //     break;
-    //   case 'manual':
-    //     break;
-    //   default:
-    //     break;
-    // }
-  }
-
-  updateAfterClose(tileData) {
     const tileid = this.state.currentTile;
-    const formData = this.state.formData;
 
+    const formData = this.state.formData;
     const tilesFieldname = getTilesFieldname(formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layoutField = formData[tilesLayoutFieldname];
-    const activeScreenSize = this.state.activeScreenSize || 'lg';
-    const activeMosaicLayout = layoutField.mosaic_layout[activeScreenSize];
 
     this.setState(
       {
@@ -362,24 +307,143 @@ class Form extends Component {
             ...this.state.formData[tilesFieldname],
             [tileid]: tileData || null,
           },
-          [tilesLayoutFieldname]: {
-            ...layoutField, // changed layout in place
-            mosaic_layout: {
-              // TODO: just added, needs to be tested
-              [activeScreenSize]: activeMosaicLayout,
-              ...layoutField.mosaic_layout,
-            },
-          },
         },
         showModal: false,
-        currentTile: null,
-        activeMosaicLayout,
+        preview: true,
+        // activeMosaicLayout,
+        // currentTile: null,
       },
       () => {
         console.log('state after handleCloseEditor', this.state);
       },
     );
   }
+
+  onShowTile(tileid, height) {
+    const formData = this.state.formData;
+
+    const tilesFieldname = getTilesFieldname(formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const layoutField = formData[tilesLayoutFieldname];
+    const activeScreenSize = this.state.activeScreenSize || 'lg';
+    const tileData = formData[tilesFieldname][tileid];
+
+    const sizing = tileData.mosaic_box_sizing || 'fit-content';
+
+    let ix, lh;
+    switch (sizing) {
+      case 'fit-content':
+        this.setState(
+          (state, props) => {
+            const activeMosaicLayout = JSON.parse(
+              JSON.stringify(state.activeMosaicLayout),
+            );
+            lh = Math.ceil(height / this.props.rowHeight);
+            ix = activeMosaicLayout.indexOf(
+              activeMosaicLayout.find(el => {
+                return el.i === tileid;
+              }),
+            );
+            activeMosaicLayout[ix].h = lh;
+            return {
+              formData: {
+                ...state.formData,
+                [tilesLayoutFieldname]: {
+                  ...layoutField,
+                  mosaic_layout: {
+                    ...layoutField.mosaic_layout,
+                    [activeScreenSize]: activeMosaicLayout,
+                  },
+                },
+              },
+              activeMosaicLayout,
+            };
+          },
+          () => {
+            console.log('height of node', height, lh, tileid, this.state);
+          },
+        );
+        break;
+
+      // case 'min-height':
+      //   // TODO: get minimum tile height from settings, trigger layout update
+      //   const type = formData['@type'].toLowerCase();
+      //   const minHeight = tiles.tilesConfig[type].height || 100;
+      //   height = Math.ceil(minHeight / this.props.rowHeight);
+      //   ix = activeMosaicLayout.indexOf(
+      //     activeMosaicLayout.find(el => {
+      //       return el.i === tileid;
+      //     }),
+      //   );
+      //   activeMosaicLayout[ix].h = height;
+      //   break;
+      case 'fill-space':
+        break;
+      case 'manual':
+        break;
+      default:
+        break;
+    }
+  }
+
+  // const tileRef = this.state.refs[tileid];
+  // const current = tileRef && tileRef.current;
+  // console.log('tileref', tileRef);
+  // if (!current) break;
+  // const node = ReactDOM.findDOMNode(tileRef.current);
+  // // const size = node.getBoundingClientRect();
+  // height = node.scrollHeight;
+  // height = heights[tileid];
+  // this.tileHeights[tileid] = height;
+  // let heights = this.state.tileHeights;
+  // this.setState(
+  //   {
+  //     tileHeights: {
+  //       ...this.state.tileHeights,
+  //       [tileid]: height,
+  //     },
+  //   },
+  //   () => {
+  //     console.log(
+  //       'onShowTile height',
+  //       tileid,
+  //       height,
+  //       this.state.tileHeights,
+  //     );
+  //   },
+  // );
+  // if (
+  //   Object.keys(heights).length ===
+  //   this.state.formData.tiles_layout.items.length
+  // ) {
+  //   this.updateAfterClose();
+  // } else {
+  //   this.setState({
+  //     tileHeights: {
+  //       ...this.state.tileHeights,
+  //       [tileid]: height,
+  //     },
+  //   });
+  // }
+  // this.updateAfterClose({ tileid, height });
+  //
+  // let { tileid, height, tileData } = args;
+  //
+  // if (!tileData) tileData = this.state.payload;
+  // if (!tileid) tileid = this.state.currentTile;
+  //
+  // // const heights = Object.fromEntries(
+  // //   Object.entries(this.state.refs).map(([tileid, ref]) => {
+  // //     return [tileid, this.getHeight(ref)];
+  // //   }),
+  // // );
+  // // console.log('Heights', heights);
+  // getHeight(ref) {
+  //   const node = ReactDOM.findDOMNode(ref.current);
+  //   return node.scrollHeight;
+  // }
+
+  // updateAfterClose(args) {}
 
   onLayoutChange(newLayout) {
     console.log('on layout change');
@@ -494,10 +558,14 @@ class Form extends Component {
             useref={ref}
             formData={this.state.formData}
             tileid={tileid}
-            onUpdate={this.onShowTile}
+            showUpdate={this.onShowTile}
           />
         ) : (
-          <div className={hasData ? 'empty' : ''}>
+          <div
+            className={
+              hasData ? 'tile-edit-wrapper empty' : 'tile-edit-wrapper'
+            }
+          >
             <div className="tile-info-data">
               <div>
                 <h4>{tile.mosaic_tile_title || tile['@type']}</h4>
