@@ -296,32 +296,32 @@ class Form extends Component {
 
     const tileid = this.state.currentTile;
     console.log('HandleCloseEditor', tileData, tileid);
-    const formData = this.state.formData;
 
-    const tilesFieldname = getTilesFieldname(formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layoutField = formData[tilesLayoutFieldname];
-    const activeScreenSize = this.state.activeScreenSize || 'lg';
-    const activeMosaicLayout = layoutField.mosaic_layout[activeScreenSize];
+    // const formData = this.state.formData;
+    // const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    // const tilesFieldname = getTilesFieldname(formData);
+    // const layoutField = formData[tilesLayoutFieldname];
+    // const activeScreenSize = this.state.activeScreenSize || 'lg';
+    // const activeMosaicLayout = this.state.activeMosaicLayout;
 
     this.setState(
       {
-        formData: {
-          ...this.state.formData,
-          [tilesFieldname]: {
-            ...this.state.formData[tilesFieldname],
-            [tileid]: tileData || null,
-          },
-          [tilesLayoutFieldname]: {
-            ...layoutField, // changed layout in place
-            mosaic_layout: {
-              // TODO: just added, needs to be tested
-              [activeScreenSize]: activeMosaicLayout,
-              ...layoutField.mosaic_layout,
-            },
-          },
-        },
-        activeMosaicLayout,
+        // formData: {
+        //   ...this.state.formData,
+        //   [tilesFieldname]: {
+        //     ...this.state.formData[tilesFieldname],
+        //     [tileid]: tileData || null,
+        //   },
+        //   [tilesLayoutFieldname]: {
+        //     ...layoutField, // changed layout in place
+        //     mosaic_layout: {
+        //       // TODO: just added, needs to be tested
+        //       [activeScreenSize]: activeMosaicLayout,
+        //       ...layoutField.mosaic_layout,
+        //     },
+        //   },
+        // },
+        // activeMosaicLayout,
         showModal: false,
         // currentTile: null,
       },
@@ -350,53 +350,12 @@ class Form extends Component {
   }
 
   onShowTile(tileid, height) {
-    // this.tileHeights[tileid] = height;
-    // let heights = this.state.tileHeights;
-    // this.setState(
-    //   {
-    //     tileHeights: {
-    //       ...this.state.tileHeights,
-    //       [tileid]: height,
-    //     },
-    //   },
-    //   () => {
-    //     console.log(
-    //       'onShowTile height',
-    //       tileid,
-    //       height,
-    //       this.state.tileHeights,
-    //     );
-    //   },
-    // );
-    // if (
-    //   Object.keys(heights).length ===
-    //   this.state.formData.tiles_layout.items.length
-    // ) {
-    //   this.updateAfterClose();
-    // } else {
-    //   this.setState({
-    //     tileHeights: {
-    //       ...this.state.tileHeights,
-    //       [tileid]: height,
-    //     },
-    //   });
-    // }
-    // this.updateAfterClose({ tileid, height });
-    //
-    // let { tileid, height, tileData } = args;
-    //
-    // if (!tileData) tileData = this.state.payload;
-    // if (!tileid) tileid = this.state.currentTile;
-    //
     const formData = this.state.formData;
 
     const tilesFieldname = getTilesFieldname(formData);
     const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
     const layoutField = formData[tilesLayoutFieldname];
     const activeScreenSize = this.state.activeScreenSize || 'lg';
-    const activeMosaicLayout = JSON.parse(
-      JSON.stringify(layoutField.mosaic_layout[activeScreenSize]),
-    );
     const tileData = formData[tilesFieldname][tileid];
 
     const sizing = tileData.mosaic_box_sizing || 'fit-content';
@@ -404,52 +363,50 @@ class Form extends Component {
     let ix, lh;
     switch (sizing) {
       case 'fit-content':
-        // const tileRef = this.state.refs[tileid];
-        // const current = tileRef && tileRef.current;
-        // console.log('tileref', tileRef);
-        // if (!current) break;
-        // const node = ReactDOM.findDOMNode(tileRef.current);
-        // // const size = node.getBoundingClientRect();
-        // height = node.scrollHeight;
-        // height = heights[tileid];
-        lh = Math.ceil(height / this.props.rowHeight);
-        ix = activeMosaicLayout.indexOf(
-          activeMosaicLayout.find(el => {
-            return el.i === tileid;
-          }),
-        );
-        activeMosaicLayout[ix].h = lh;
         this.setState(
-          {
-            formData: {
-              ...this.state.formData,
-              [tilesLayoutFieldname]: {
-                ...layoutField,
-                mosaic_layout: {
-                  [activeScreenSize]: activeMosaicLayout,
-                  ...layoutField.mosaic_layout,
+          (state, props) => {
+            const activeMosaicLayout = JSON.parse(
+              JSON.stringify(state.activeMosaicLayout),
+            );
+            lh = Math.ceil(height / this.props.rowHeight);
+            ix = activeMosaicLayout.indexOf(
+              activeMosaicLayout.find(el => {
+                return el.i === tileid;
+              }),
+            );
+            activeMosaicLayout[ix].h = lh;
+            return {
+              formData: {
+                ...state.formData,
+                [tilesLayoutFieldname]: {
+                  ...layoutField,
+                  mosaic_layout: {
+                    ...layoutField.mosaic_layout,
+                    [activeScreenSize]: activeMosaicLayout,
+                  },
                 },
               },
-            },
-            activeMosaicLayout,
+              activeMosaicLayout,
+            };
           },
           () => {
-            console.log('height of node', height, lh, tileid, tileData);
+            console.log('height of node', height, lh, tileid, this.state);
           },
         );
         break;
-      case 'min-height':
-        // TODO: get minimum tile height from settings, trigger layout update
-        const type = formData['@type'].toLowerCase();
-        const minHeight = tiles.tilesConfig[type].height || 100;
-        height = Math.ceil(minHeight / this.props.rowHeight);
-        ix = activeMosaicLayout.indexOf(
-          activeMosaicLayout.find(el => {
-            return el.i === tileid;
-          }),
-        );
-        activeMosaicLayout[ix].h = height;
-        break;
+
+      // case 'min-height':
+      //   // TODO: get minimum tile height from settings, trigger layout update
+      //   const type = formData['@type'].toLowerCase();
+      //   const minHeight = tiles.tilesConfig[type].height || 100;
+      //   height = Math.ceil(minHeight / this.props.rowHeight);
+      //   ix = activeMosaicLayout.indexOf(
+      //     activeMosaicLayout.find(el => {
+      //       return el.i === tileid;
+      //     }),
+      //   );
+      //   activeMosaicLayout[ix].h = height;
+      //   break;
       case 'fill-space':
         break;
       case 'manual':
@@ -459,6 +416,52 @@ class Form extends Component {
     }
   }
 
+  // const tileRef = this.state.refs[tileid];
+  // const current = tileRef && tileRef.current;
+  // console.log('tileref', tileRef);
+  // if (!current) break;
+  // const node = ReactDOM.findDOMNode(tileRef.current);
+  // // const size = node.getBoundingClientRect();
+  // height = node.scrollHeight;
+  // height = heights[tileid];
+  // this.tileHeights[tileid] = height;
+  // let heights = this.state.tileHeights;
+  // this.setState(
+  //   {
+  //     tileHeights: {
+  //       ...this.state.tileHeights,
+  //       [tileid]: height,
+  //     },
+  //   },
+  //   () => {
+  //     console.log(
+  //       'onShowTile height',
+  //       tileid,
+  //       height,
+  //       this.state.tileHeights,
+  //     );
+  //   },
+  // );
+  // if (
+  //   Object.keys(heights).length ===
+  //   this.state.formData.tiles_layout.items.length
+  // ) {
+  //   this.updateAfterClose();
+  // } else {
+  //   this.setState({
+  //     tileHeights: {
+  //       ...this.state.tileHeights,
+  //       [tileid]: height,
+  //     },
+  //   });
+  // }
+  // this.updateAfterClose({ tileid, height });
+  //
+  // let { tileid, height, tileData } = args;
+  //
+  // if (!tileData) tileData = this.state.payload;
+  // if (!tileid) tileid = this.state.currentTile;
+  //
   // // const heights = Object.fromEntries(
   // //   Object.entries(this.state.refs).map(([tileid, ref]) => {
   // //     return [tileid, this.getHeight(ref)];
