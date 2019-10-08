@@ -40,18 +40,20 @@ export class TileViewWrapper extends Component {
     const tileData = formData[tilesFieldname][tileid];
 
     let style = tileData.mosaic_box_style || 'default-tile';
-    let klass = 'tile-container ' + style;
+    let klass = 'tile-wrapper ' + style;
 
     return Tile !== null ? (
-      <div className={klass} ref={this.props.useref}>
-        {tileData.tile_title && tileData.show_tile_title && (
-          <div className="title-title">{tileData.tile_title}</div>
-        )}
-        <Tile
-          key={tileid}
-          properties={formData}
-          data={availableTiles[tileid]}
-        />
+      <div className="tile-container" ref={this.props.useref}>
+        <div className={klass}>
+          {tileData.tile_title && tileData.show_tile_title && (
+            <h5 className="title-title">{tileData.tile_title}</h5>
+          )}
+          <Tile
+            key={tileid}
+            properties={formData}
+            data={availableTiles[tileid]}
+            />
+        </div>
       </div>
     ) : (
       <div> {JSON.stringify(tiletype)} </div>
@@ -116,7 +118,7 @@ class View extends Component {
     items: 50,
     cols: 12,
     rowHeight: 30,
-    margin: [25, 25],
+    margin: [0, 0],
     onLayoutChange: function() {},
   };
 
@@ -165,7 +167,7 @@ class View extends Component {
               }}
               measureBeforeMount={true}
               rowHeight={rowHeight}
-              margin={[25, 25]}
+              margin={[0, 0]}
               isDraggable={false}
               isResizable={false}
               isDroppable={false}
