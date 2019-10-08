@@ -295,58 +295,28 @@ class Form extends Component {
     }
 
     const tileid = this.state.currentTile;
-    console.log('HandleCloseEditor', tileData, tileid);
 
-    // const formData = this.state.formData;
-    // const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    // const tilesFieldname = getTilesFieldname(formData);
-    // const layoutField = formData[tilesLayoutFieldname];
-    // const activeScreenSize = this.state.activeScreenSize || 'lg';
-    // const activeMosaicLayout = this.state.activeMosaicLayout;
+    const formData = this.state.formData;
+    const tilesFieldname = getTilesFieldname(formData);
 
     this.setState(
       {
-        // formData: {
-        //   ...this.state.formData,
-        //   [tilesFieldname]: {
-        //     ...this.state.formData[tilesFieldname],
-        //     [tileid]: tileData || null,
-        //   },
-        //   [tilesLayoutFieldname]: {
-        //     ...layoutField, // changed layout in place
-        //     mosaic_layout: {
-        //       // TODO: just added, needs to be tested
-        //       [activeScreenSize]: activeMosaicLayout,
-        //       ...layoutField.mosaic_layout,
-        //     },
-        //   },
-        // },
+        formData: {
+          ...this.state.formData,
+          [tilesFieldname]: {
+            ...this.state.formData[tilesFieldname],
+            [tileid]: tileData || null,
+          },
+        },
         // activeMosaicLayout,
         showModal: false,
+        preview: true,
         // currentTile: null,
       },
       () => {
         console.log('state after handleCloseEditor', this.state);
-        this.setState({ preview: true });
       },
     );
-
-    // if (!this.state.preview) {
-    //   this.setState(
-    //     {
-    //       preview: true,
-    //       payload: tileData,
-    //       showModal: false,
-    //       // currentTile: null,
-    //     },
-    //     // () => {
-    //     //   this.updateAfterClose(tileData);
-    //     // },
-    //   );
-    // }
-    // else {
-    //   this.updateAfterClose({ tileData });
-    // }
   }
 
   onShowTile(tileid, height) {
