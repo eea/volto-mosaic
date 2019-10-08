@@ -116,7 +116,7 @@ class View extends Component {
     items: 50,
     cols: 12,
     rowHeight: 30,
-    margin: [25, 25],
+    margin: [0, 0],
     onLayoutChange: function() {},
   };
 
@@ -165,7 +165,7 @@ class View extends Component {
               }}
               measureBeforeMount={true}
               rowHeight={rowHeight}
-              margin={[25, 25]}
+              margin={[0, 0]}
               isDraggable={false}
               isResizable={false}
               isDroppable={false}

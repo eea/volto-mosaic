@@ -34,7 +34,7 @@ import { TileViewWrapper } from './../theme/View';
 import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
 
-import { tiles } from '~/config';
+// import { tiles } from '~/config';
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -177,7 +177,7 @@ class Form extends Component {
     // cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
     cols: 12,
     rowHeight: rowHeight,
-    margin: [25, 25],
+    margin: [0, 0],
     layoutWidth: null, // preview responsive layout width
     activeScreenSize: 'lg', // 'desktop' is the default screen size
 
@@ -246,7 +246,7 @@ class Form extends Component {
       layoutWidth: this.props.layoutWidth,
       activeScreenSize,
       activeMosaicLayout,
-      // dirtyLayout: false,
+      dirtyLayout: false,
       refs: Object.fromEntries(refs),
       tileHeights: {},
     };
@@ -274,7 +274,6 @@ class Form extends Component {
 
     this.createElement = this.createElement.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
-    // this.updateAfterClose = this.updateAfterClose.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
@@ -385,65 +384,6 @@ class Form extends Component {
         break;
     }
   }
-
-  // const tileRef = this.state.refs[tileid];
-  // const current = tileRef && tileRef.current;
-  // console.log('tileref', tileRef);
-  // if (!current) break;
-  // const node = ReactDOM.findDOMNode(tileRef.current);
-  // // const size = node.getBoundingClientRect();
-  // height = node.scrollHeight;
-  // height = heights[tileid];
-  // this.tileHeights[tileid] = height;
-  // let heights = this.state.tileHeights;
-  // this.setState(
-  //   {
-  //     tileHeights: {
-  //       ...this.state.tileHeights,
-  //       [tileid]: height,
-  //     },
-  //   },
-  //   () => {
-  //     console.log(
-  //       'onShowTile height',
-  //       tileid,
-  //       height,
-  //       this.state.tileHeights,
-  //     );
-  //   },
-  // );
-  // if (
-  //   Object.keys(heights).length ===
-  //   this.state.formData.tiles_layout.items.length
-  // ) {
-  //   this.updateAfterClose();
-  // } else {
-  //   this.setState({
-  //     tileHeights: {
-  //       ...this.state.tileHeights,
-  //       [tileid]: height,
-  //     },
-  //   });
-  // }
-  // this.updateAfterClose({ tileid, height });
-  //
-  // let { tileid, height, tileData } = args;
-  //
-  // if (!tileData) tileData = this.state.payload;
-  // if (!tileid) tileid = this.state.currentTile;
-  //
-  // // const heights = Object.fromEntries(
-  // //   Object.entries(this.state.refs).map(([tileid, ref]) => {
-  // //     return [tileid, this.getHeight(ref)];
-  // //   }),
-  // // );
-  // // console.log('Heights', heights);
-  // getHeight(ref) {
-  //   const node = ReactDOM.findDOMNode(ref.current);
-  //   return node.scrollHeight;
-  // }
-
-  // updateAfterClose(args) {}
 
   onLayoutChange(newLayout) {
     console.log('on layout change');
@@ -820,7 +760,7 @@ class Form extends Component {
         this.setState(
           {
             activeMosaicLayout,
-            // dirtyLayout: false,    // This could be used to show that layout
+            dirtyLayout: false, // This could be used to show that layout
             // will be saved
             activeScreenSize: data,
             layoutWidth,
@@ -870,8 +810,9 @@ class Form extends Component {
                 size.width ||
                 document.querySelector('main').offsetWidth
               }
-              onResize={this.onResize}
+              onDragStop={this.onDragStop}
               onResizeStop={this.onResizeStop}
+              onResize={this.onResize}
               onResizeStart={this.onResizeStart}
               {...this.props}
             >
@@ -967,7 +908,7 @@ class Form extends Component {
   }
 
   onResizeStop(layout, old, neu, x, e, node) {
-    console.log('on resize stop'); //, layout, oldDragItem, l, x, e, node);
+    // console.log('on resize stop'); //, layout, oldDragItem, l, x, e, node);
 
     let dW = neu.w - old.w; // negative if size made smaller
     layout.forEach((el, i) => {
@@ -986,16 +927,16 @@ class Form extends Component {
       //   el.w += dW;
       // }
     });
-    // this.setState({
-    //   dirtyLayout: true,
-    // });
+    this.setState({
+      dirtyLayout: true,
+    });
   }
 
   onDragStop(layout, old, neu, x, e, node) {
-    console.log('on drag stop'); // , layout, oldDragItem, l, x, e, node);
-    // this.setState({
-    //   dirtyLayout: true,
-    // });
+    // console.log('on drag stop'); // , layout, oldDragItem, l, x, e, node);
+    this.setState({
+      dirtyLayout: true,
+    });
   }
 
   // onResize(layout, old, neu, x, e, node) {
@@ -1028,13 +969,13 @@ class Form extends Component {
   //   //   oldDragItem,
   //   //   l,
   //   //   x,
-  //   //   e,
-  //   //   node,
+  //   //   // e,
+  //   //   // node,
   //   // );
   // }
 
   // onDragStart(layout, oldDragItem, l, x, e, node) {
-  //   console.log('on drag start'); //, layout, oldDragItem, l, x, e, node);
+  //   // console.log('on drag start'); //, layout, oldDragItem, l, x, e, node);
   // }
 
   // onEditTile(id, value, size) {
