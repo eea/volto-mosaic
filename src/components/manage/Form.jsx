@@ -309,8 +309,6 @@ class Form extends Component {
         },
         showModal: false,
         preview: true,
-        // activeMosaicLayout,
-        // currentTile: null,
       },
       () => {
         console.log('state after handleCloseEditor', this.state);
@@ -394,6 +392,7 @@ class Form extends Component {
 
     const size = this.state.activeScreenSize;
 
+    // Layout hasn't been created yet
     if (Object.keys(mosaic_layout).indexOf(size) === -1) {
       this.setState({
         activeMosaicLayout: newLayout,
@@ -927,6 +926,8 @@ class Form extends Component {
       //   el.w += dW;
       // }
     });
+
+    // if the height has changed, set sizing policy for this layout to manual
     this.setState({
       dirtyLayout: true,
     });

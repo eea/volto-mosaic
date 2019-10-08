@@ -1,5 +1,7 @@
+import { Icon as VoltoIcon } from '@plone/volto/components';
 import React, { Component } from 'react';
 import { Button, Dropdown, Grid, Radio } from 'semantic-ui-react';
+import checkIcon from '@plone/volto/icons/check.svg';
 
 class LayoutToolbar extends Component {
   static defaultProps = {
@@ -54,7 +56,7 @@ class LayoutToolbar extends Component {
       const res = Object.assign({}, el);
       const has = Object.keys(layouts).indexOf(el.value) > -1;
       // TODO: use appropriate icons, load fontawesome, something
-      if (has) res.icon = 'check';
+      if (has) res.icon = <VoltoIcon name={checkIcon} size={10} />;
       return res;
     });
     return screens;

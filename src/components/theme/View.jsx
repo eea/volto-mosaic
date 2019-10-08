@@ -52,7 +52,7 @@ export class TileViewWrapper extends Component {
             key={tileid}
             properties={formData}
             data={availableTiles[tileid]}
-            />
+          />
         </div>
       </div>
     ) : (
