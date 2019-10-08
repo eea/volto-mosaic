@@ -472,6 +472,12 @@ class Form extends Component {
     );
   }
 
+  getTileClass(tile) {
+    return (
+      'tile-info-data tile-edit-' + (tile.mosaic_box_sizing || 'fit-content')
+    );
+  }
+
   createElement(el) {
     const tileid = el.i;
 
@@ -505,7 +511,7 @@ class Form extends Component {
               hasData ? 'tile-edit-wrapper empty' : 'tile-edit-wrapper'
             }
           >
-            <div className="tile-info-data">
+            <div className={this.getTileClass(tile)}>
               <div>
                 <h4>{tile.mosaic_tile_title || tile['@type']}</h4>
                 <div>

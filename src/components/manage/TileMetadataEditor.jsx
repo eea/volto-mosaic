@@ -35,7 +35,7 @@ class TileMetadataEditor extends Component {
       selectedBoxStyle: tile.mosaic_box_style || 'default-tile',
 
       mosaic_tile_title: tile.mosaic_tile_title,
-      mosaic_box_sizing: this.mosaic_box_sizing || 'fit-content',
+      mosaic_box_sizing: tile.mosaic_box_sizing || 'fit-content',
       tile_title: tile.tile_title,
       show_tile_title,
     };
