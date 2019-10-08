@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import { breakpoints, rowHeight } from '../../config';
 import React, { Component } from 'react';
 import { Responsive } from 'react-grid-layout';
@@ -14,7 +15,18 @@ import {
 const ReactGridLayout = Responsive;
 
 export class TileViewWrapper extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      updated: false,
+      // ref: React.createRef(),
+    };
+
+    this.getHeight = this.getHeight.bind(this);
+  }
+
   render() {
+    console.log('rendering tile');
     const formData = this.props.formData;
     const tileid = this.props.tileid;
 
@@ -30,7 +42,6 @@ export class TileViewWrapper extends Component {
     let style = tileData.mosaic_box_style || 'default-tile';
     let klass = 'tile-container ' + style;
 
-    // TODO: no need to have ref as a property, can use one created here
     return Tile !== null ? (
       <div className={klass} ref={this.props.useref}>
         {tileData.tile_title && tileData.show_tile_title && (
@@ -47,12 +58,44 @@ export class TileViewWrapper extends Component {
     );
   }
 
-  componentDidUpdate(prevProps) {
-    if (!this.props.useref) return; // don't need this on View
+  getHeight() {
+    const node = ReactDOM.findDOMNode(this.props.useref.current);
+    // console.log('getheight', node);
+    return node.scrollHeight;
+  }
 
-    console.log('comp did update', this.props.tileid);
-    this.props.onUpdate(this.props.useref);
+  componentDidMount() {
+    if (!this.props.showUpdate) return; // don't need this on View
 
+    this.setState({ updated: false }, () => {
+      const height = this.getHeight();
+      console.log('componentDidMount', this.props.tileid, height);
+      this.props.showUpdate(this.props.tileid, height);
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (!this.props.showUpdate) return; // don't need this on View
+
+    // console.log('componentDidUpdate', this.props, this.state);
+    // if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
+    //   console.log('componentDidUpdate different props');
+    //   this.setState({ updated: true }, () => {
+    //     const height = this.getHeight();
+    //     this.props.showUpdate(this.props.tileid, height);
+    //   });
+    //   return;
+    // }
+
+    if (this.state.updated) return;
+
+    this.setState({ updated: true }, () => {
+      const height = this.getHeight();
+      console.log('componentDidUpdate default code', this.props.tileid, height);
+      this.props.showUpdate(this.props.tileid, height);
+    });
+
+    // this.props.showUpdate(this.props.tileid, height);
     // if (this.props.previewState !== prevProps.previewState) { }
     // const tileid = this.props.tileid;
     // const formData = this.props.formData;
@@ -60,7 +103,7 @@ export class TileViewWrapper extends Component {
     // const tileData = formData[tilesFieldname][tileid];
     // const prevData = prevProps && prevProps.formData[tilesFieldname][tileid];
     // if (!prevData || JSON.stringify(tileData) !== JSON.stringify(prevData)) {
-    //   this.props.onUpdate(this.props.useref);
+    //   this.props.showUpdate(this.props.useref);
     // }
   }
 }
@@ -96,11 +139,7 @@ class View extends Component {
     return this.state.mosaic_layout['lg'].map((item, i) => {
       return (
         <div key={item.i}>
-          <TileViewWrapper
-            tileid={item.i}
-            formData={this.props.content}
-            onUpdate={this.props.onUpdate}
-          />
+          <TileViewWrapper tileid={item.i} formData={this.props.content} />
         </div>
       );
     });
