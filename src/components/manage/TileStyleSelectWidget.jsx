@@ -28,7 +28,7 @@ class TileStyleSelectWidget extends Component {
               <label htmlFor={`field-${id}`}>{title}</label>
             </Grid.Column>
             <Grid.Column width="8">
-              <Menu fluid vertical>
+              <Menu inverted fluid vertical>
                 <Item.Group>
                   {this.props.options.map(style => {
                     const [opttitle, optid] = style.split('|');
