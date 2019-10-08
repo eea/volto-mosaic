@@ -308,9 +308,9 @@ class Form extends Component {
             [tileid]: tileData || null,
           },
         },
-        // activeMosaicLayout,
         showModal: false,
         preview: true,
+        // activeMosaicLayout,
         // currentTile: null,
       },
       () => {
