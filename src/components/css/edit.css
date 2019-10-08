@@ -207,3 +207,21 @@
   font-size: smaller;
   color: gray;
 }
+.layout-preview {
+  background: gray;
+  border: 6px solid gray;
+  padding: 6px;
+}
+#layout-preview-sm {
+  /* for some reasone need to add 24px, probably padding and border */
+  width: 792px !important;
+}
+#layout-preview-md {
+  width: 1020 !important;
+}
+#layout-preview-xs {
+  width: 504px !important;
+}
+#layout-preview-xxs {
+  width: 484px !important;
+}

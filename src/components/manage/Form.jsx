@@ -810,29 +810,34 @@ class Form extends Component {
           dispatchToParent={this.handleLayoutToolbar}
         />
 
-        <SizeMe>
-          {({ size }) => (
-            <ReactGridLayout
-              onLayoutChange={this.onLayoutChange}
-              onBreakpointChange={this.onBreakpointChange}
-              layout={this.state.activeMosaicLayout}
-              width={
-                this.state.layoutWidth ||
-                size.width ||
-                document.querySelector('main').offsetWidth
-              }
-              onDragStop={this.onDragStop}
-              onResizeStop={this.onResizeStop}
-              onResize={this.onResize}
-              onResizeStart={this.onResizeStart}
-              {...this.props}
-            >
-              {_.map(this.state.activeMosaicLayout, el =>
-                this.createElement(el),
-              )}
-            </ReactGridLayout>
-          )}
-        </SizeMe>
+        <div
+          className="layout-preview"
+          id={'layout-preview-' + this.state.activeScreenSize}
+        >
+          <SizeMe>
+            {({ size }) => (
+              <ReactGridLayout
+                onLayoutChange={this.onLayoutChange}
+                onBreakpointChange={this.onBreakpointChange}
+                layout={this.state.activeMosaicLayout}
+                width={
+                  this.state.layoutWidth ||
+                  size.width ||
+                  document.querySelector('main').offsetWidth
+                }
+                onDragStop={this.onDragStop}
+                onResizeStop={this.onResizeStop}
+                onResize={this.onResize}
+                onResizeStart={this.onResizeStart}
+                {...this.props}
+              >
+                {_.map(this.state.activeMosaicLayout, el =>
+                  this.createElement(el),
+                )}
+              </ReactGridLayout>
+            )}
+          </SizeMe>
+        </div>
 
         {/* onChangeTile={this.onEditTile} */}
         {this.state.showModal ? (
