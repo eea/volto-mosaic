@@ -401,18 +401,20 @@ class Form extends Component {
     }
 
     this.setState(
-      {
-        activeMosaicLayout: newLayout,
-        formData: {
-          ...this.state.formData,
-          [tilesLayoutFieldname]: {
-            ...this.state.formData.tiles_layout,
-            mosaic_layout: {
-              ...mosaic_layout,
-              [size]: newLayout,
+      (state, props) => {
+        return {
+          activeMosaicLayout: newLayout,
+          formData: {
+            ...state.formData,
+            [tilesLayoutFieldname]: {
+              ...state.formData[tilesLayoutFieldname],
+              mosaic_layout: {
+                ...state.formData[tilesLayoutFieldname].mosaic_layout,
+                [size]: newLayout,
+              },
             },
           },
-        },
+        };
       },
       () => {
         console.log('Set state on change layout ' + size, this.state);
@@ -516,6 +518,9 @@ class Form extends Component {
                 <div className="tile-size-info">
                   {el.w} cols x {el.h} rows
                 </div>
+              )}
+              {el.h > 2 && el.w > 4 && (
+                <div className="tile-uuid-info">{el.i}</div>
               )}
               <div>
                 {el.h > 2 && (
@@ -945,9 +950,30 @@ class Form extends Component {
     });
 
     // if the height has changed, set sizing policy for this layout to manual
-    this.setState({
-      dirtyLayout: true,
-    });
+    const tileid = old.i;
+    const formData = this.state.formData;
+    const tilesFieldname = getTilesFieldname(formData);
+
+    this.setState(
+      (state, props) => {
+        return {
+          dirtyLayout: true,
+          formData: {
+            ...state.formData,
+            [tilesFieldname]: {
+              ...state.formData[tilesFieldname],
+              [tileid]: {
+                ...state.formData[tilesFieldname][tileid],
+                mosaic_box_sizing: 'manual',
+              },
+            },
+          },
+        };
+      },
+      () => {
+        // console.log('after resize', this.state);
+      },
+    );
   }
 
   onDragStop(layout, old, neu, x, e, node) {

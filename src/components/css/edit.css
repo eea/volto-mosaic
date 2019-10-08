@@ -200,6 +200,13 @@
   background-size: 6px 6px;
 }
 
+.tile-uuid-info {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.6rem;
+  color: gray;
+  font-size: smaller;
+}
 .tile-size-info {
   position: absolute;
   bottom: 0.6rem;
