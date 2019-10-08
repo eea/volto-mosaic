@@ -27,7 +27,7 @@
 
 .ui.modal .ui.vertical.menu .item:hover,
 .ui.modal .ui.vertical.menu .active.item {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.02);
   color: #020;
 }
 

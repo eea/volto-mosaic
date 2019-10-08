@@ -177,7 +177,7 @@ class Form extends Component {
     // cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
     cols: 12,
     rowHeight: rowHeight,
-    margin: [0, 0],
+    margin: [25, 25],
     layoutWidth: null, // preview responsive layout width
     activeScreenSize: 'lg', // 'desktop' is the default screen size
   };
