@@ -308,17 +308,6 @@ class Form extends Component {
     // const size = node.getBoundingClientRect();
     height = node.scrollHeight;
     console.log('height of node on show tile', height, node);
-  }
-
-  updateAfterClose(tileData) {
-    const tileid = this.state.currentTile;
-    const formData = this.state.formData;
-
-    const tilesFieldname = getTilesFieldname(formData);
-    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
-    const layoutField = formData[tilesLayoutFieldname];
-    const activeMosaicLayout =
-      layoutField.mosaic_layout[this.state.activeScreenSize || 'lg'];
 
     // const sizing = tileData.mosaic_box_sizing || 'fit-content';
     // let height;
@@ -353,6 +342,17 @@ class Form extends Component {
     //   default:
     //     break;
     // }
+  }
+
+  updateAfterClose(tileData) {
+    const tileid = this.state.currentTile;
+    const formData = this.state.formData;
+
+    const tilesFieldname = getTilesFieldname(formData);
+    const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
+    const layoutField = formData[tilesLayoutFieldname];
+    const activeScreenSize = this.state.activeScreenSize || 'lg';
+    const activeMosaicLayout = layoutField.mosaic_layout[activeScreenSize];
 
     this.setState(
       {
@@ -366,7 +366,7 @@ class Form extends Component {
             ...layoutField, // changed layout in place
             mosaic_layout: {
               // TODO: just added, needs to be tested
-              [this.activeScreenSize]: activeMosaicLayout,
+              [activeScreenSize]: activeMosaicLayout,
               ...layoutField.mosaic_layout,
             },
           },

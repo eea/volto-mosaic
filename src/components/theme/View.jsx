@@ -30,6 +30,7 @@ export class TileViewWrapper extends Component {
     let style = tileData.mosaic_box_style || 'default-tile';
     let klass = 'tile-container ' + style;
 
+    // TODO: no need to have ref as a property, can use one created here
     return Tile !== null ? (
       <div className={klass} ref={this.props.useref}>
         {tileData.tile_title && tileData.show_tile_title && (
@@ -47,14 +48,15 @@ export class TileViewWrapper extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('comp did update', this.props, prevProps);
     if (!this.props.useref) return; // don't need this on View
-    const tileid = this.props.tileid;
-    const formData = this.props.formData;
-    const tilesFieldname = getTilesFieldname(formData);
 
+    console.log('comp did update', this.props.tileid);
     this.props.onUpdate(this.props.useref);
 
+    // if (this.props.previewState !== prevProps.previewState) { }
+    // const tileid = this.props.tileid;
+    // const formData = this.props.formData;
+    // const tilesFieldname = getTilesFieldname(formData);
     // const tileData = formData[tilesFieldname][tileid];
     // const prevData = prevProps && prevProps.formData[tilesFieldname][tileid];
     // if (!prevData || JSON.stringify(tileData) !== JSON.stringify(prevData)) {
@@ -105,6 +107,9 @@ class View extends Component {
   }
 
   render() {
+    console.log('breakpoints', breakpoints);
+    console.log('layouts', this.state.mosaic_layout);
+
     return this.state.mosaic_layout ? (
       <div>
         <SizeMe>
