@@ -5,7 +5,6 @@ import { tiles } from '~/config';
 import { Tab, Button, Modal, Grid } from 'semantic-ui-react';
 import { Icon as VoltoIcon, TileChooser } from '@plone/volto/components';
 
-// import SelectTileType from './SelectTileType';
 import TileMetadataEditor from './TileMetadataEditor';
 
 import penIcon from '@plone/volto/icons/pen.svg';
@@ -100,13 +99,14 @@ class ModalEditor extends Component {
     });
   }
 
-  onMutateTile(type) {
+  onMutateTile(tile, choice) {
     // handles changing the tile type. Needed by the <Tile> component?
     this.setState({
       tileData: {
         ...this.state.tileData,
-        '@type': type,
+        ...choice,
       },
+      showTileChooser: false,
     });
   }
 
@@ -140,6 +140,7 @@ class ModalEditor extends Component {
   }
 
   render() {
+    console.log('render', this.state.tileData, tiles.tilesConfig);
     return (
       <Modal open={true} size="fullscreen">
         <Modal.Content scrolling>
@@ -172,22 +173,15 @@ class ModalEditor extends Component {
         <Modal.Actions>
           <Grid columns={2}>
             <Grid.Column style={{ textAlign: 'left' }}>
-              {/* <label htmlFor="select-tile-type">Set type:</label> */}
-              {/* <SelectTileType */}
-              {/*   id="select-tile-type" */}
-              {/*   tiles={this.state.formData.tiles} */}
-              {/*   tile={this.state.tileData} */}
-              {/*   onMutateTile={this.onMutateTile} */}
-              {/* /> */}
-
               <Button
                 basic
-                circular
                 primary
                 size="big"
                 onClick={() => this.setState({ showTileChooser: true })}
               >
-                Set type
+                {this.state.tileData['@type']
+                  ? tiles.tilesConfig[this.state.tileData['@type']].title
+                  : 'Set type'}
               </Button>
 
               <div ref={node => (this.ref = node)}>
