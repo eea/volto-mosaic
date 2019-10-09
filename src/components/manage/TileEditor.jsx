@@ -27,6 +27,7 @@ class ModalEditor extends Component {
       formData: props.formData,
       tileData: tile,
       showTileChooser: false,
+      activeTabPage: 0,
     };
 
     this.tileRef = React.createRef();
@@ -38,6 +39,7 @@ class ModalEditor extends Component {
     this.onMutateTile = this.onMutateTile.bind(this);
     this.handleMetadataChange = this.handleMetadataChange.bind(this);
     this.updateTileData = this.updateTileData.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
 
     this.panes = [];
   }
@@ -107,6 +109,7 @@ class ModalEditor extends Component {
         ...choice,
       },
       showTileChooser: false,
+      activeTabPage: 0,
     });
   }
 
@@ -139,12 +142,19 @@ class ModalEditor extends Component {
     });
   }
 
+  handleTabChange(e, { activeIndex }) {
+    this.setState({
+      activeTabPage: activeIndex,
+    });
+  }
+
   render() {
-    console.log('render', this.state.tileData, tiles.tilesConfig);
     return (
       <Modal open={true} size="fullscreen">
         <Modal.Content scrolling>
           <Tab
+            onTabChange={this.handleTabChange}
+            activeIndex={this.state.activeTabPage}
             menu={{
               secondary: true,
               pointing: true,
@@ -173,25 +183,27 @@ class ModalEditor extends Component {
         <Modal.Actions>
           <Grid columns={2}>
             <Grid.Column style={{ textAlign: 'left' }}>
-              <Button
-                basic
-                primary
-                size="big"
-                onClick={() => this.setState({ showTileChooser: true })}
-              >
-                {this.state.tileData['@type']
-                  ? tiles.tilesConfig[this.state.tileData['@type']].title
-                  : 'Set type'}
-              </Button>
+              <Button.Group floated="left">
+                <Button
+                  basic
+                  primary
+                  size="big"
+                  onClick={() => this.setState({ showTileChooser: true })}
+                >
+                  {this.state.tileData['@type']
+                    ? tiles.tilesConfig[this.state.tileData['@type']].title
+                    : 'Set type'}
+                </Button>
 
-              <div ref={node => (this.ref = node)}>
-                {this.state.showTileChooser && (
-                  <TileChooser
-                    onMutateTile={this.onMutateTile}
-                    currentTile={this.state.tileData}
-                  />
-                )}
-              </div>
+                <div ref={node => (this.ref = node)}>
+                  {this.state.showTileChooser && (
+                    <TileChooser
+                      onMutateTile={this.onMutateTile}
+                      currentTile={this.state.tileData}
+                    />
+                  )}
+                </div>
+              </Button.Group>
             </Grid.Column>
             <Grid.Column>
               <Button.Group floated="right">
