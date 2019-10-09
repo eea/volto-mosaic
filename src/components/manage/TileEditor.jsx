@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
+import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import { tiles } from '~/config';
 import { Tab, Button, Modal, Grid } from 'semantic-ui-react';
-import { Icon as VoltoIcon } from '@plone/volto/components';
+import { Icon as VoltoIcon, TileChooser } from '@plone/volto/components';
 
-import SelectTileType from './SelectTileType';
+// import SelectTileType from './SelectTileType';
 import TileMetadataEditor from './TileMetadataEditor';
 
 import penIcon from '@plone/volto/icons/pen.svg';
@@ -26,7 +27,7 @@ class ModalEditor extends Component {
       tileid: props.tileid,
       formData: props.formData,
       tileData: tile,
-      useRecommendedHeight: false,
+      showTileChooser: false,
     };
 
     this.tileRef = React.createRef();
@@ -40,6 +41,21 @@ class ModalEditor extends Component {
     this.updateTileData = this.updateTileData.bind(this);
 
     this.panes = [];
+  }
+
+  handleClickOutside = e => {
+    if (this.ref && doesNodeContainClick(this.ref, e)) return;
+    this.setState(() => ({
+      showTileChooser: false,
+    }));
+  };
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside, false);
   }
 
   renderEditTile() {
@@ -157,23 +173,50 @@ class ModalEditor extends Component {
           <Grid columns={2}>
             <Grid.Column style={{ textAlign: 'left' }}>
               {/* <label htmlFor="select-tile-type">Set type:</label> */}
-              <SelectTileType
-                id="select-tile-type"
-                tiles={this.state.formData.tiles}
-                tile={this.state.tileData}
-                onMutateTile={this.onMutateTile}
-              />
+              {/* <SelectTileType */}
+              {/*   id="select-tile-type" */}
+              {/*   tiles={this.state.formData.tiles} */}
+              {/*   tile={this.state.tileData} */}
+              {/*   onMutateTile={this.onMutateTile} */}
+              {/* /> */}
+
+              <Button
+                basic
+                circular
+                primary
+                size="big"
+                onClick={() => this.setState({ showTileChooser: true })}
+              >
+                Set type
+              </Button>
+
+              <div ref={node => (this.ref = node)}>
+                {this.state.showTileChooser && (
+                  <TileChooser
+                    onMutateTile={this.onMutateTile}
+                    currentTile={this.state.tileData}
+                  />
+                )}
+              </div>
             </Grid.Column>
             <Grid.Column>
               <Button.Group floated="right">
                 <Button
-                  icon
                   basic
+                  circular
+                  primary
+                  size="big"
                   onClick={() => this.props.onClose(this.state.tileData)}
                 >
                   <VoltoIcon name={penIcon} color="green" className="circled" />
                 </Button>
-                <Button icon basic onClick={() => this.props.onClose()}>
+                <Button
+                  basic
+                  circular
+                  secondary
+                  size="big"
+                  onClick={() => this.props.onClose()}
+                >
                   <VoltoIcon color="red" name={clearIcon} className="circled" />
                 </Button>
               </Button.Group>
