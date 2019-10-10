@@ -23,13 +23,30 @@
 .ui.modal .ui.vertical.menu .item {
   display: flex;
   margin: 0;
+  font-weight: normal;
 }
 
-.ui.modal .ui.vertical.menu .item:hover,
+.ui.modal .ui.vertical.menu .active.item {
+  font-weight: 600;
+}
+
+.ui.modal .ui.vertical.menu {
+  display: -webkit-flex;
+  -webkit-flex-direction: column;
+  height: auto;
+  max-height: 150px;
+}
+
+.ui.modal .ui.vertical.menu .items {
+  -webkit-flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+/* .ui.modal .ui.vertical.menu .item:hover,
 .ui.modal .ui.vertical.menu .active.item {
   background-color: rgba(0, 0, 0, 0.02);
   color: #020;
-}
+} */
 
 .modal .tile {
   min-height: 400px;
@@ -234,6 +251,12 @@
   border: 6px solid gray;
   padding: 6px;
 }
+
+.tile-container p {
+  margin: 0;
+}
+
+
 #layout-preview-sm {
   /* for some reasone need to add 24px, probably padding and border */
   width: 792px !important;

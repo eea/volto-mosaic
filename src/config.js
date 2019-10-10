@@ -6,4 +6,4 @@ export const screenSizes = {
   xs: 'Phone',
   xxs: 'Small screen',
 };
-export const rowHeight = 30;
+export const rowHeight = 21;
