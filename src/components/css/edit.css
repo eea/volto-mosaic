@@ -256,13 +256,17 @@
   margin: 0;
 }
 
+#layout-preview-lg {
+  width: 1573px !important;
+}
+
+#layout-preview-md {
+  width: 1020px !important;
+}
 
 #layout-preview-sm {
   /* for some reasone need to add 24px, probably padding and border */
   width: 792px !important;
-}
-#layout-preview-md {
-  width: 1020 !important;
 }
 #layout-preview-xs {
   width: 504px !important;
