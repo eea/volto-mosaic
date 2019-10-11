@@ -34,7 +34,7 @@ import { TileViewWrapper } from './../theme/View';
 import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
 
-// import { tiles } from '~/config';
+import { tiles } from '~/config';
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -483,12 +483,6 @@ class Form extends Component {
   createElement(el) {
     const tileid = el.i;
 
-    const formData = this.state.formData;
-    const tilesFieldname = getTilesFieldname(formData);
-
-    let tile = formData[tilesFieldname][tileid];
-    const hasData = tile['@type'] !== 'text';
-
     // const removeStyle = {
     //   position: 'absolute',
     //   right: '2px',
@@ -508,47 +502,61 @@ class Form extends Component {
             showUpdate={this.onShowTile}
           />
         ) : (
-          <div
-            className={
-              hasData ? 'tile-edit-wrapper empty' : 'tile-edit-wrapper'
-            }
-          >
-            <div className={this.getTileClass(tile)}>
-              {el.h > 2 && (
-                <div className="tile-size-info">
-                  {el.w} cols x {el.h} rows
-                </div>
-              )}
-              <div>
-                {el.h > 2 && (
-                  <div>
-                    <h4>{tile.mosaic_tile_title || tile['@type']}</h4>
-                  </div>
-                )}
-                <Button.Group size="mini">
-                  <Button
-                    size="mini"
-                    icon
-                    color="green"
-                    onClick={() => this.handleOpen(tileid)}
-                  >
-                    <Icon name={editIcon} size="10" />
-                  </Button>
-                  {this.state.activeScreenSize === 'lg' && (
-                    <Button
-                      size="mini"
-                      icon
-                      color="red"
-                      onClick={this.onRemoveItem.bind(this, i)}
-                    >
-                      <Icon name={deleteIcon} size="10" />
-                    </Button>
-                  )}
-                </Button.Group>
-              </div>
-            </div>
-          </div>
+          this.renderEditTilePlaceholder(el, tileid)
         )}
+      </div>
+    );
+  }
+
+  renderEditTilePlaceholder(el, tileid) {
+    const formData = this.state.formData;
+    const tilesFieldname = getTilesFieldname(formData);
+
+    let tile = formData[tilesFieldname][tileid];
+    const hasData = tile['@type'] !== 'text';
+    const i = el.add ? '+' : el.i; // what is this?
+
+    return (
+      <div
+        className={hasData ? 'tile-edit-wrapper empty' : 'tile-edit-wrapper'}
+      >
+        <div className={this.getTileClass(tile)}>
+          {el.h > 2 && (
+            <div className="tile-size-info">
+              {el.w} cols x {el.h} rows
+            </div>
+          )}
+          <div>
+            {el.h > 2 && (
+              <div>
+                <h4>
+                  {tile.mosaic_tile_title ||
+                    tiles.tilesConfig[tile['@type']].title}
+                </h4>
+              </div>
+            )}
+            <Button.Group size="mini">
+              <Button
+                size="mini"
+                icon
+                color="green"
+                onClick={() => this.handleOpen(tileid)}
+              >
+                <Icon name={editIcon} size="10" />
+              </Button>
+              {this.state.activeScreenSize === 'lg' && (
+                <Button
+                  size="mini"
+                  icon
+                  color="red"
+                  onClick={this.onRemoveItem.bind(this, i)}
+                >
+                  <Icon name={deleteIcon} size="10" />
+                </Button>
+              )}
+            </Button.Group>
+          </div>
+        </div>
       </div>
     );
   }

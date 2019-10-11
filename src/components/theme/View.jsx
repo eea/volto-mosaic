@@ -79,16 +79,6 @@ export class TileViewWrapper extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!this.props.showUpdate) return; // don't need this on View
 
-    // console.log('componentDidUpdate', this.props, this.state);
-    // if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
-    //   console.log('componentDidUpdate different props');
-    //   this.setState({ updated: true }, () => {
-    //     const height = this.getHeight();
-    //     this.props.showUpdate(this.props.tileid, height);
-    //   });
-    //   return;
-    // }
-
     if (this.state.updated) return;
 
     this.setState({ updated: true }, () => {
@@ -96,28 +86,12 @@ export class TileViewWrapper extends Component {
       console.log('componentDidUpdate default code', this.props.tileid, height);
       this.props.showUpdate(this.props.tileid, height);
     });
-
-    // this.props.showUpdate(this.props.tileid, height);
-    // if (this.props.previewState !== prevProps.previewState) { }
-    // const tileid = this.props.tileid;
-    // const formData = this.props.formData;
-    // const tilesFieldname = getTilesFieldname(formData);
-    // const tileData = formData[tilesFieldname][tileid];
-    // const prevData = prevProps && prevProps.formData[tilesFieldname][tileid];
-    // if (!prevData || JSON.stringify(tileData) !== JSON.stringify(prevData)) {
-    //   this.props.showUpdate(this.props.useref);
-    // }
   }
 }
 
 class View extends Component {
   static defaultProps = {
-    className: 'layout',
-    isDraggable: false,
-    isResizable: false,
-    items: 50,
     cols: 12,
-    rowHeight: 30,
     margin: [0, 0],
     onLayoutChange: function() {},
   };
@@ -138,6 +112,7 @@ class View extends Component {
   }
 
   renderTiles() {
+    console.log('render tiles');
     return this.state.mosaic_layout['lg'].map((item, i) => {
       return (
         <div key={item.i}>
@@ -160,10 +135,10 @@ class View extends Component {
               breakpoints={breakpoints}
               cols={{
                 lg: 12,
-                md: this.state.mosaic_layout.md ? 12 : 9, // is this a good default?
-                sm: this.state.mosaic_layout.sm ? 12 : 6,
-                xs: this.state.mosaic_layout.xs ? 12 : 3,
-                xxs: this.state.mosaic_layout.xxs ? 12 : 2,
+                md: this.state.mosaic_layout.md ? 12 : 12, // is this a good default?
+                sm: this.state.mosaic_layout.sm ? 12 : 12,
+                xs: this.state.mosaic_layout.xs ? 2 : 12,
+                xxs: this.state.mosaic_layout.xxs ? 1 : 12,
               }}
               measureBeforeMount={true}
               rowHeight={rowHeight}
