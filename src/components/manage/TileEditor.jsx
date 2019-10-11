@@ -185,9 +185,6 @@ class ModalEditor extends Component {
             <Grid.Column style={{ textAlign: 'left' }}>
               <Button.Group floated="left">
                 <Button
-                  basic
-                  primary
-                  size="big"
                   onClick={() => this.setState({ showTileChooser: true })}
                 >
                   {this.state.tileData['@type']
@@ -211,10 +208,9 @@ class ModalEditor extends Component {
                   basic
                   circular
                   primary
-                  size="big"
                   onClick={() => this.props.onClose(this.state.tileData)}
                 >
-                  <VoltoIcon name={penIcon} color="green" className="circled" />
+                  <VoltoIcon name={penIcon} className="circled" />
                 </Button>
                 <Button
                   basic
@@ -223,7 +219,7 @@ class ModalEditor extends Component {
                   size="big"
                   onClick={() => this.props.onClose()}
                 >
-                  <VoltoIcon color="red" name={clearIcon} className="circled" />
+                  <VoltoIcon name={clearIcon} className="circled" />
                 </Button>
               </Button.Group>
             </Grid.Column>
