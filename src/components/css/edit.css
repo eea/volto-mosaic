@@ -285,3 +285,8 @@
 #layout-preview-xxs {
   width: 484px !important;
 }
+.tile-chooser {
+  top:unset;
+  left: 0;
+  bottom: 100%;
+}

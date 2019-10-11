@@ -56,7 +56,7 @@ class LayoutToolbar extends Component {
       const res = Object.assign({}, el);
       const has = Object.keys(layouts).indexOf(el.value) > -1;
       // TODO: use appropriate icons, load fontawesome, something
-      if (has) res.icon = <VoltoIcon name={checkIcon} size={10} />;
+      if (has) res.icon = <VoltoIcon name={checkIcon} size="10" />;
       return res;
     });
     return screens;

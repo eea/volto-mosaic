@@ -85,7 +85,7 @@ function fallbackLayoutFromData(formData, ids) {
   const tilesFieldname = getTilesFieldname(formData);
   const tilesLayoutFieldname = getTilesLayoutFieldname(formData);
 
-  const order = formData[tilesLayoutFieldname].items;
+  const order = formData[tilesLayoutFieldname].items || [];
   const data = formData[tilesFieldname];
 
   const fallbackLayout = [
@@ -233,10 +233,8 @@ class Form extends Component {
       };
     }
 
-    const refs = formData[tilesLayoutFieldname].items.map(id => [
-      id,
-      React.createRef(),
-    ]);
+    const items = formData[tilesLayoutFieldname].items || [];
+    const refs = items.map(id => [id, React.createRef()]);
 
     this.state = {
       formData,
@@ -683,7 +681,10 @@ class Form extends Component {
         formData: {
           ...this.state.formData,
           [tilesLayoutFieldname]: {
-            items: [...this.state.formData[tilesLayoutFieldname].items, id],
+            items: [
+              ...(this.state.formData[tilesLayoutFieldname].items || []),
+              id,
+            ],
             mosaic_layout: { ...mosaic_layout },
           },
           [tilesFieldname]: {

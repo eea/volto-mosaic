@@ -130,7 +130,7 @@ class Edit extends Component {
     let nextType = nextProps.content && nextProps.content['@type'];
     let type = this.props.content && this.props.content['@type'];
 
-    if (nextType && (nextType !== type) && nextType === 'Plone Site') {
+    if (nextType && nextType !== type && nextType === 'Plone Site') {
       this.setState({
         visual: true,
       });
@@ -169,9 +169,12 @@ class Edit extends Component {
    * @returns {string} Markup for the component.
    */
   render() {
+    console.log('rendering edit');
     if (this.props.schemaRequest.loaded && this.props.content) {
-      let FormImpl = this.props.content.layout == 'mosaic_tiles_view' ?
-        MosaicForm : Form;
+      let isMosaic = false;
+      if (this.props.content.layout === 'mosaic_tiles_view') isMosaic = true;
+      if (this.props.content['@type'] === 'Plone Site') isMosaic = true;
+      let FormImpl = isMosaic ? MosaicForm : Form;
       return (
         <div id="page-edit">
           <Helmet
