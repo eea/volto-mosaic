@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
 import { Button, Form as UiForm, Segment } from 'semantic-ui-react';
-import { defineMessages, injectIntl, intlShape } from 'react-intl';
+import { defineMessages, injectIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
 
@@ -136,14 +136,13 @@ class Form extends Component {
       properties: PropTypes.objectOf(PropTypes.any),
       definitions: PropTypes.objectOf(PropTypes.any),
       required: PropTypes.arrayOf(PropTypes.string),
-    }).isRequired,
+    }),
     formData: PropTypes.objectOf(PropTypes.any),
     pathname: PropTypes.string,
     onSubmit: PropTypes.func,
     onCancel: PropTypes.func,
     submitLabel: PropTypes.string,
     resetAfterSubmit: PropTypes.bool,
-    intl: intlShape.isRequired,
     title: PropTypes.string,
     error: PropTypes.shape({
       message: PropTypes.string,
@@ -156,19 +155,20 @@ class Form extends Component {
   };
 
   static defaultProps = {
-    formData: null,
-    onSubmit: null,
-    onCancel: null,
-    submitLabel: null,
-    resetAfterSubmit: false,
-    title: null,
     description: null,
     error: null,
-    loading: null,
+    formData: null,
     hideActions: false,
-    visual: false,
-    tiles: [],
+    loading: null,
+    onCancel: null,
+    onSubmit: null,
     pathname: '',
+    resetAfterSubmit: false,
+    schema: {},
+    submitLabel: null,
+    tiles: [],
+    title: null,
+    visual: false,
 
     preview: false,
     // Grid props
@@ -807,6 +807,7 @@ class Form extends Component {
 
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
+    console.log('render props', this.props);
 
     return this.props.visual ? (
       <div className="ui wrapper">
@@ -907,25 +908,26 @@ class Form extends Component {
             onSubmit={this.onSubmit}
             error={keys(this.state.errors).length > 0}
           >
-            {map(schema.fieldsets, item => [
-              <Segment secondary attached key={item.title}>
-                {item.title}
-              </Segment>,
-              <Segment attached key={`fieldset-contents-${item.title}`}>
-                {map(item.fields, (field, index) => (
-                  <Field
-                    {...schema.properties[field]}
-                    id={field}
-                    focus={index === 0}
-                    value={this.state.formData[field]}
-                    required={schema.required.indexOf(field) !== -1}
-                    onChange={this.onChangeField}
-                    key={field}
-                    error={this.state.errors[field]}
-                  />
-                ))}
-              </Segment>,
-            ])}
+            {schema &&
+              map(schema.fieldsets, item => [
+                <Segment secondary attached key={item.title}>
+                  {item.title}
+                </Segment>,
+                <Segment attached key={`fieldset-contents-${item.title}`}>
+                  {map(item.fields, (field, index) => (
+                    <Field
+                      {...schema.properties[field]}
+                      id={field}
+                      focus={index === 0}
+                      value={this.state.formData[field]}
+                      required={schema.required.indexOf(field) !== -1}
+                      onChange={this.onChangeField}
+                      key={field}
+                      error={this.state.errors[field]}
+                    />
+                  ))}
+                </Segment>,
+              ])}
           </UiForm>
         </Portal>
       </div>
@@ -1046,4 +1048,4 @@ class Form extends Component {
   // }
 }
 
-export default injectIntl(Form, { withRef: true });
+export default injectIntl(Form, { forwardRef: true });

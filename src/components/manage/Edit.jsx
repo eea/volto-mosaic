@@ -1,26 +1,20 @@
-/**
- * Edit container.
- * @module components/manage/Edit/Edit
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import VoltoEdit from '@plone/volto/components/manage/Edit/Edit';
+import MosaicForm from './Form';
+import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
+import { defineMessages, injectIntl } from 'react-intl';
 import Helmet from 'react-helmet';
+import { Portal } from 'react-portal';
+import saveSVG from '@plone/volto/icons/save.svg';
+import clearSVG from '@plone/volto/icons/clear.svg';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { defineMessages, injectIntl, intlShape } from 'react-intl';
-import { Portal } from 'react-portal';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import qs from 'query-string';
-
-import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
 import { updateContent, getContent, getSchema } from '@plone/volto/actions';
+import PropTypes from 'prop-types';
 import { getBaseUrl, hasTilesData } from '@plone/volto/helpers';
-import MosaicForm from './Form';
-
-import saveSVG from '@plone/volto/icons/save.svg';
-import clearSVG from '@plone/volto/icons/clear.svg';
 
 const messages = defineMessages({
   edit: {
@@ -37,17 +31,7 @@ const messages = defineMessages({
   },
 });
 
-/**
- * Edit class.
- * @class Edit
- * @extends Component
- */
-class Edit extends Component {
-  /**
-   * Property types.
-   * @property {Object} propTypes Property types.
-   * @static
-   */
+class Edit extends VoltoEdit {
   static propTypes = {
     updateContent: PropTypes.func.isRequired,
     getContent: PropTypes.func.isRequired,
@@ -70,7 +54,6 @@ class Edit extends Component {
       '@type': PropTypes.string,
     }),
     schema: PropTypes.objectOf(PropTypes.any),
-    intl: intlShape.isRequired,
   };
 
   /**
@@ -79,7 +62,7 @@ class Edit extends Component {
    * @static
    */
   static defaultProps = {
-    schema: null,
+    schema: {},
     content: null,
     returnUrl: null,
   };
@@ -93,7 +76,7 @@ class Edit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visual: false,
+      visual: true,
     };
     this.onCancel = this.onCancel.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -119,18 +102,14 @@ class Edit extends Component {
       this.props.getSchema(nextProps.content['@type']);
     }
     if (this.props.schemaRequest.loading && nextProps.schemaRequest.loaded) {
-      if (hasTilesData(nextProps.schema.properties)) {
+      if (!hasTilesData(nextProps.schema.properties)) {
         this.setState({
-          visual: true,
+          visual: false,
         });
       }
     }
     // Hack for make the Plone site editable by Volto Editor without checkings
-    console.log('received props', nextProps);
-    let nextType = nextProps.content && nextProps.content['@type'];
-    let type = this.props.content && this.props.content['@type'];
-
-    if (nextType && nextType !== type && nextType === 'Plone Site') {
+    if (this.props.content['@type'] === 'Plone Site') {
       this.setState({
         visual: true,
       });
@@ -163,86 +142,94 @@ class Edit extends Component {
     );
   }
 
-  /**
-   * Render method.
-   * @method render
-   * @returns {string} Markup for the component.
-   */
+  form = React.createRef();
+
   render() {
-    console.log('rendering edit');
-    if (this.props.schemaRequest.loaded && this.props.content) {
-      let isMosaic = false;
-      if (this.props.content.layout === 'mosaic_tiles_view') isMosaic = true;
-      if (this.props.content['@type'] === 'Plone Site') isMosaic = true;
-      let FormImpl = isMosaic ? MosaicForm : Form;
-      return (
-        <div id="page-edit">
-          <Helmet
-            title={this.props.intl.formatMessage(messages.edit, {
-              title: this.props.schema.title,
-            })}
-          />
-          <FormImpl
-            ref={instance => {
-              if (instance) {
-                this.form = instance.refs.wrappedInstance;
-              }
-            }}
-            schema={this.props.schema}
-            formData={this.props.content}
-            onSubmit={this.onSubmit}
-            hideActions
+    // This is the only thing different from the original. This version comes
+    // from Volto 4.0.0.alpha-9
+    let isMosaic = false;
+    let content = this.props.content;
+
+    if (content && this.props.content.layout === 'mosaic_tiles_view')
+      isMosaic = true;
+    if (content && this.props.content['@type'] === 'Plone Site')
+      isMosaic = true;
+    const FormImpl = isMosaic ? MosaicForm : Form;
+    // const FwdFormImpl = React.forwardRef((props, ref) => (
+    //   <FormImpl {...props} />
+    // ));
+    //
+
+    return (
+      <div id="page-edit">
+        <Helmet
+          title={
+            this.props?.schema?.title
+              ? this.props.intl.formatMessage(messages.edit, {
+                  title: this.props.schema.title,
+                })
+              : null
+          }
+        />
+        <FormImpl
+          ref={this.form}
+          schema={this.props.schema}
+          formData={this.props.content}
+          onSubmit={this.onSubmit}
+          hideActions
+          pathname={this.props.pathname}
+          visual={this.state.visual}
+          title={
+            this.props?.schema?.title
+              ? this.props.intl.formatMessage(messages.edit, {
+                  title: this.props.schema.title,
+                })
+              : null
+          }
+          loading={this.props.updateRequest.loading}
+        />
+        <Portal node={__CLIENT__ && document.getElementById('toolbar')}>
+          <Toolbar
             pathname={this.props.pathname}
-            visual={this.state.visual}
-            title={this.props.intl.formatMessage(messages.edit, {
-              title: this.props.schema.title,
-            })}
-            loading={this.props.updateRequest.loading}
+            hideDefaultViewButtons
+            inner={
+              <>
+                <button
+                  id="toolbar-save"
+                  className="save"
+                  aria-label={this.props.intl.formatMessage(messages.save)}
+                  onClick={() => this.form.current.onSubmit()}
+                >
+                  <Icon
+                    name={saveSVG}
+                    className="circled"
+                    size="30px"
+                    title={this.props.intl.formatMessage(messages.save)}
+                  />
+                </button>
+                <button
+                  className="cancel"
+                  aria-label={this.props.intl.formatMessage(messages.cancel)}
+                  onClick={() => this.onCancel()}
+                >
+                  <Icon
+                    name={clearSVG}
+                    className="circled"
+                    size="30px"
+                    title={this.props.intl.formatMessage(messages.cancel)}
+                  />
+                </button>
+              </>
+            }
           />
-          <Portal node={__CLIENT__ && document.getElementById('toolbar')}>
-            <Toolbar
-              pathname={this.props.pathname}
-              hideDefaultViewButtons
-              inner={
-                <>
-                  <button
-                    id="toolbar-save"
-                    className="save"
-                    aria-label={this.props.intl.formatMessage(messages.save)}
-                    onClick={() => this.form.onSubmit()}
-                  >
-                    <Icon
-                      name={saveSVG}
-                      className="circled"
-                      size="30px"
-                      title={this.props.intl.formatMessage(messages.save)}
-                    />
-                  </button>
-                  <button
-                    className="cancel"
-                    aria-label={this.props.intl.formatMessage(messages.cancel)}
-                    onClick={() => this.onCancel()}
-                  >
-                    <Icon
-                      name={clearSVG}
-                      className="circled"
-                      size="30px"
-                      title={this.props.intl.formatMessage(messages.cancel)}
-                    />
-                  </button>
-                </>
-              }
-            />
+        </Portal>
+        {this.state.visual && (
+          <Portal node={__CLIENT__ && document.getElementById('sidebar')}>
+            <Sidebar />
           </Portal>
-          {this.state.visual && (
-            <Portal node={__CLIENT__ && document.getElementById('sidebar')}>
-              <Sidebar />
-            </Portal>
-          )}
-        </div>
-      );
-    }
-    return <div />;
+        )}
+      </div>
+    );
   }
 }
 
