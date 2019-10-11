@@ -205,14 +205,24 @@
 .tile-edit-manual {
   /* background-image: linear-gradient(45deg, #B2A2CD 25%, transparent 25%, transparent 50%, #B2A2CD 50%, #B2A2CD 75%, #5F5370 75%, #5F5370 100%); */
   /* background-size: 6px 6px; */
-  background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
-    linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
-    linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
-    linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
-    linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
-  background-color: #131313;
-  background-size: 20px 20px;
+  /* background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px, */
+  /*   linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px, */
+  /*   linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px, */
+  /*   linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px, */
+  /*   linear-gradient(90deg, #1b1b1b 10px, transparent 10px), */
+  /*   linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424); */
+
+  /* background: */
+  /*   radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent), */
+  /*   radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent) 50px 50px, */
+  /*   linear-gradient(#A8B1BB 8px, transparent 8px) 0 -4px, */
+  /*   linear-gradient(90deg, #A8B1BB 8px, transparent 8px) -4px 0; */
+  background-color: slategray;
+  background-size:20px 20px, 20px 20px, 4px 4px, 4px 4px;
+  color: white;
+
+  /* background-color: #131313; */
+  /* background-size: 20px 20px; */
 }
 
 .tile-edit-fit-content {

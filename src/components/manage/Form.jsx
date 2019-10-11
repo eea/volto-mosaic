@@ -519,9 +519,6 @@ class Form extends Component {
                   {el.w} cols x {el.h} rows
                 </div>
               )}
-              {el.h > 2 && el.w > 4 && (
-                <div className="tile-uuid-info">{el.i}</div>
-              )}
               <div>
                 {el.h > 2 && (
                   <div>
@@ -956,6 +953,9 @@ class Form extends Component {
 
     this.setState(
       (state, props) => {
+        const tileData = state.formData[tilesFieldname][tileid] || {};
+        let mosaic_box_sizing = tileData.mosaic_box_sizing || 'fit-content';
+        if (neu.h !== old.h) mosaic_box_sizing = 'manual';
         return {
           dirtyLayout: true,
           formData: {
@@ -964,7 +964,7 @@ class Form extends Component {
               ...state.formData[tilesFieldname],
               [tileid]: {
                 ...state.formData[tilesFieldname][tileid],
-                mosaic_box_sizing: 'manual',
+                mosaic_box_sizing,
               },
             },
           },
