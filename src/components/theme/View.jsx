@@ -30,14 +30,16 @@ export class TileViewWrapper extends Component {
     const formData = this.props.formData;
     const tileid = this.props.tileid;
 
-    // const content = this.props.content;
     const tilesFieldname = getTilesFieldname(formData);
-    const availableTiles = formData[tilesFieldname];
-    const tiletype = availableTiles[tileid]['@type'].toLowerCase();
+    const tileData = formData[tilesFieldname][tileid];
+    if (!tileData) {
+      console.log('no tile data for tileid', tileid, formData[tilesFieldname]);
+      return '';
+    }
+    const tiletype = tileData['@type'].toLowerCase();
 
     let Tile = null;
     Tile = tiles.tilesConfig[tiletype].view;
-    const tileData = formData[tilesFieldname][tileid];
 
     let style = tileData.mosaic_box_style || 'default-tile';
     let klass = 'tile-wrapper ' + style;
@@ -48,11 +50,7 @@ export class TileViewWrapper extends Component {
           {tileData.tile_title && tileData.show_tile_title && (
             <h5 className="title-title">{tileData.tile_title}</h5>
           )}
-          <Tile
-            key={tileid}
-            properties={formData}
-            data={availableTiles[tileid]}
-          />
+          <Tile key={tileid} properties={formData} data={tileData} />
         </div>
       </div>
     ) : (
