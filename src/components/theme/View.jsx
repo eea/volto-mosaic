@@ -137,7 +137,9 @@ class View extends Component {
     const fullLayout = content[tilesLayoutFieldname];
 
     let layout =
-      fullLayout.mosaic_layout[size] || fullLayout.mosaic_layout['lg'];
+      fullLayout.mosaic_layout &&
+      (fullLayout.mosaic_layout[size] || fullLayout.mosaic_layout['lg']);
+    if (!layout) return;
     let tile = layout.find(t => t.i === tileid);
     let oldH = tile.h;
     let h = Math.ceil(height / rowHeight);
