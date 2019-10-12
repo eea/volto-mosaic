@@ -5,6 +5,7 @@ import { Responsive } from 'react-grid-layout';
 // import WidthProvider from './WidthProvider';
 import { tiles } from '~/config'; // settings,
 import { SizeMe } from 'react-sizeme';
+import _ from 'lodash';
 
 import {
   getTilesFieldname,
@@ -17,16 +18,16 @@ const ReactGridLayout = Responsive;
 export class TileViewWrapper extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       updated: false,
-      // ref: React.createRef(),
+      ref: props.useref || React.createRef(),
     };
 
     this.getHeight = this.getHeight.bind(this);
   }
 
   render() {
-    console.log('rendering tile');
     const formData = this.props.formData;
     const tileid = this.props.tileid;
 
@@ -45,7 +46,7 @@ export class TileViewWrapper extends Component {
     let klass = 'tile-wrapper ' + style;
 
     return Tile !== null ? (
-      <div className="tile-container" ref={this.props.useref}>
+      <div className="tile-container" ref={this.state.ref}>
         <div className={klass}>
           {tileData.tile_title && tileData.show_tile_title && (
             <h5 className="title-title">{tileData.tile_title}</h5>
@@ -59,13 +60,12 @@ export class TileViewWrapper extends Component {
   }
 
   getHeight() {
-    const node = ReactDOM.findDOMNode(this.props.useref.current);
-    // console.log('getheight', node);
-    return node.scrollHeight;
+    const node = ReactDOM.findDOMNode(this.state.ref.current);
+    return node && node.scrollHeight;
   }
 
   componentDidMount() {
-    if (!this.props.showUpdate) return; // don't need this on View
+    if (!this.props.showUpdate) return; // might not need this on View
 
     this.setState({ updated: false }, () => {
       const height = this.getHeight();
@@ -77,7 +77,12 @@ export class TileViewWrapper extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!this.props.showUpdate) return; // don't need this on View
 
-    if (this.state.updated) return;
+    // need this to avoid infinite recursion
+    if (
+      prevProps.containerWidth === this.props.containerWidth &&
+      this.state.updated
+    )
+      return;
 
     this.setState({ updated: true }, () => {
       const height = this.getHeight();
@@ -100,30 +105,94 @@ class View extends Component {
     const content = props.content;
     const tilesLayoutFieldname = getTilesLayoutFieldname(content);
     const layout = content[tilesLayoutFieldname];
+    console.log('received layout', layout);
 
     if (!__SERVER__) {
       this.state = {
         mosaic_layout: layout.mosaic_layout,
         items: layout.items,
+        activeMosaicLayout: 'lg',
+        containerWidth: null,
       };
     }
+
+    this.onTileShowUpdate = this.onTileShowUpdate.bind(this);
+    this.onBreakpointChange = this.onBreakpointChange.bind(this);
+    this.onWidthChange = this.onWidthChange.bind(this);
+  }
+
+  onTileShowUpdate(tileid, height) {
+    const size = this.state.activeMosaicLayout;
+
+    const content = this.props.content;
+    const tilesLayoutFieldname = getTilesLayoutFieldname(content);
+    const fullLayout = content[tilesLayoutFieldname];
+
+    let layout =
+      fullLayout.mosaic_layout[size] || fullLayout.mosaic_layout['lg'];
+    let tile = layout.find(t => t.i === tileid);
+    let oldH = tile.h;
+    let h = Math.ceil(height / rowHeight);
+
+    this.setState((state, props) => {
+      let newState = {
+        ...state,
+        mosaic_layout: {
+          ...fullLayout.mosaic_layout,
+          [size]: [{ ...tile, h }, ..._.without(layout, tile)],
+        },
+      };
+      console.log('new state', oldH, h, newState);
+
+      return newState;
+    });
   }
 
   renderTiles() {
-    console.log('render tiles');
+    // console.log('render tiles');
     return this.state.mosaic_layout['lg'].map((item, i) => {
       return (
         <div key={item.i}>
-          <TileViewWrapper tileid={item.i} formData={this.props.content} />
+          <TileViewWrapper
+            tileid={item.i}
+            formData={this.props.content}
+            showUpdate={this.onTileShowUpdate}
+            containerWidth={this.state.containerWidth}
+          />
         </div>
       );
     });
   }
 
-  render() {
-    console.log('breakpoints', breakpoints);
-    console.log('layouts', this.state.mosaic_layout);
+  onBreakpointChange(bk, cols) {
+    console.log('New breakpoint', bk, cols);
+    this.setState({
+      activeMosaicLayout: bk,
+    });
+  }
 
+  onWidthChange(containerWidth, margin, cols, containerPadding) {
+    // (containerWidth: number,
+    //   margin: [number, number],
+    //   cols: number,
+    //   containerPadding: [number, number])
+    console.log(
+      'On width change',
+      containerWidth,
+      margin,
+      cols,
+      containerPadding,
+    );
+    let width = Math.floor(containerWidth);
+    if (Math.abs(width - this.state.containerWidth) > 6) {
+      console.log('new width', width);
+      this.setState({
+        containerWidth: width,
+      });
+    }
+  }
+
+  render() {
     return this.state.mosaic_layout ? (
       <div>
         <SizeMe>
@@ -133,11 +202,13 @@ class View extends Component {
               breakpoints={breakpoints}
               cols={{
                 lg: 12,
-                md: this.state.mosaic_layout.md ? 12 : 12, // is this a good default?
-                sm: this.state.mosaic_layout.sm ? 12 : 12,
-                xs: this.state.mosaic_layout.xs ? 2 : 12,
-                xxs: this.state.mosaic_layout.xxs ? 1 : 12,
+                md: this.state.mosaic_layout.md ? 9 : 9, // is this a good default?
+                sm: this.state.mosaic_layout.sm ? 4 : 4,
+                xs: this.state.mosaic_layout.xs ? 2 : 2,
+                xxs: this.state.mosaic_layout.xxs ? 1 : 1,
               }}
+              onBreakpointChange={this.onBreakpointChange}
+              onWidthChange={this.onWidthChange}
               measureBeforeMount={true}
               rowHeight={rowHeight}
               margin={[0, 0]}
