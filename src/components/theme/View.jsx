@@ -61,7 +61,15 @@ export class TileViewWrapper extends Component {
 
   getHeight() {
     const node = ReactDOM.findDOMNode(this.state.ref.current);
-    return node && node.scrollHeight;
+    let child = node && node.querySelector('.tile-wrapper > *');
+    console.log('get height', node);
+    let height = (child && child.scrollHeight) || (node && node.scrollHeight);
+    // TODO: this is a hack. Need to make sure that this is correct;
+    // The problem is that tile-wrapper and its parrent tile-container are all
+    // 100% height. There is a conflict between need for static layout but also
+    // update dynamically, so we need to be a lot smarter and there will be
+    // a lot of edge cases that we can't avoid.
+    return height && height + 12; // also add paddings from tile-wrapper
   }
 
   componentDidMount() {
