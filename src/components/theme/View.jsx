@@ -62,7 +62,7 @@ export class TileViewWrapper extends Component {
   getHeight() {
     const node = ReactDOM.findDOMNode(this.state.ref.current);
     let child = node && node.querySelector('.tile-wrapper > *');
-    console.log('get height', node);
+    // console.log('get height', node);
     let height = (child && child.scrollHeight) || (node && node.scrollHeight);
     // TODO: this is a hack. Need to make sure that this is correct;
     // The problem is that tile-wrapper and its parrent tile-container are all
@@ -184,13 +184,13 @@ class View extends Component {
     //   margin: [number, number],
     //   cols: number,
     //   containerPadding: [number, number])
-    console.log(
-      'On width change',
-      containerWidth,
-      margin,
-      cols,
-      containerPadding,
-    );
+    // console.log(
+    //   'On width change',
+    //   containerWidth,
+    //   margin,
+    //   cols,
+    //   containerPadding,
+    // );
     let width = Math.floor(containerWidth);
     if (Math.abs(width - this.state.containerWidth) > 6) {
       console.log('new width', width);
