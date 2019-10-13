@@ -69,7 +69,7 @@ export class TileViewWrapper extends Component {
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
-    return height && height + 12; // also add paddings from tile-wrapper
+    return height && height + 20; // also add paddings from tile-wrapper
   }
 
   componentDidMount() {
