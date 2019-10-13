@@ -79,6 +79,14 @@ const messages = defineMessages({
   },
 });
 
+// Instead of Object.fromEntries
+function fromEntries(iterable) {
+  return [...iterable].reduce((obj, [key, val]) => {
+    obj[key] = val;
+    return obj;
+  }, {});
+}
+
 function fallbackLayoutFromData(formData, ids) {
   // create a default layout based on existing tiles
 
@@ -187,6 +195,8 @@ class Form extends Component {
   constructor(props) {
     super(props);
 
+    if (__SERVER__) return;
+
     const ids = {
       title: uuid(),
       text: uuid(),
@@ -245,7 +255,7 @@ class Form extends Component {
       activeScreenSize,
       activeMosaicLayout,
       dirtyLayout: false,
-      refs: Object.fromEntries(refs),
+      refs: fromEntries(refs),
       tileHeights: {},
     };
 
@@ -809,7 +819,7 @@ class Form extends Component {
     const { schema } = this.props; // , onCancel, onSubmit
     console.log('render props', this.props);
 
-    return this.props.visual ? (
+    return __CLIENT__ ? (
       <div className="ui wrapper">
         <LayoutToolbar
           availableScreens={this.state.availableScreens}

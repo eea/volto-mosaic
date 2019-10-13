@@ -117,11 +117,13 @@ class View extends Component {
 
     if (!__SERVER__) {
       this.state = {
-        mosaic_layout: layout.mosaic_layout,
+        mosaic_layout: (layout && layout.mosaic_layout) || {},
         items: layout.items,
         activeMosaicLayout: 'lg',
         containerWidth: null,
       };
+    } else {
+      this.state = {};
     }
 
     this.onTileShowUpdate = this.onTileShowUpdate.bind(this);
