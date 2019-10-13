@@ -39,6 +39,11 @@ export class TileViewWrapper extends Component {
     }
     const tiletype = tileData['@type'].toLowerCase();
 
+    if (!tiles.tilesConfig[tiletype]) {
+      console.log('Tile configuration not found', tiletype);
+      return '';
+    }
+
     let Tile = null;
     Tile = tiles.tilesConfig[tiletype].view;
 
