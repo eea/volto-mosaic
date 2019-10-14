@@ -524,6 +524,18 @@ class Form extends Component {
     const hasData = tile['@type'] !== 'text';
     const i = el.add ? '+' : el.i; // what is this?
 
+    let title = '';
+
+    if (!tiles.tilesConfig[tile['@type']]) {
+      console.log(
+        'could not find configuration for this tile type',
+        tile['@type'],
+      );
+      title = 'broken tile';
+    } else {
+      title = tile.mosaic_tile_title || tiles.tilesConfig[tile['@type']].title;
+    }
+
     return (
       <div
         className={hasData ? 'tile-edit-wrapper empty' : 'tile-edit-wrapper'}
@@ -537,10 +549,7 @@ class Form extends Component {
           <div>
             {el.h > 2 && (
               <div>
-                <h4>
-                  {tile.mosaic_tile_title ||
-                    tiles.tilesConfig[tile['@type']].title}
-                </h4>
+                <h4>{title}</h4>
               </div>
             )}
             <Button.Group size="mini">
