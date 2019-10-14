@@ -82,7 +82,7 @@ export class TileViewWrapper extends Component {
 
     this.setState({ updated: false }, () => {
       const height = this.getHeight();
-      console.log('componentDidMount', this.props.tileid, height);
+      // console.log('componentDidMount', this.props.tileid, height);
       this.props.showUpdate(this.props.tileid, height);
     });
   }
@@ -99,7 +99,7 @@ export class TileViewWrapper extends Component {
 
     this.setState({ updated: true }, () => {
       const height = this.getHeight();
-      console.log('componentDidUpdate default code', this.props.tileid, height);
+      // console.log('componentDidUpdate default code', this.props.tileid, height);
       this.props.showUpdate(this.props.tileid, height);
     });
   }
@@ -159,7 +159,7 @@ class View extends Component {
           [size]: [{ ...tile, h }, ..._.without(layout, tile)],
         },
       };
-      console.log('new state', oldH, h, newState);
+      // console.log('new state', oldH, h, newState);
 
       return newState;
     });
@@ -167,7 +167,7 @@ class View extends Component {
 
   renderTiles() {
     // console.log('render tiles');
-    return this.state.mosaic_layout['lg'].map((item, i) => {
+    return this.state.mosaic_layout['lg'] && this.state.mosaic_layout['lg'].map((item, i) => {
       return (
         <div key={item.i}>
           <TileViewWrapper
@@ -182,7 +182,7 @@ class View extends Component {
   }
 
   onBreakpointChange(bk, cols) {
-    console.log('New breakpoint', bk, cols);
+    console.log('New breakpoint', bk, cols, this.state.containerWidth);
     this.setState({
       activeMosaicLayout: bk,
     });
@@ -210,8 +210,9 @@ class View extends Component {
   }
 
   render() {
+    console.log(this.state.mosaic_layout)
     return this.state.mosaic_layout ? (
-      <div>
+      <div className="mosaic_view">
         <SizeMe>
           {({ size }) => (
             <ReactGridLayout
@@ -219,10 +220,10 @@ class View extends Component {
               breakpoints={breakpoints}
               cols={{
                 lg: 12,
-                md: this.state.mosaic_layout.md ? 9 : 9, // is this a good default?
-                sm: this.state.mosaic_layout.sm ? 4 : 4,
-                xs: this.state.mosaic_layout.xs ? 2 : 2,
-                xxs: this.state.mosaic_layout.xxs ? 1 : 1,
+                md: this.state.mosaic_layout.md ? 12 : 9, // is this a good default?
+                sm: this.state.mosaic_layout.sm ? 12 : 4,
+                xs: this.state.mosaic_layout.xs ? 12 : 2,
+                xxs: this.state.mosaic_layout.xxs ? 12 : 1,
               }}
               onBreakpointChange={this.onBreakpointChange}
               onWidthChange={this.onWidthChange}

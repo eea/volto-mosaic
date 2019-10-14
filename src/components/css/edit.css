@@ -272,12 +272,14 @@
 }
 
 #layout-preview-md {
-  width: 1020px !important;
+  /* width: 1230px !important; */
+  width: 1109px !important;
 }
 
 #layout-preview-sm {
   /* for some reasone need to add 24px, probably padding and border */
-  width: 792px !important;
+  /* width: 792px !important; */
+  width: 743px;
 }
 #layout-preview-xs {
   width: 504px !important;
