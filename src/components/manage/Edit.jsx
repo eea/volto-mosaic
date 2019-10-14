@@ -31,7 +31,7 @@ const messages = defineMessages({
   },
 });
 
-class Edit extends VoltoEdit {
+class Edit extends Component {
   static propTypes = {
     updateContent: PropTypes.func.isRequired,
     getContent: PropTypes.func.isRequired,
