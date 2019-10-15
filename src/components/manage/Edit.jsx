@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import VoltoEdit from '@plone/volto/components/manage/Edit/Edit';
 import MosaicForm from './Form';
 import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
