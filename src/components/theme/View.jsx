@@ -123,7 +123,7 @@ class View extends Component {
     if (!__SERVER__) {
       this.state = {
         mosaic_layout: (layout && layout.mosaic_layout) || {},
-        items: layout.items,
+        items: (layout && layout.items) || {},
         activeMosaicLayout: 'lg',
         containerWidth: null,
       };
