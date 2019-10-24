@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import VoltoEdit from '@plone/volto/components/manage/Edit/Edit';
+import React, { Component } from 'react';
+// import VoltoEdit from '@plone/volto/components/manage/Edit/Edit';
 import MosaicForm from './Form';
 import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
 import { defineMessages, injectIntl } from 'react-intl';
@@ -108,7 +108,7 @@ class Edit extends Component {
         });
       }
     }
-    // blabla
+
     // Hack for make the Plone site editable by Volto Editor without checkings
     if (this.props.content && this.props.content['@type'] === 'Plone Site') {
       this.setState({

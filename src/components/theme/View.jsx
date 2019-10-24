@@ -148,7 +148,7 @@ class View extends Component {
       (fullLayout.mosaic_layout[size] || fullLayout.mosaic_layout['lg']);
     if (!layout) return;
     let tile = layout.find(t => t.i === tileid);
-    let oldH = tile.h;
+    // let oldH = tile.h;
     let h = Math.ceil(height / rowHeight);
 
     this.setState((state, props) => {
@@ -167,18 +167,21 @@ class View extends Component {
 
   renderTiles() {
     // console.log('render tiles');
-    return this.state.mosaic_layout['lg'] && this.state.mosaic_layout['lg'].map((item, i) => {
-      return (
-        <div key={item.i}>
-          <TileViewWrapper
-            tileid={item.i}
-            formData={this.props.content}
-            showUpdate={this.onTileShowUpdate}
-            containerWidth={this.state.containerWidth}
-          />
-        </div>
-      );
-    });
+    return (
+      this.state.mosaic_layout['lg'] &&
+      this.state.mosaic_layout['lg'].map((item, i) => {
+        return (
+          <div key={item.i}>
+            <TileViewWrapper
+              tileid={item.i}
+              formData={this.props.content}
+              showUpdate={this.onTileShowUpdate}
+              containerWidth={this.state.containerWidth}
+            />
+          </div>
+        );
+      })
+    );
   }
 
   onBreakpointChange(bk, cols) {
@@ -210,7 +213,7 @@ class View extends Component {
   }
 
   render() {
-    console.log(this.state.mosaic_layout)
+    console.log(this.state.mosaic_layout);
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <SizeMe>
