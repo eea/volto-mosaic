@@ -3,14 +3,14 @@ import { breakpoints, rowHeight } from '../../config';
 import React, { Component } from 'react';
 import { Responsive } from 'react-grid-layout';
 // import WidthProvider from './WidthProvider';
-import { tiles } from '~/config'; // settings,
+import { blocks } from '~/config'; // settings,
 import { SizeMe } from 'react-sizeme';
 import _ from 'lodash';
 
 import {
-  getTilesFieldname,
-  getTilesLayoutFieldname,
-  // hasTilesData,
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+  // hasBlocksData,
 } from '@plone/volto/helpers';
 
 const ReactGridLayout = Responsive;
@@ -31,32 +31,32 @@ export class TileViewWrapper extends Component {
     const formData = this.props.formData;
     const tileid = this.props.tileid;
 
-    const tilesFieldname = getTilesFieldname(formData);
-    const tileData = formData[tilesFieldname][tileid];
-    if (!tileData) {
+    const tilesFieldname = getBlocksFieldname(formData);
+    const blockData = formData[tilesFieldname][tileid];
+    if (!blockData) {
       console.log('no tile data for tileid', tileid, formData[tilesFieldname]);
       return '';
     }
-    const tiletype = tileData['@type'].toLowerCase();
+    const tiletype = blockData['@type'].toLowerCase();
 
-    if (!tiles.tilesConfig[tiletype]) {
+    if (!blocks.tilesConfig[tiletype]) {
       console.log('Tile configuration not found', tiletype);
       return '';
     }
 
     let Tile = null;
-    Tile = tiles.tilesConfig[tiletype].view;
+    Tile = blocks.tilesConfig[tiletype].view;
 
-    let style = tileData.mosaic_box_style || 'default-tile';
+    let style = blockData.mosaic_box_style || 'default-tile';
     let klass = 'tile-wrapper ' + style;
 
     return Tile !== null ? (
       <div className="tile-container" ref={this.state.ref}>
         <div className={klass}>
-          {tileData.tile_title && tileData.show_tile_title && (
-            <h5 className="title-title">{tileData.tile_title}</h5>
+          {blockData.tile_title && blockData.show_tile_title && (
+            <h5 className="title-title">{blockData.tile_title}</h5>
           )}
-          <Tile key={tileid} properties={formData} data={tileData} />
+          <Tile key={tileid} properties={formData} data={blockData} />
         </div>
       </div>
     ) : (
@@ -116,7 +116,7 @@ class View extends Component {
     super(props);
 
     const content = props.content;
-    const tilesLayoutFieldname = getTilesLayoutFieldname(content);
+    const tilesLayoutFieldname = getBlocksLayoutFieldname(content);
     const layout = content[tilesLayoutFieldname];
     console.log('received layout', layout);
 
@@ -140,7 +140,7 @@ class View extends Component {
     const size = this.state.activeMosaicLayout;
 
     const content = this.props.content;
-    const tilesLayoutFieldname = getTilesLayoutFieldname(content);
+    const tilesLayoutFieldname = getBlocksLayoutFieldname(content);
     const fullLayout = content[tilesLayoutFieldname];
 
     let layout =
@@ -166,7 +166,7 @@ class View extends Component {
   }
 
   renderTiles() {
-    // console.log('render tiles');
+    // console.log('render blocks');
     return (
       this.state.mosaic_layout['lg'] &&
       this.state.mosaic_layout['lg'].map((item, i) => {

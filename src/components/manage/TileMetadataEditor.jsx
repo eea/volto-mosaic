@@ -23,7 +23,7 @@ class TileMetadataEditor extends Component {
     super(props);
     console.log('props in tilemetadateeditor', props);
 
-    const tile = JSON.parse(JSON.stringify(props.tileData));
+    const tile = JSON.parse(JSON.stringify(props.blockData));
     let show_tile_title = tile.show_tile_title;
 
     if (Object.keys(tile).indexOf('show_tile_title') === -1) {

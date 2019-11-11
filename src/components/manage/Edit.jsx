@@ -14,7 +14,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import qs from 'query-string';
 import { updateContent, getContent, getSchema } from '@plone/volto/actions';
 import PropTypes from 'prop-types';
-import { getBaseUrl, hasTilesData } from '@plone/volto/helpers';
+import { getBaseUrl, hasBlocksData } from '@plone/volto/helpers';
 
 const messages = defineMessages({
   edit: {
@@ -102,7 +102,7 @@ class Edit extends Component {
       this.props.getSchema(nextProps.content['@type']);
     }
     if (this.props.schemaRequest.loading && nextProps.schemaRequest.loaded) {
-      if (!hasTilesData(nextProps.schema.properties)) {
+      if (!hasBlocksData(nextProps.schema.properties)) {
         this.setState({
           visual: false,
         });

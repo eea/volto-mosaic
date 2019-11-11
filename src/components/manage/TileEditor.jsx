@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
-import { tiles } from '~/config';
+import { blocks } from '~/config';
 import { Tab, Button, Modal, Grid } from 'semantic-ui-react';
-import { Icon as VoltoIcon, TileChooser } from '@plone/volto/components';
+import { Icon as VoltoIcon, BlockChooser } from '@plone/volto/components';
 
 import TileMetadataEditor from './TileMetadataEditor';
 
@@ -11,21 +11,21 @@ import penIcon from '@plone/volto/icons/pen.svg';
 import clearIcon from '@plone/volto/icons/clear.svg';
 
 // import PropTypes from 'prop-types';
-// import TileDataEditor from './TileDataEditor';
+// import blockDataEditor from './blockDataEditor';
 
 class ModalEditor extends Component {
   constructor(props) {
     super(props);
 
     const tile = JSON.parse(
-      JSON.stringify(props.formData['tiles'][props.tileid]),
+      JSON.stringify(props.formData['blocks'][props.tileid]),
     );
 
     this.state = {
-      // tiles: props.tiles,
+      // blocks: props.blocks,
       tileid: props.tileid,
       formData: props.formData,
-      tileData: tile,
+      blockData: tile,
       showTileChooser: false,
       activeTabPage: 0,
     };
@@ -36,9 +36,9 @@ class ModalEditor extends Component {
 
     // this is ugly, should reduce number of similar methods
     this.onChangeTile = this.onChangeTile.bind(this);
-    this.onMutateTile = this.onMutateTile.bind(this);
+    this.onMutateBlock = this.onMutateBlock.bind(this);
     this.handleMetadataChange = this.handleMetadataChange.bind(this);
-    this.updateTileData = this.updateTileData.bind(this);
+    this.updateblockData = this.updateblockData.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
 
     this.panes = [];
@@ -61,12 +61,12 @@ class ModalEditor extends Component {
 
   renderEditTile() {
     // const { formData } = this.state; // destructuring
-    // const tilesFieldname = getTilesFieldname(formData);
+    // const tilesFieldname = getBlocksFieldname(formData);
     // const tilesDict = formData[tilesFieldname];
 
     let Tile = null;
-    let type = this.state.tileData['@type'].toLowerCase();
-    Tile = tiles.tilesConfig[type].edit;
+    let type = this.state.blockData['@type'].toLowerCase();
+    Tile = blocks.blocksConfig[type].edit;
 
     let nop = () => {};
 
@@ -74,11 +74,11 @@ class ModalEditor extends Component {
       <Tile
         id={this.state.tileid}
         tile={this.state.tileid}
-        data={this.state.tileData}
+        data={this.state.blockData}
         properties={this.state.formData}
-        onAddTile={nop}
+        onAddBlock={nop}
         onChangeTile={this.onChangeTile}
-        onMutateTile={nop}
+        onMutateBlock={nop}
         onChangeField={nop}
         onDeleteTile={nop}
         onSelectTile={nop}
@@ -97,15 +97,15 @@ class ModalEditor extends Component {
   onChangeTile(id, value) {
     // handles editing inside the actual tile editor (ex: TinyMCE)
     this.setState({
-      tileData: { ...value },
+      blockData: { ...value },
     });
   }
 
-  onMutateTile(tile, choice) {
+  onMutateBlock(tile, choice) {
     // handles changing the tile type. Needed by the <Tile> component?
     this.setState({
-      tileData: {
-        ...this.state.tileData,
+      blockData: {
+        ...this.state.blockData,
         ...choice,
       },
       showTileChooser: false,
@@ -116,11 +116,11 @@ class ModalEditor extends Component {
   handleMetadataChange(values) {
     // handles changes coming from the metadata editor
 
-    let tileData = this.state.tileData;
+    let blockData = this.state.blockData;
     this.setState(
       {
-        tileData: {
-          ...tileData,
+        blockData: {
+          ...blockData,
           ...values,
         },
       },
@@ -130,13 +130,13 @@ class ModalEditor extends Component {
     );
   }
 
-  updateTileData(name, data) {
-    let tileData = this.state.tileData;
+  updateblockData(name, data) {
+    let blockData = this.state.blockData;
     // TODO: check if this doesn't introduce extra render of tile editor
 
     this.setState({
-      tileData: {
-        ...tileData,
+      blockData: {
+        ...blockData,
         [name]: data,
       },
     });
@@ -172,7 +172,7 @@ class ModalEditor extends Component {
                   <Tab.Pane>
                     <TileMetadataEditor
                       onDataChange={this.handleMetadataChange}
-                      tileData={this.state.tileData}
+                      blockData={this.state.blockData}
                     />
                   </Tab.Pane>
                 ),
@@ -187,16 +187,16 @@ class ModalEditor extends Component {
                 <Button
                   onClick={() => this.setState({ showTileChooser: true })}
                 >
-                  {this.state.tileData['@type']
-                    ? tiles.tilesConfig[this.state.tileData['@type']].title
+                  {this.state.blockData['@type']
+                    ? blocks.blocksConfig[this.state.blockData['@type']].title
                     : 'Set type'}
                 </Button>
 
                 <div ref={node => (this.ref = node)}>
                   {this.state.showTileChooser && (
-                    <TileChooser
-                      onMutateTile={this.onMutateTile}
-                      currentTile={this.state.tileData}
+                    <BlockChooser
+                      onMutateBlock={this.onMutateBlock}
+                      currentTile={this.state.blockData}
                     />
                   )}
                 </div>
@@ -208,7 +208,7 @@ class ModalEditor extends Component {
                   basic
                   circular
                   primary
-                  onClick={() => this.props.onClose(this.state.tileData)}
+                  onClick={() => this.props.onClose(this.state.blockData)}
                 >
                   <VoltoIcon name={penIcon} className="circled" />
                 </Button>
