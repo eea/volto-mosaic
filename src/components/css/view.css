@@ -1,5 +1,5 @@
-#page-document .mosaic-tile,
-.mosaic-preview-body .mosaic-tile {
+#page-document .mosaic-block,
+.mosaic-preview-body .mosaic-block {
   margin: 0;
 }
 
@@ -38,7 +38,7 @@
   display: none!important;
 }
 
-#page-document .tile-container,
-.mosaic-preview-body .tile-container {
+#page-document .block-container,
+.mosaic-preview-body .block-container {
   height: 100%;
 }

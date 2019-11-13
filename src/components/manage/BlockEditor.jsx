@@ -4,8 +4,11 @@ import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import { blocks } from '~/config';
 import { Tab, Button, Modal, Grid } from 'semantic-ui-react';
 import { Icon as VoltoIcon, BlockChooser } from '@plone/volto/components';
-
-import TileMetadataEditor from './TileMetadataEditor';
+import {
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+} from '@plone/volto/helpers';
+import BlockMetadataEditor from './BlockMetadataEditor';
 
 import penIcon from '@plone/volto/icons/pen.svg';
 import clearIcon from '@plone/volto/icons/clear.svg';
@@ -17,25 +20,25 @@ class ModalEditor extends Component {
   constructor(props) {
     super(props);
 
-    const tile = JSON.parse(
-      JSON.stringify(props.formData['blocks'][props.tileid]),
+    const block = JSON.parse(
+      JSON.stringify(props.formData['blocks'][props.blockid]),
     );
 
     this.state = {
       // blocks: props.blocks,
-      tileid: props.tileid,
+      blockid: props.blockid,
       formData: props.formData,
-      blockData: tile,
-      showTileChooser: false,
+      blockData: block,
+      showBlockChooser: false,
       activeTabPage: 0,
     };
 
-    this.tileRef = React.createRef();
+    this.blockRef = React.createRef();
 
-    this.renderEditTile = this.renderEditTile.bind(this);
+    this.renderEditBlock = this.renderEditBlock.bind(this);
 
     // this is ugly, should reduce number of similar methods
-    this.onChangeTile = this.onChangeTile.bind(this);
+    this.onChangeBlock = this.onChangeBlock.bind(this);
     this.onMutateBlock = this.onMutateBlock.bind(this);
     this.handleMetadataChange = this.handleMetadataChange.bind(this);
     this.updateblockData = this.updateblockData.bind(this);
@@ -47,7 +50,7 @@ class ModalEditor extends Component {
   handleClickOutside = e => {
     if (this.ref && doesNodeContainClick(this.ref, e)) return;
     this.setState(() => ({
-      showTileChooser: false,
+      showBlockChooser: false,
     }));
   };
 
@@ -59,56 +62,76 @@ class ModalEditor extends Component {
     document.removeEventListener('mousedown', this.handleClickOutside, false);
   }
 
-  renderEditTile() {
-    // const { formData } = this.state; // destructuring
-    // const tilesFieldname = getBlocksFieldname(formData);
-    // const tilesDict = formData[tilesFieldname];
+  renderEditBlock() {
+    const { formData } = this.state; // destructuring
+    const blocksFieldname = getBlocksFieldname(formData);
+    const blocksDict = formData[blocksFieldname];
 
-    let Tile = null;
+    let Block = null;
     let type = this.state.blockData['@type'].toLowerCase();
-    Tile = blocks.blocksConfig[type].edit;
+    Block = blocks.blocksConfig[type].edit;
 
     let nop = () => {};
 
     return (
-      <Tile
-        id={this.state.tileid}
-        tile={this.state.tileid}
-        data={this.state.blockData}
-        properties={this.state.formData}
-        onAddBlock={nop}
-        onChangeTile={this.onChangeTile}
-        onMutateBlock={nop}
-        onChangeField={nop}
-        onDeleteTile={nop}
-        onSelectTile={nop}
-        handleKeyDown={nop}
-        pathname={this.props.pathname}
-        onMoveTile={nop}
-        onFocusPreviousTile={nop}
-        onFocusNextTile={nop}
-        selected={true}
+      <Block
+        // id={this.state.blockid}
+        // block={this.state.blockid}
+        // data={this.state.blockData}
+        // properties={this.state.formData}
+        // onAddBlock={nop}
+        // onChangeBlock={this.onChangeBlock}
+        // onMutateBlock={nop}
+        // onChangeField={nop}
+        // onDeleteBlock={nop}
+        // onSelectBlock={nop}
+        // handleKeyDown={nop}
+        // pathname={this.props.pathname}
+        // onMoveBlock={nop}
+        // onFocusPreviousBlock={nop}
+        // onFocusNextBlock={nop}
+        // selected={true}
+        // index={0}
+        // ref={this.blockRef}
+      
+        id={this.state.blockid}
         index={0}
-        ref={this.tileRef}
+        type={blocksDict[this.state.blockid]['@type']}
+        key={this.state.blockid}
+        handleKeyDown={()=>{}}
+        onAddBlock={this.onAddBlock}
+        onChangeBlock={this.onChangeBlock}
+        onMutateBlock={this.onMutateBlock}
+        onChangeField={this.onChangeField}
+        onDeleteBlock={this.onDeleteBlock}
+        onSelectBlock={this.onSelectBlock}
+        onMoveBlock={this.onMoveBlock}
+        onFocusPreviousBlock={this.onFocusPreviousBlock}
+        onFocusNextBlock={this.onFocusNextBlock}
+        properties={formData}
+        data={blocksDict[this.state.blockid]}
+        pathname={this.props.pathname}
+        block={this.state.blockid}
+        selected={this.state.selected === this.state.blockid}
       />
     );
   }
 
-  onChangeTile(id, value) {
-    // handles editing inside the actual tile editor (ex: TinyMCE)
+  onChangeBlock(id, value) {
+    // handles editing inside the actual block editor (ex: TinyMCE)
     this.setState({
       blockData: { ...value },
     });
   }
 
-  onMutateBlock(tile, choice) {
-    // handles changing the tile type. Needed by the <Tile> component?
+  onMutateBlock(block, choice) {
+    // handles changing the block type. Needed by the <Block> component?
     this.setState({
       blockData: {
         ...this.state.blockData,
         ...choice,
       },
-      showTileChooser: false,
+      showBlockChooser: false,
       activeTabPage: 0,
     });
   }
@@ -132,7 +155,7 @@ class ModalEditor extends Component {
 
   updateblockData(name, data) {
     let blockData = this.state.blockData;
-    // TODO: check if this doesn't introduce extra render of tile editor
+    // TODO: check if this doesn't introduce extra render of block editor
 
     this.setState({
       blockData: {
@@ -164,13 +187,13 @@ class ModalEditor extends Component {
             panes={[
               {
                 menuItem: 'Data',
-                render: () => <Tab.Pane>{this.renderEditTile()}</Tab.Pane>,
+                render: () => <Tab.Pane>{this.renderEditBlock()}</Tab.Pane>,
               },
               {
                 menuItem: 'Metadata',
                 render: () => (
                   <Tab.Pane>
-                    <TileMetadataEditor
+                    <BlockMetadataEditor
                       onDataChange={this.handleMetadataChange}
                       blockData={this.state.blockData}
                     />
@@ -185,7 +208,7 @@ class ModalEditor extends Component {
             <Grid.Column style={{ textAlign: 'left' }}>
               <Button.Group floated="left">
                 <Button
-                  onClick={() => this.setState({ showTileChooser: true })}
+                  onClick={() => this.setState({ showBlockChooser: true })}
                 >
                   {this.state.blockData['@type']
                     ? blocks.blocksConfig[this.state.blockData['@type']].title
@@ -193,10 +216,10 @@ class ModalEditor extends Component {
                 </Button>
 
                 <div ref={node => (this.ref = node)}>
-                  {this.state.showTileChooser && (
+                  {this.state.showBlockChooser && (
                     <BlockChooser
                       onMutateBlock={this.onMutateBlock}
-                      currentTile={this.state.blockData}
+                      currentBlock={this.state.blockData}
                     />
                   )}
                 </div>

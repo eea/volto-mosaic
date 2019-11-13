@@ -15,7 +15,7 @@ import {
 
 const ReactGridLayout = Responsive;
 
-export class TileViewWrapper extends Component {
+export class BlockViewWrapper extends Component {
   constructor(props) {
     super(props);
 
@@ -29,52 +29,52 @@ export class TileViewWrapper extends Component {
 
   render() {
     const formData = this.props.formData;
-    const tileid = this.props.tileid;
+    const blockid = this.props.blockid;
 
-    const tilesFieldname = getBlocksFieldname(formData);
-    const blockData = formData[tilesFieldname][tileid];
+    const blocksFieldname = getBlocksFieldname(formData);
+    const blockData = formData[blocksFieldname][blockid];
     if (!blockData) {
-      console.log('no tile data for tileid', tileid, formData[tilesFieldname]);
+      console.log('no block data for blockid', blockid, formData[blocksFieldname]);
       return '';
     }
-    const tiletype = blockData['@type'].toLowerCase();
+    const blocktype = blockData['@type'].toLowerCase();
 
-    if (!blocks.tilesConfig[tiletype]) {
-      console.log('Tile configuration not found', tiletype);
+    if (!blocks.blocksConfig[blocktype]) {
+      console.log('Block configuration not found', blocktype);
       return '';
     }
 
-    let Tile = null;
-    Tile = blocks.tilesConfig[tiletype].view;
+    let Block = null;
+    Block = blocks.blocksConfig[blocktype].view;
 
-    let style = blockData.mosaic_box_style || 'default-tile';
-    let klass = 'tile-wrapper ' + style;
+    let style = blockData.mosaic_box_style || 'default-block';
+    let klass = 'block-wrapper ' + style;
 
-    return Tile !== null ? (
-      <div className="tile-container" ref={this.state.ref}>
+    return Block !== null ? (
+      <div className="block-container" ref={this.state.ref}>
         <div className={klass}>
-          {blockData.tile_title && blockData.show_tile_title && (
-            <h5 className="title-title">{blockData.tile_title}</h5>
+          {blockData.block_title && blockData.show_block_title && (
+            <h5 className="title-title">{blockData.block_title}</h5>
           )}
-          <Tile key={tileid} properties={formData} data={blockData} />
+          <Block key={blockid} properties={formData} data={blockData} />
         </div>
       </div>
     ) : (
-      <div> {JSON.stringify(tiletype)} </div>
+      <div> {JSON.stringify(blocktype)} </div>
     );
   }
 
   getHeight() {
     const node = ReactDOM.findDOMNode(this.state.ref.current);
-    let child = node && node.querySelector('.tile-wrapper > *');
+    let child = node && node.querySelector('.block-wrapper > *');
     // console.log('get height', node);
     let height = (child && child.scrollHeight) || (node && node.scrollHeight);
     // TODO: this is a hack. Need to make sure that this is correct;
-    // The problem is that tile-wrapper and its parrent tile-container are all
+    // The problem is that block-wrapper and its parrent block-container are all
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
-    return height && height + 20; // also add paddings from tile-wrapper
+    return height && height + 20; // also add paddings from block-wrapper
   }
 
   componentDidMount() {
@@ -82,8 +82,8 @@ export class TileViewWrapper extends Component {
 
     this.setState({ updated: false }, () => {
       const height = this.getHeight();
-      // console.log('componentDidMount', this.props.tileid, height);
-      this.props.showUpdate(this.props.tileid, height);
+      // console.log('componentDidMount', this.props.blockid, height);
+      this.props.showUpdate(this.props.blockid, height);
     });
   }
 
@@ -99,8 +99,8 @@ export class TileViewWrapper extends Component {
 
     this.setState({ updated: true }, () => {
       const height = this.getHeight();
-      // console.log('componentDidUpdate default code', this.props.tileid, height);
-      this.props.showUpdate(this.props.tileid, height);
+      // console.log('componentDidUpdate default code', this.props.blockid, height);
+      this.props.showUpdate(this.props.blockid, height);
     });
   }
 }
@@ -116,8 +116,8 @@ class View extends Component {
     super(props);
 
     const content = props.content;
-    const tilesLayoutFieldname = getBlocksLayoutFieldname(content);
-    const layout = content[tilesLayoutFieldname];
+    const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
+    const layout = content[blocksLayoutFieldname];
     console.log('received layout', layout);
 
     if (!__SERVER__) {
@@ -131,24 +131,24 @@ class View extends Component {
       this.state = {};
     }
 
-    this.onTileShowUpdate = this.onTileShowUpdate.bind(this);
+    this.onBlockShowUpdate = this.onBlockShowUpdate.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
     this.onWidthChange = this.onWidthChange.bind(this);
   }
 
-  onTileShowUpdate(tileid, height) {
+  onBlockShowUpdate(blockid, height) {
     const size = this.state.activeMosaicLayout;
 
     const content = this.props.content;
-    const tilesLayoutFieldname = getBlocksLayoutFieldname(content);
-    const fullLayout = content[tilesLayoutFieldname];
+    const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
+    const fullLayout = content[blocksLayoutFieldname];
 
     let layout =
       fullLayout.mosaic_layout &&
       (fullLayout.mosaic_layout[size] || fullLayout.mosaic_layout['lg']);
     if (!layout) return;
-    let tile = layout.find(t => t.i === tileid);
-    // let oldH = tile.h;
+    let block = layout.find(t => t.i === blockid);
+    // let oldH = block.h;
     let h = Math.ceil(height / rowHeight);
 
     this.setState((state, props) => {
@@ -156,7 +156,7 @@ class View extends Component {
         ...state,
         mosaic_layout: {
           ...fullLayout.mosaic_layout,
-          [size]: [{ ...tile, h }, ..._.without(layout, tile)],
+          [size]: [{ ...block, h }, ..._.without(layout, block)],
         },
       };
       // console.log('new state', oldH, h, newState);
@@ -165,17 +165,17 @@ class View extends Component {
     });
   }
 
-  renderTiles() {
+  renderBlocks() {
     // console.log('render blocks');
     return (
       this.state.mosaic_layout['lg'] &&
       this.state.mosaic_layout['lg'].map((item, i) => {
         return (
           <div key={item.i}>
-            <TileViewWrapper
-              tileid={item.i}
+            <BlockViewWrapper
+              blockid={item.i}
               formData={this.props.content}
-              showUpdate={this.onTileShowUpdate}
+              showUpdate={this.onBlockShowUpdate}
               containerWidth={this.state.containerWidth}
             />
           </div>
@@ -238,7 +238,7 @@ class View extends Component {
               isDroppable={false}
               width={size.width || document.querySelector('main').offsetWidth}
             >
-              {this.renderTiles()}
+              {this.renderBlocks()}
             </ReactGridLayout>
           )}
         </SizeMe>

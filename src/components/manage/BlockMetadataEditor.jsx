@@ -2,42 +2,42 @@ import React, { Component } from 'react';
 import { Grid, Button, Form as UiForm, Input } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { getMosaicSettings } from '../../actions';
-import { Field } from '@plone/volto/components'; // EditTile
+import { Field } from '@plone/volto/components'; // EditBlock
 import { Icon as VoltoIcon } from '@plone/volto/components';
 
 import showIcon from '@plone/volto/icons/show.svg';
 import hideIcon from '@plone/volto/icons/hide.svg';
 
-import TileStyleSelectWidget from './TileStyleSelectWidget';
+import BlockStyleSelectWidget from './BlockStyleSelectWidget';
 
 // import PropTypes from 'prop-types';
 export const SIZING_POLICY_CHOICES = [
   ['fit-content', 'Shrink fit to content'],
-  ['min-height', 'Minimum tile height (specific to each tile type)'],
+  ['min-height', 'Minimum block height (specific to each block type)'],
   ['fill-space', 'Fill available space'],
   ['manual', 'Resized manually'],
 ];
 
-class TileMetadataEditor extends Component {
+class BlockMetadataEditor extends Component {
   constructor(props) {
     super(props);
-    console.log('props in tilemetadateeditor', props);
+    console.log('props in blockmetadateeditor', props);
 
-    const tile = JSON.parse(JSON.stringify(props.blockData));
-    let show_tile_title = tile.show_tile_title;
+    const block = JSON.parse(JSON.stringify(props.blockData));
+    let show_block_title = block.show_block_title;
 
-    if (Object.keys(tile).indexOf('show_tile_title') === -1) {
-      show_tile_title = true;
+    if (Object.keys(block).indexOf('show_block_title') === -1) {
+      show_block_title = true;
     }
 
     this.state = {
       settings: props.settings,
-      selectedBoxStyle: tile.mosaic_box_style || 'default-tile',
+      selectedBoxStyle: block.mosaic_box_style || 'default-block',
 
-      mosaic_tile_title: tile.mosaic_tile_title,
-      mosaic_box_sizing: tile.mosaic_box_sizing || 'fit-content',
-      tile_title: tile.tile_title,
-      show_tile_title,
+      mosaic_block_title: block.mosaic_block_title,
+      mosaic_box_sizing: block.mosaic_box_sizing || 'fit-content',
+      block_title: block.block_title,
+      show_block_title,
     };
 
     this.updateData = this.updateData.bind(this);
@@ -73,32 +73,32 @@ class TileMetadataEditor extends Component {
         <UiForm.Field
           inline
           required={false}
-          className="help tile-title"
-          id="field-tile-title"
+          className="help block-title"
+          id="field-block-title"
         >
           <Grid>
             <Grid.Row stretched>
               <Grid.Column width="4">
-                <label htmlFor="tile-title">Title:</label>
+                <label htmlFor="block-title">Title:</label>
               </Grid.Column>
               <Grid.Column width="8">
                 <Input
-                  id="tile-title"
+                  id="block-title"
                   type="text"
-                  defaultValue={this.state.tile_title || ''}
-                  onChange={(e, d) => this.updateData({ tile_title: d.value })}
+                  defaultValue={this.state.block_title || ''}
+                  onChange={(e, d) => this.updateData({ block_title: d.value })}
                   icon={
                     <Button
-                      color={this.state.show_tile_title ? 'green' : 'red'}
+                      color={this.state.show_block_title ? 'green' : 'red'}
                       onClick={() =>
                         this.updateData({
-                          show_tile_title: !this.state.show_tile_title,
+                          show_block_title: !this.state.show_block_title,
                         })
                       }
                     >
                       <VoltoIcon
                         size="20"
-                        name={this.state.show_tile_title ? showIcon : hideIcon}
+                        name={this.state.show_block_title ? showIcon : hideIcon}
                       />
                     </Button>
                   }
@@ -110,20 +110,20 @@ class TileMetadataEditor extends Component {
 
         <Field
           id="mosaic-title"
-          title="Tile name"
+          title="Block name"
           type="text"
-          description="Identifier for this tile"
-          value={this.state.mosaic_tile_title}
+          description="Identifier for this block"
+          value={this.state.mosaic_block_title}
           required={false}
-          onChange={(e, d) => this.updateData({ mosaic_tile_title: d })}
+          onChange={(e, d) => this.updateData({ mosaic_block_title: d })}
         />
 
-        <TileStyleSelectWidget
-          title="Tile style"
-          description="Select a style to apply to this tile"
+        <BlockStyleSelectWidget
+          title="Block style"
+          description="Select a style to apply to this block"
           value={this.state.selectedBoxStyle}
           options={styles}
-          id="tile-style-select"
+          id="block-style-select"
           onChange={(name, selection) =>
             this.updateData({ mosaic_box_style: selection })
           }
@@ -132,7 +132,7 @@ class TileMetadataEditor extends Component {
         <Field
           id="sizing-policy"
           title="Height sizing policy"
-          description="Set the default sizing policy for this tile"
+          description="Set the default sizing policy for this block"
           value={this.state.mosaic_box_sizing}
           onChange={(e, d) => {
             this.updateData({ mosaic_box_sizing: d });
@@ -149,4 +149,4 @@ export default connect(
     settings: state.mosaic_settings.items,
   }),
   { getMosaicSettings },
-)(TileMetadataEditor);
+)(BlockMetadataEditor);

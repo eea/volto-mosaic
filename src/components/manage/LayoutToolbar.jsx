@@ -16,11 +16,11 @@ class LayoutToolbar extends Component {
     };
 
     this.getAvailableScreens = this.getAvailableScreens.bind(this);
-    this.sendAddTile = this.sendAddTile.bind(this);
+    this.sendAddBlock = this.sendAddBlock.bind(this);
     this.sendChangeScreenSize = this.sendChangeScreenSize.bind(this);
     this.sendDeleteLayout = this.sendDeleteLayout.bind(this);
     this.sendPreviewResponsive = this.sendPreviewResponsive.bind(this);
-    this.sendPreviewTiles = this.sendPreviewTiles.bind(this);
+    this.sendPreviewBlocks = this.sendPreviewBlocks.bind(this);
     this.sendSaveLayout = this.sendSaveLayout.bind(this);
   }
 
@@ -42,11 +42,11 @@ class LayoutToolbar extends Component {
     this.props.dispatchToParent('CREATE_LAYOUT', this.state.currentScreenSize);
   }
 
-  sendPreviewTiles(event, data) {
+  sendPreviewBlocks(event, data) {
     this.props.dispatchToParent('PREVIEW_TILES', data.checked);
   }
 
-  sendAddTile() {
+  sendAddBlock() {
     this.props.dispatchToParent('CREATE_TILE', null);
   }
 
@@ -87,9 +87,9 @@ class LayoutToolbar extends Component {
               <Radio
                 toggle
                 checked={this.props.preview}
-                onChange={this.sendPreviewTiles}
+                onChange={this.sendPreviewBlocks}
               />
-              <small>Preview tiles</small>
+              <small>Preview blocks</small>
             </div>
           </Grid.Column>
 
@@ -119,7 +119,7 @@ class LayoutToolbar extends Component {
               ''
             )}
             {this.state.currentScreenSize === 'lg' ? (
-              <Button onClick={this.sendAddTile}>Add new tile</Button>
+              <Button onClick={this.sendAddBlock}>Add new block</Button>
             ) : (
               ''
             )}

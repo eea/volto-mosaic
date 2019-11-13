@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Menu, Form as UiForm, Grid, Item } from 'semantic-ui-react';
 
-class TileStyleSelectWidget extends Component {
+class BlockStyleSelectWidget extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,7 +32,7 @@ class TileStyleSelectWidget extends Component {
                 <Item.Group>
                   {this.props.options.map(style => {
                     const [opttitle, optid] = style.split('|');
-                    const klass = 'tile-box preview ' + optid;
+                    const klass = 'block-box preview ' + optid;
                     return (
                       <Menu.Item
                         name={optid}
@@ -59,4 +59,4 @@ class TileStyleSelectWidget extends Component {
   }
 }
 
-export default TileStyleSelectWidget;
+export default BlockStyleSelectWidget;

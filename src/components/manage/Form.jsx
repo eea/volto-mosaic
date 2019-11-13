@@ -7,7 +7,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
 
-import { Field, Icon } from '@plone/volto/components'; // EditTile
+import { Field, Icon } from '@plone/volto/components'; // EditBlock
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
@@ -27,9 +27,9 @@ import '../css/view.css';
 
 import { rowHeight, breakpoints, screenSizes } from '../../config';
 
-import TileEditor from './TileEditor';
+import BlockEditor from './BlockEditor';
 import LayoutToolbar from './LayoutToolbar';
-import { TileViewWrapper } from './../theme/View';
+import { BlockViewWrapper } from './../theme/View';
 
 import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
@@ -45,9 +45,9 @@ const screens = Object.keys(screenSizes).map(k => {
 });
 
 const messages = defineMessages({
-  addTile: {
-    id: 'Add tile...',
-    defaultMessage: 'Add tile...',
+  addBlock: {
+    id: 'Add block...',
+    defaultMessage: 'Add block...',
   },
   required: {
     id: 'Required input is missing.',
@@ -98,7 +98,7 @@ function fallbackLayoutFromData(formData, ids) {
 
   const fallbackLayout = [
     {
-      // provide default tile for title
+      // provide default block for title
       h: 1,
       i: ids.title,
       w: 12,
@@ -106,7 +106,7 @@ function fallbackLayoutFromData(formData, ids) {
       y: 0,
     },
     {
-      // provide default tile for text
+      // provide default block for text
       h: 3,
       i: ids.text,
       w: 12,
@@ -219,11 +219,11 @@ class Form extends Component {
       formData[blocksFieldname] = {
         [ids.title]: {
           '@type': 'title',
-          mosaic_tile_title: 'title tile',
+          mosaic_block_title: 'title block',
         },
         [ids.text]: {
           '@type': 'text',
-          mosaic_tile_title: 'text tile',
+          mosaic_block_title: 'text block',
         },
       };
     }
@@ -256,17 +256,17 @@ class Form extends Component {
       activeMosaicLayout,
       dirtyLayout: false,
       refs: fromEntries(refs),
-      tileHeights: {},
+      blockHeights: {},
     };
 
-    // this.onMoveTile = this.onMoveTile.bind(this);
-    // this.onSelectTile = this.onSelectTile.bind(this);
-    // this.onDeleteTile = this.onDeleteTile.bind(this);
-    // this.onFocusPreviousTile = this.onFocusPreviousTile.bind(this);
-    // this.onFocusNextTile = this.onFocusNextTile.bind(this);
+    // this.onMoveBlock = this.onMoveBlock.bind(this);
+    // this.onSelectBlock = this.onSelectBlock.bind(this);
+    // this.onDeleteBlock = this.onDeleteBlock.bind(this);
+    // this.onFocusPreviousBlock = this.onFocusPreviousBlock.bind(this);
+    // this.onFocusNextBlock = this.onFocusNextBlock.bind(this);
     // this.handleKeyDown = this.handleKeyDown.bind(this);
-    // this.onEditTile = this.onEditTile.bind(this);
-    // this.renderTilePreview = this.renderTilePreview.bind(this);
+    // this.onEditBlock = this.onEditBlock.bind(this);
+    // this.renderBlockPreview = this.renderBlockPreview.bind(this);
     // this.onDragStart = this.onDragStart.bind(this);
     // this.onDrag = this.onDrag.bind(this);
     // this.onResize = this.onResize.bind(this);
@@ -288,20 +288,20 @@ class Form extends Component {
     this.onShowBlock = this.onShowBlock.bind(this);
   }
 
-  handleOpen(tileid) {
-    this.setState({ showModal: true, currentTile: tileid, tileHeights: {} });
+  handleOpen(blockid) {
+    this.setState({ showModal: true, currentBlock: blockid, blockHeights: {} });
   }
 
   handleCloseEditor(blockData) {
     if (!blockData) {
       this.setState({
         showModal: false,
-        currentTile: null,
+        currentBlock: null,
       });
       return;
     }
 
-    const tileid = this.state.currentTile;
+    const blockid = this.state.currentBlock;
 
     const formData = this.state.formData;
     const blocksFieldname = getBlocksFieldname(formData);
@@ -312,7 +312,7 @@ class Form extends Component {
           ...this.state.formData,
           [blocksFieldname]: {
             ...this.state.formData[blocksFieldname],
-            [tileid]: blockData || null,
+            [blockid]: blockData || null,
           },
         },
         showModal: false,
@@ -324,14 +324,14 @@ class Form extends Component {
     );
   }
 
-  onShowBlock(tileid, height) {
+  onShowBlock(blockid, height) {
     const formData = this.state.formData;
 
     const blocksFieldname = getBlocksFieldname(formData);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
     const layoutField = formData[blocksLayoutFieldname];
     const activeScreenSize = this.state.activeScreenSize || 'lg';
-    const blockData = formData[blocksFieldname][tileid];
+    const blockData = formData[blocksFieldname][blockid];
 
     const sizing = blockData.mosaic_box_sizing || 'fit-content';
 
@@ -346,7 +346,7 @@ class Form extends Component {
             lh = Math.ceil(height / this.props.rowHeight);
             ix = activeMosaicLayout.indexOf(
               activeMosaicLayout.find(el => {
-                return el.i === tileid;
+                return el.i === blockid;
               }),
             );
             activeMosaicLayout[ix].h = lh;
@@ -365,19 +365,19 @@ class Form extends Component {
             };
           },
           () => {
-            console.log('height of node', height, lh, tileid, this.state);
+            console.log('height of node', height, lh, blockid, this.state);
           },
         );
         break;
 
       // case 'min-height':
-      //   // TODO: get minimum tile height from settings, trigger layout update
+      //   // TODO: get minimum block height from settings, trigger layout update
       //   const type = formData['@type'].toLowerCase();
       //   const minHeight = blocks.blocksConfig[type].height || 100;
       //   height = Math.ceil(minHeight / this.props.rowHeight);
       //   ix = activeMosaicLayout.indexOf(
       //     activeMosaicLayout.find(el => {
-      //       return el.i === tileid;
+      //       return el.i === blockid;
       //     }),
       //   );
       //   activeMosaicLayout[ix].h = height;
@@ -482,14 +482,14 @@ class Form extends Component {
     );
   }
 
-  getTileClass(tile) {
+  getBlockClass(block) {
     return (
-      'tile-info-data tile-edit-' + (tile.mosaic_box_sizing || 'fit-content')
+      'block-info-data block-edit-' + (block.mosaic_box_sizing || 'fit-content')
     );
   }
 
   createElement(el) {
-    const tileid = el.i;
+    const blockid = el.i;
 
     // const removeStyle = {
     //   position: 'absolute',
@@ -498,51 +498,51 @@ class Form extends Component {
     //   cursor: 'pointer',
     // };
     const i = el.add ? '+' : el.i;
-    const ref = this.state.refs[tileid];
+    const ref = this.state.refs[blockid];
 
     return (
       <div key={i} data-grid={el}>
         {this.state.preview ? (
-          <TileViewWrapper
+          <BlockViewWrapper
             useref={ref}
             formData={this.state.formData}
-            tileid={tileid}
+            blockid={blockid}
             showUpdate={this.onShowBlock}
           />
         ) : (
-          this.renderEditTilePlaceholder(el, tileid)
+          this.renderEditBlockPlaceholder(el, blockid)
         )}
       </div>
     );
   }
 
-  renderEditTilePlaceholder(el, tileid) {
+  renderEditBlockPlaceholder(el, blockid) {
     const formData = this.state.formData;
     const blocksFieldname = getBlocksFieldname(formData);
 
-    let tile = formData[blocksFieldname][tileid];
-    const hasData = tile['@type'] !== 'text';
+    let block = formData[blocksFieldname][blockid];
+    const hasData = block['@type'] !== 'text';
     const i = el.add ? '+' : el.i; // what is this?
 
     let title = '';
 
-    if (!blocks.blocksConfig[tile['@type']]) {
+    if (!blocks.blocksConfig[block['@type']]) {
       console.log(
-        'could not find configuration for this tile type',
-        tile['@type'],
+        'could not find configuration for this block type',
+        block['@type'],
       );
-      title = 'broken tile';
+      title = 'broken block';
     } else {
-      title = tile.mosaic_tile_title || blocks.blocksConfig[tile['@type']].title;
+      title = block.mosaic_block_title || blocks.blocksConfig[block['@type']].title;
     }
 
     return (
       <div
-        className={hasData ? 'tile-edit-wrapper empty' : 'tile-edit-wrapper'}
+        className={hasData ? 'block-edit-wrapper empty' : 'block-edit-wrapper'}
       >
-        <div className={this.getTileClass(tile)}>
+        <div className={this.getBlockClass(block)}>
           {el.h > 2 && (
-            <div className="tile-size-info">
+            <div className="block-size-info">
               {el.w} cols x {el.h} rows
             </div>
           )}
@@ -557,7 +557,7 @@ class Form extends Component {
                 size="mini"
                 icon
                 color="green"
-                onClick={() => this.handleOpen(tileid)}
+                onClick={() => this.handleOpen(blockid)}
               >
                 <Icon name={editIcon} size="10" />
               </Button>
@@ -661,7 +661,7 @@ class Form extends Component {
   }
 
   onAddBlock(type, index) {
-    // Handles the creation of a new tile in the layout editor
+    // Handles the creation of a new block in the layout editor
     const id = uuid();
 
     const formData = this.state.formData;
@@ -672,14 +672,14 @@ class Form extends Component {
     // const totalItems = formData[blocksLayoutFieldname].items.length;
     // const insert = index === -1 ? totalItems : index;
 
-    const newTile = {
+    const newBlock = {
       i: id,
       x: 0,
       y: Infinity, // puts it at the bottom
       w: this.state.cols || 2,
       h: 2,
     };
-    const newLayout = this.state.activeMosaicLayout.concat(newTile);
+    const newLayout = this.state.activeMosaicLayout.concat(newBlock);
 
     let mosaic_layout = layoutField.mosaic_layout || {};
 
@@ -870,10 +870,10 @@ class Form extends Component {
           </SizeMe>
         </div>
 
-        {/* onChangeTile={this.onEditTile} */}
+        {/* onChangeBlock={this.onEditBlock} */}
         {this.state.showModal ? (
-          <TileEditor
-            tileid={this.state.currentTile}
+          <BlockEditor
+            blockid={this.state.currentBlock}
             formData={this.state.formData}
             onClose={this.handleCloseEditor}
           />
@@ -977,13 +977,13 @@ class Form extends Component {
     });
 
     // if the height has changed, set sizing policy for this layout to manual
-    const tileid = old.i;
+    const blockid = old.i;
     const formData = this.state.formData;
     const blocksFieldname = getBlocksFieldname(formData);
 
     this.setState(
       (state, props) => {
-        const blockData = state.formData[blocksFieldname][tileid] || {};
+        const blockData = state.formData[blocksFieldname][blockid] || {};
         let mosaic_box_sizing = blockData.mosaic_box_sizing || 'fit-content';
         if (neu.h !== old.h) mosaic_box_sizing = 'manual';
         return {
@@ -992,8 +992,8 @@ class Form extends Component {
             ...state.formData,
             [blocksFieldname]: {
               ...state.formData[blocksFieldname],
-              [tileid]: {
-                ...state.formData[blocksFieldname][tileid],
+              [blockid]: {
+                ...state.formData[blocksFieldname][blockid],
                 mosaic_box_sizing,
               },
             },
@@ -1052,8 +1052,8 @@ class Form extends Component {
   //   // console.log('on drag start'); //, layout, oldDragItem, l, x, e, node);
   // }
 
-  // onEditTile(id, value, size) {
-  //   // Handles editing of tile by the tile editor
+  // onEditBlock(id, value, size) {
+  //   // Handles editing of block by the block editor
   //   const blocksFieldname = getBlocksFieldname(this.state.formData);
   //   this.setState({
   //     formData: {

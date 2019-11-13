@@ -7,6 +7,11 @@
   margin: 0 0.5em;
 }
 
+.modal {
+  transform:none !important;
+  transform-origin: unset!important;
+}
+
 .ui.modal .ui.input > input {
   padding: 0.5em;
 }
@@ -48,7 +53,7 @@
   color: #020;
 } */
 
-.modal .tile {
+.modal .block {
   min-height: 400px;
   margin-top: 1em;
 }
@@ -70,7 +75,7 @@
   pointer-events: all;
 }
 
-#page-edit .mosaic-window-body .tile {
+#page-edit .mosaic-window-body .block {
   height: 100%;
 }
 
@@ -78,11 +83,11 @@
   display: none;
 }
 
-#page-edit .mosaic-window-body .tile .tile-inner-wrapper {
+#page-edit .mosaic-window-body .block .block-inner-wrapper {
   height: 100%;
 }
 
-#page-edit .mosaic-window-body .tile .tile-inner-wrapper .hero-body {
+#page-edit .mosaic-window-body .block .block-inner-wrapper .hero-body {
   min-width: 100px;
   height: 100%;
 }
@@ -115,7 +120,7 @@
   display: none !important;
 }
 
-.tile-selector .menu{
+.block-selector .menu{
   height: 200px;
 }
 
@@ -171,7 +176,7 @@
 }
 
 
-.react-grid-item.react-draggable > .tile-edit-wrapper {
+.react-grid-item.react-draggable > .block-edit-wrapper {
   height: 100%;
   background-color: rgba(0, 128, 0, 0.1);
   -webkit-box-shadow: inset 0px 0px 8px 0px rgb(210,210,210);
@@ -183,7 +188,7 @@
   background-color: rgba(128,0,0,0.1);
 }
 
-.tile-info-data {
+.block-info-data {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -194,7 +199,7 @@
 /* sizing policies */
 /* see https://leaverou.github.io/css3patterns/#microbial-mat */
 /* for more */
-.tile-edit-fill-space {
+.block-edit-fill-space {
   /* background-image: linear-gradient(45deg, #D6A3AC 16.67%, #e0d0d0 16.67%, transparent 33.33%, #e0d0d0 33.33%, #e0d0d0 50%, #d6a3ac 50%, #d6a3ac 66.67%, #97b8cc 66.67%, #97b8cc 83.33%, #e0d0d0 83.33%, #e0d0d0 100%); */
   /* background-size: 6px 6px; */
   background: radial-gradient(circle at 0% 50%, rgba(96, 16, 48, 0) 9px, #613 10px, rgba(96, 16, 48, 0) 11px) 0px 10px,
@@ -202,7 +207,7 @@
   background-size: 20px 20px;
 }
 
-.tile-edit-manual {
+.block-edit-manual {
   /* background-image: linear-gradient(45deg, #B2A2CD 25%, transparent 25%, transparent 50%, #B2A2CD 50%, #B2A2CD 75%, #5F5370 75%, #5F5370 100%); */
   /* background-size: 6px 6px; */
   /* background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px, */
@@ -225,12 +230,12 @@
   /* background-size: 20px 20px; */
 }
 
-.tile-edit-fit-content {
+.block-edit-fit-content {
   background-image: linear-gradient(45deg, #98cd8d30 25%, #f6f0cf30 25%, #f6f0cf30 50%, #98cd8d30 50%, #98cd8d30 75%, #f6f0cf30 75%, #f6f0cf30 100%);
   background-size: 6px 6px;
 }
 
-.tile-edit-min-height {
+.block-edit-min-height {
   /* background-image: linear-gradient(45deg, #F6F0CF 25%, transparent 25%, transparent 50%, #B2A2CD 50%, #B2A2CD 75%, #5F5370 75%, #5F5370 100%); */
   /* background-size: 6px 6px; */
   background-color: #6d695c;
@@ -242,14 +247,14 @@
   background-size: 70px 120px;
 }
 
-.tile-uuid-info {
+.block-uuid-info {
   position: absolute;
   right: 1rem;
   bottom: 0.6rem;
   color: gray;
   font-size: smaller;
 }
-.tile-size-info {
+.block-size-info {
   position: absolute;
   bottom: 0.6rem;
   left: 1rem;
@@ -257,7 +262,7 @@
   color: gray;
 }
 
-.tile-container p {
+.block-container p {
   margin: 0;
 }
 
@@ -287,7 +292,7 @@
 #layout-preview-xxs {
   width: 484px !important;
 }
-.tile-chooser {
+.block-chooser {
   top:unset;
   left: 0;
   bottom: 100%;
