@@ -24,12 +24,12 @@
     "url": "https://github.com/eaudeweb/volto-mosaic/issues"
   },
   "homepage": "https://github.com/eaudeweb/volto-mosaic#readme",
-  "peerDependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.6.0",
     "@babel/core": "^7.6.0",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.6.0",
+    "lodash": "^4.17.5",
     "@babel/preset-react": "^7.0.0"
   },
   "dependencies": {
