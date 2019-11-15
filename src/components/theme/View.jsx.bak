@@ -33,7 +33,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
   // hasBlocksData,
-} from '@plone/volto/helpers';
+} from '../../../../@plone/volto/helpers';
 
 import '../css/view.css';
 
