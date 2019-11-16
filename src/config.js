@@ -8,4 +8,6 @@ export const screenSizes = {
 };
 export const rowHeight = 21;
 
-export const voltoConfig = {};
+export function applyConfig(config) {
+  return config;
+}
