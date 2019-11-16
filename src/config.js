@@ -7,3 +7,5 @@ export const screenSizes = {
   xxs: 'Small screen',
 };
 export const rowHeight = 21;
+
+export const voltoConfig = {};
