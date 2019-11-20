@@ -1,4 +1,4 @@
-import { GET_MOSAIC_SETTINGS } from './../constants';
+import { GET_MOSAIC_SETTINGS } from '../constants';
 
 export function getMosaicSettings() {
   return {
