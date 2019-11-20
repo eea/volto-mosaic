@@ -7,10 +7,10 @@
   margin: 0 0.5em;
 }
 
-.modal {
+/* .modal {
   transform:none !important;
   transform-origin: unset!important;
-}
+} */
 
 .ui.modal .ui.input > input {
   padding: 0.5em;

@@ -75,44 +75,44 @@ class ModalEditor extends Component {
 
     return (
       <Block
-        // id={this.state.blockid}
-        // block={this.state.blockid}
-        // data={this.state.blockData}
-        // properties={this.state.formData}
-        // onAddBlock={nop}
-        // onChangeBlock={this.onChangeBlock}
-        // onMutateBlock={nop}
-        // onChangeField={nop}
-        // onDeleteBlock={nop}
-        // onSelectBlock={nop}
-        // handleKeyDown={nop}
-        // pathname={this.props.pathname}
-        // onMoveBlock={nop}
-        // onFocusPreviousBlock={nop}
-        // onFocusNextBlock={nop}
-        // selected={true}
-        // index={0}
-        // ref={this.blockRef}
-      
         id={this.state.blockid}
-        index={0}
-        type={blocksDict[this.state.blockid]['@type']}
-        key={this.state.blockid}
-        handleKeyDown={()=>{}}
-        onAddBlock={this.onAddBlock}
-        onChangeBlock={this.onChangeBlock}
-        onMutateBlock={this.onMutateBlock}
-        onChangeField={this.onChangeField}
-        onDeleteBlock={this.onDeleteBlock}
-        onSelectBlock={this.onSelectBlock}
-        onMoveBlock={this.onMoveBlock}
-        onFocusPreviousBlock={this.onFocusPreviousBlock}
-        onFocusNextBlock={this.onFocusNextBlock}
-        properties={formData}
-        data={blocksDict[this.state.blockid]}
-        pathname={this.props.pathname}
         block={this.state.blockid}
-        selected={this.state.selected === this.state.blockid}
+        data={this.state.blockData}
+        properties={this.state.formData}
+        onAddBlock={nop}
+        onChangeBlock={this.onChangeBlock}
+        onMutateBlock={nop}
+        onChangeField={nop}
+        onDeleteBlock={nop}
+        onSelectBlock={nop}
+        handleKeyDown={nop}
+        pathname={this.props.pathname}
+        onMoveBlock={nop}
+        onFocusPreviousBlock={nop}
+        onFocusNextBlock={nop}
+        selected={true}
+        index={0}
+        ref={this.blockRef}
+      
+        // id={this.state.blockid}
+        // index={0}
+        // type={blocksDict[this.state.blockid]['@type']}
+        // key={this.state.blockid}
+        // handleKeyDown={()=>{}}
+        // onAddBlock={this.onAddBlock}
+        // onChangeBlock={this.onChangeBlock}
+        // onMutateBlock={this.onMutateBlock}
+        // onChangeField={this.onChangeField}
+        // onDeleteBlock={this.onDeleteBlock}
+        // onSelectBlock={() => {}}
+        // onMoveBlock={this.onMoveBlock}
+        // onFocusPreviousBlock={this.onFocusPreviousBlock}
+        // onFocusNextBlock={this.onFocusNextBlock}
+        // properties={formData}
+        // data={blocksDict[this.state.blockid]}
+        // pathname={this.props.pathname}
+        // block={this.state.blockid}
+        // selected={this.state.selected === this.state.blockid}
       />
     );
   }
@@ -219,7 +219,7 @@ class ModalEditor extends Component {
                   {this.state.showBlockChooser && (
                     <BlockChooser
                       onMutateBlock={this.onMutateBlock}
-                      currentBlock={this.state.blockData}
+                      currentBlock={this.state.blockData['@type']}
                     />
                   )}
                 </div>
