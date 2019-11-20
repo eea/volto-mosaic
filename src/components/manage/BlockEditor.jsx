@@ -219,7 +219,7 @@ class ModalEditor extends Component {
                   {this.state.showBlockChooser && (
                     <BlockChooser
                       onMutateBlock={this.onMutateBlock}
-                      currentBlock={this.state.blockData}
+                      currentBlock={this.state.blockData['@type']}
                     />
                   )}
                 </div>
