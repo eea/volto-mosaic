@@ -172,6 +172,11 @@ class ModalEditor extends Component {
   }
 
   render() {
+    console.log('blocks config', blocks.blocksConfig);
+    console.log('state block type', this.state.blockData['@type']);
+
+    const selectedBlock = blocks.blocksConfig[this.state.blockData['@type']];
+
     return (
       <Modal open={true} size="fullscreen">
         <Modal.Content scrolling>
@@ -210,8 +215,8 @@ class ModalEditor extends Component {
                 <Button
                   onClick={() => this.setState({ showBlockChooser: true })}
                 >
-                  {this.state.blockData['@type']
-                    ? blocks.blocksConfig[this.state.blockData['@type']].title
+                  {this.state.blockData['@type'] && selectedBlock
+                    ? selectedBlock.title
                     : 'Set type'}
                 </Button>
 

@@ -10,7 +10,7 @@ export function applyConfig(config) {
   return {
     ...config,
     addonReducers: {
-      ...config.reducers,
+      ...config.addonReducers,
       ...addonReducers,
     },
     addonRoutes: [...(config.addonRoutes || []), ...addonRoutes],
