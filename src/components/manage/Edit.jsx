@@ -1,20 +1,21 @@
-import React, { Component } from 'react';
 // import VoltoEdit from '@plone/volto/components/manage/Edit/Edit';
-import MosaicForm from './Form';
-import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
-import { defineMessages, injectIntl } from 'react-intl';
-import Helmet from 'react-helmet';
-import { Portal } from 'react-portal';
-import saveSVG from '@plone/volto/icons/save.svg';
-import clearSVG from '@plone/volto/icons/clear.svg';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { DragDropContext } from 'react-dnd';
+//
 import HTML5Backend from 'react-dnd-html5-backend';
-import qs from 'query-string';
-import { updateContent, getContent, getSchema } from '@plone/volto/actions';
+import Helmet from 'react-helmet';
+import MosaicForm from './Form';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import clearSVG from '@plone/volto/icons/clear.svg';
+import qs from 'query-string';
+import saveSVG from '@plone/volto/icons/save.svg';
+import { DragDropContext } from 'react-dnd';
+import { Form, Icon, Toolbar, Sidebar } from '@plone/volto/components';
+import { Portal } from 'react-portal';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { defineMessages, injectIntl } from 'react-intl';
 import { getBaseUrl, hasBlocksData } from '@plone/volto/helpers';
+import { updateContent, getContent, getSchema } from '@plone/volto/actions';
 
 const messages = defineMessages({
   edit: {

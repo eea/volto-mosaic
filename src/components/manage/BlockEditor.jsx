@@ -93,7 +93,7 @@ class ModalEditor extends Component {
         selected={true}
         index={0}
         ref={this.blockRef}
-      
+
         // id={this.state.blockid}
         // index={0}
         // type={blocksDict[this.state.blockid]['@type']}
