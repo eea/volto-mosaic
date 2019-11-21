@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { breakpoints, rowHeight } from '../../config';
+import { breakpoints, rowHeight } from '../../constants';
 import React, { Component } from 'react';
 import { Responsive } from 'react-grid-layout';
 // import WidthProvider from './WidthProvider';
@@ -34,7 +34,11 @@ export class BlockViewWrapper extends Component {
     const blocksFieldname = getBlocksFieldname(formData);
     const blockData = formData[blocksFieldname][blockid];
     if (!blockData) {
-      console.log('no block data for blockid', blockid, formData[blocksFieldname]);
+      console.log(
+        'no block data for blockid',
+        blockid,
+        formData[blocksFieldname],
+      );
       return '';
     }
     const blocktype = blockData['@type'].toLowerCase();
