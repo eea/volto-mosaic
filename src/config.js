@@ -13,9 +13,6 @@ export function applyConfig(config) {
       ...config.reducers,
       ...addonReducers,
     },
-    addonRoutes: {
-      ...(config.addonRoutes || []),
-      addonRoutes,
-    },
+    addonRoutes: [...(config.addonRoutes || []), ...addonRoutes],
   };
 }
