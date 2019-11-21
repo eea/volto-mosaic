@@ -25,7 +25,7 @@ import { SizeMe } from 'react-sizeme';
 import '../css/edit.css';
 import '../css/view.css';
 
-import { rowHeight, breakpoints, screenSizes } from '../../config';
+import { rowHeight, breakpoints, screenSizes } from '../../constants';
 
 import BlockEditor from './BlockEditor';
 import LayoutToolbar from './LayoutToolbar';
@@ -35,6 +35,7 @@ import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
 
 import { blocks } from '~/config';
+
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -533,7 +534,8 @@ class Form extends Component {
       );
       title = 'broken block';
     } else {
-      title = block.mosaic_block_title || blocks.blocksConfig[block['@type']].title;
+      title =
+        block.mosaic_block_title || blocks.blocksConfig[block['@type']].title;
     }
 
     return (
@@ -906,8 +908,8 @@ class Form extends Component {
                       blocks_layout: {
                         ...this.state.formData.blocks_layout,
                         mosaic_layout: {
-                          ...(this.state.formData.blocks_layout?.mosaic_layout ||
-                            {}),
+                          ...(this.state.formData.blocks_layout
+                            ?.mosaic_layout || {}),
                           mosaic_css_override: value,
                         },
                       },
