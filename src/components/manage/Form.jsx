@@ -858,10 +858,10 @@ class Form extends Component {
                   size.width ||
                   document.querySelector('main').offsetWidth
                 }
-                onDragStop={this.onDragStop}
-                onResizeStop={this.onResizeStop}
-                onResize={this.onResize}
-                onResizeStart={this.onResizeStart}
+                // onDragStop={this.onDragStop}
+                // onResizeStop={this.onResizeStop}
+                // onResize={this.onResize}
+                // onResizeStart={this.onResizeStart}
                 {...this.props}
               >
                 {_.map(this.state.activeMosaicLayout, el =>

@@ -146,7 +146,7 @@ class BlockMetadataEditor extends Component {
 
 export default connect(
   state => ({
-    settings: state.mosaic_settings.items,
+    settings: state.mosaic_settings && state.mosaic_settings.items,
   }),
   { getMosaicSettings },
 )(BlockMetadataEditor);

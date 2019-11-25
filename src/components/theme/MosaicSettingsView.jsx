@@ -42,7 +42,7 @@ class MosaicSettingsView extends Component {
     );
   }
   render() {
-    console.log('state', this.state.settings);
+    console.log('alalalalstate', this.state.settings);
     return this.state.settings && this.state.settings.styles ? (
       <div>{this.state.settings.styles.map(this.getCard)}</div>
     ) : (
