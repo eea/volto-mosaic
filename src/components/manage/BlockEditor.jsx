@@ -173,8 +173,8 @@ class ModalEditor extends Component {
   }
 
   render() {
-    console.log('blocks config', blocks.blocksConfig);
-    console.log('state block type', this.state.blockData['@type']);
+    // console.log('blocks config', blocks.blocksConfig);
+    // console.log('state block type', this.state.blockData['@type']);
 
     const selectedBlock = blocks.blocksConfig[this.state.blockData['@type']];
 
