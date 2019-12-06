@@ -320,7 +320,7 @@ class Form extends Component {
         preview: true,
       },
       () => {
-        console.log('state after handleCloseEditor', this.state);
+        console.debug('state after handleCloseEditor', this.state);
       },
     );
   }
@@ -366,7 +366,7 @@ class Form extends Component {
             };
           },
           () => {
-            console.log('height of node', height, lh, blockid, this.state);
+            console.debug('height of node', height, lh, blockid, this.state);
           },
         );
         break;
@@ -393,7 +393,7 @@ class Form extends Component {
   }
 
   onLayoutChange(newLayout) {
-    console.log('on layout change');
+    console.debug('on layout change');
     const formData = this.state.formData;
     const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
     const layoutField = formData[blocksLayoutFieldname];
@@ -426,7 +426,7 @@ class Form extends Component {
         };
       },
       () => {
-        console.log('Set state on change layout ' + size, this.state);
+        console.debug('Set state on change layout ' + size, this.state);
       },
     );
   }
@@ -453,7 +453,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('Set state on layout save', this.state);
+        console.debug('Set state on layout save', this.state);
       },
     );
   }
@@ -478,7 +478,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('Set state on change layout', this.state);
+        console.debug('Set state on change layout', this.state);
       },
     );
   }
@@ -528,7 +528,7 @@ class Form extends Component {
     let title = '';
 
     if (!blocks.blocksConfig[block['@type']]) {
-      console.log(
+      console.warn(
         'could not find configuration for this block type',
         block['@type'],
       );
@@ -610,7 +610,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('state on removeitem', this.state);
+        console.debug('state on removeitem', this.state);
       },
     );
   }
@@ -625,7 +625,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('change state in onChangeField', this.state);
+        console.debug('change state in onChangeField', this.state);
       },
     );
   }
@@ -657,7 +657,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('change state in onMutateBlock', this.state);
+        console.debug('change state in onMutateBlock', this.state);
       },
     );
   }
@@ -717,7 +717,7 @@ class Form extends Component {
         },
       },
       () => {
-        console.log('After onAdd', this.state);
+        console.debug('After onAdd', this.state);
       },
     );
     return id;
@@ -796,7 +796,7 @@ class Form extends Component {
         } else if (data === 'xxs') {
           layoutWidth = breakpoints['xs'] - 20;
         }
-        console.log('Change screen', data, layoutWidth, layouts);
+        console.debug('Change screen', data, layoutWidth, layouts);
         // TODO: this needs to be improved. We want to automatically take
         // size from (<next upper breakpoint> -1)
 
@@ -828,7 +828,7 @@ class Form extends Component {
 
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
-    console.log('render props', this.props);
+    // console.log('render props', this.props);
 
     return __CLIENT__ ? (
       <div className="ui wrapper">
@@ -966,7 +966,7 @@ class Form extends Component {
 
       if (el.x === old.x + old.w) {
         // dragged from right side, to left
-        console.log('resizeToLeft w x', dW, el.w, el.x);
+        console.debug('resizeToLeft w x', dW, el.w, el.x);
         el.x = neu.x + neu.w;
         el.w -= neu.w - old.w;
       }

@@ -44,7 +44,7 @@ export default function WidthProvider(ComposedComponent) {
       // eslint-disable-next-line react/no-find-dom-node
       const node = ReactDOM.findDOMNode(this);
       if (node instanceof HTMLElement) {
-        console.log('window onresize', node, node.offsetWidth);
+        // console.log('window onresize', node, node.offsetWidth);
         this.setState({ width: node.offsetWidth });
       }
     };
@@ -52,7 +52,7 @@ export default function WidthProvider(ComposedComponent) {
     render() {
       const { measureBeforeMount, ...rest } = this.props;
       if (measureBeforeMount && !this.mounted) {
-        console.log('not mounted, default div', this.state);
+        // console.log('not mounted, default div', this.state);
         return (
           <div className={this.props.className} style={this.props.style} />
         );

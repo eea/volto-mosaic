@@ -8,7 +8,7 @@ class BlockStyleSelectWidget extends Component {
       ...props,
     };
     this.handleClick = this.handleClick.bind(this);
-    console.log('props in style select', props);
+    // console.log('props in style select', props);
   }
 
   handleClick(e, data) {

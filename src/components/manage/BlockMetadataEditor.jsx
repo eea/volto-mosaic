@@ -21,7 +21,7 @@ export const SIZING_POLICY_CHOICES = [
 class BlockMetadataEditor extends Component {
   constructor(props) {
     super(props);
-    console.log('props in blockmetadateeditor', props);
+    // console.log('props in blockmetadateeditor', props);
 
     const block = JSON.parse(JSON.stringify(props.blockData));
     let show_block_title = block.show_block_title;
@@ -67,7 +67,7 @@ class BlockMetadataEditor extends Component {
 
   render() {
     let styles = (this.state.settings && this.state.settings.styles) || [];
-    console.log('will pass styles', styles);
+    // console.log('will pass styles', styles);
     return (
       <UiForm>
         <UiForm.Field

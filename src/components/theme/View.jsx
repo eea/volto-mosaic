@@ -34,7 +34,7 @@ export class BlockViewWrapper extends Component {
     const blocksFieldname = getBlocksFieldname(formData);
     const blockData = formData[blocksFieldname][blockid];
     if (!blockData) {
-      console.log(
+      console.warn(
         'no block data for blockid',
         blockid,
         formData[blocksFieldname],
@@ -44,7 +44,7 @@ export class BlockViewWrapper extends Component {
     const blocktype = blockData['@type'].toLowerCase();
 
     if (!blocks.blocksConfig[blocktype]) {
-      console.log('Block configuration not found', blocktype);
+      console.warn('Block configuration not found', blocktype);
       return '';
     }
 
@@ -122,7 +122,7 @@ class View extends Component {
     const content = props.content;
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     const layout = content[blocksLayoutFieldname];
-    console.log('received layout', layout);
+    // console.log('received layout', layout);
 
     if (!__SERVER__) {
       this.state = {
@@ -189,7 +189,7 @@ class View extends Component {
   }
 
   onBreakpointChange(bk, cols) {
-    console.log('New breakpoint', bk, cols, this.state.containerWidth);
+    // console.log('New breakpoint', bk, cols, this.state.containerWidth);
     this.setState({
       activeMosaicLayout: bk,
     });
@@ -209,7 +209,7 @@ class View extends Component {
     // );
     let width = Math.floor(containerWidth);
     if (Math.abs(width - this.state.containerWidth) > 6) {
-      console.log('new width', width);
+      // console.log('new width', width);
       this.setState({
         containerWidth: width,
       });
@@ -217,7 +217,7 @@ class View extends Component {
   }
 
   render() {
-    console.log(this.state.mosaic_layout);
+    // console.log(this.state.mosaic_layout);
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <SizeMe>
