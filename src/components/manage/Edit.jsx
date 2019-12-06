@@ -1,7 +1,7 @@
 // import VoltoEdit from '@plone/volto/components/manage/Edit/Edit';
 //
 import HTML5Backend from 'react-dnd-html5-backend';
-import Helmet from 'react-helmet';
+import { Helmet } from '@plone/volto/helpers';
 import MosaicForm from './Form';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
