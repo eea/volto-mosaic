@@ -37,6 +37,6 @@
     "react-sizeme": "^2.6.10"
   },
   "peerDependencies": {
-    "@plone/volto": "^4.0.0.alpha-10"
+    "@plone/volto": "^4.0.0.alpha-17"
   }
 }
