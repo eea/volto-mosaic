@@ -162,7 +162,6 @@ class Edit extends Component {
     //   <FormImpl {...props} />
     // ));
     //
-
     return (
       <div id="page-edit">
         <Helmet
@@ -229,6 +228,18 @@ class Edit extends Component {
         {this.state.visual && (
           <Portal node={__CLIENT__ && document.getElementById('sidebar')}>
             <Sidebar />
+          </Portal>
+        )}
+
+        {__CLIENT__ && document.querySelector('.header-image .header-image') && (
+          <Portal
+            node={
+              __CLIENT__ &&
+              document.querySelector('.header-image .header-image')
+            }
+          >  
+            <h1><small>Editing: &nbsp;</small>{this.props.content.title}</h1>
+            <p>{this.props.content.description}</p>
           </Portal>
         )}
       </div>
