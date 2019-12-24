@@ -6,6 +6,7 @@ import { Responsive } from 'react-grid-layout';
 import { blocks } from '~/config'; // settings,
 import { SizeMe } from 'react-sizeme';
 import _ from 'lodash';
+import * as configJs from '~/config';
 
 import {
   getBlocksFieldname,
@@ -32,6 +33,9 @@ export class BlockViewWrapper extends Component {
     const blockid = this.props.blockid;
 
     const blocksFieldname = getBlocksFieldname(formData);
+    if (!formData[blocksFieldname]) {
+      return <div>The content for this mosaic view is not blocks-enabled</div>;
+    }
     const blockData = formData[blocksFieldname][blockid];
     if (!blockData) {
       console.warn(
@@ -217,6 +221,7 @@ class View extends Component {
   }
 
   render() {
+    console.log('the config', configJs);
     // console.log(this.state.mosaic_layout);
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
