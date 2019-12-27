@@ -221,7 +221,7 @@ class View extends Component {
   }
 
   render() {
-    console.log('the config', configJs);
+    // console.log('the config', configJs);
     // console.log(this.state.mosaic_layout);
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
