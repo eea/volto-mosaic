@@ -193,7 +193,12 @@ class ModalEditor extends Component {
             panes={[
               {
                 menuItem: 'Data',
-                render: () => <Tab.Pane>{this.renderEditBlock()}</Tab.Pane>,
+                render: () => (
+                  <Tab.Pane>
+                    <div className="editor-toolbar-wrapper" />
+                    {this.renderEditBlock()}
+                  </Tab.Pane>
+                ),
               },
               {
                 menuItem: 'Metadata',
