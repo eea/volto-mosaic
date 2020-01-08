@@ -35,6 +35,8 @@ import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
 
 import { blocks } from '~/config';
+import { changeSidebarState } from 'volto-sidebar/actions';
+import { connect } from 'react-redux';
 
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
@@ -290,10 +292,12 @@ class Form extends Component {
   }
 
   handleOpen(blockid) {
+    this.props.changeSidebarState(true);
     this.setState({ showModal: true, currentBlock: blockid, blockHeights: {} });
   }
 
   handleCloseEditor(blockData) {
+    this.props.changeSidebarState(false);
     if (!blockData) {
       this.setState({
         showModal: false,
@@ -920,7 +924,6 @@ class Form extends Component {
             </Segment>
           </UiForm>
         </Portal>
-
         {/* <Portal */}
         {/*   node={__CLIENT__ && document.getElementById('sidebar-metadata')} */}
         {/* > */}
@@ -1069,4 +1072,7 @@ class Form extends Component {
   // }
 }
 
-export default injectIntl(Form, { forwardRef: true });
+export default connect(
+  null,
+  { changeSidebarState },
+)(injectIntl(Form, { forwardRef: true }));

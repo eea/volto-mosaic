@@ -12,6 +12,7 @@ import BlockMetadataEditor from './BlockMetadataEditor';
 
 import penIcon from '@plone/volto/icons/pen.svg';
 import clearIcon from '@plone/volto/icons/clear.svg';
+import { BodyClass } from '@plone/volto/helpers';
 
 // import PropTypes from 'prop-types';
 // import blockDataEditor from './blockDataEditor';
@@ -179,7 +180,8 @@ class ModalEditor extends Component {
     const selectedBlock = blocks.blocksConfig[this.state.blockData['@type']];
 
     return (
-      <Modal open={true} size="fullscreen">
+      <Modal className="mosaic-modal" open={true} size="fullscreen">
+        <BodyClass className="mosaic-page-modal-open" />
         <Modal.Content scrolling>
           <Tab
             onTabChange={this.handleTabChange}
