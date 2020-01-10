@@ -289,6 +289,9 @@ class Form extends Component {
     this.handleCloseEditor = this.handleCloseEditor.bind(this);
     this.handleLayoutToolbar = this.handleLayoutToolbar.bind(this);
     this.onShowBlock = this.onShowBlock.bind(this);
+
+    // hack
+    this.props.inputRef.current = this;
   }
 
   handleOpen(blockid) {
@@ -833,6 +836,7 @@ class Form extends Component {
   render() {
     const { schema } = this.props; // , onCancel, onSubmit
     // console.log('render props', this.props);
+    // console.log('mosaic props', this.props.inputRef);
 
     return __CLIENT__ ? (
       <div className="ui wrapper" style={{ overflow: 'auto' }}>
@@ -924,36 +928,6 @@ class Form extends Component {
             </Segment>
           </UiForm>
         </Portal>
-        {/* <Portal */}
-        {/*   node={__CLIENT__ && document.getElementById('sidebar-metadata')} */}
-        {/* > */}
-        {/*   <UiForm */}
-        {/*     method="post" */}
-        {/*     onSubmit={this.onSubmit} */}
-        {/*     error={keys(this.state.errors).length > 0} */}
-        {/*   > */}
-        {/*     {schema && */}
-        {/*       map(schema.fieldsets, item => [ */}
-        {/*         <Segment secondary attached key={item.title}> */}
-        {/*           {item.title} */}
-        {/*         </Segment>, */}
-        {/*         <Segment attached key={`fieldset-contents-${item.title}`}> */}
-        {/*           {map(item.fields, (field, index) => ( */}
-        {/*             <Field */}
-        {/*               {...schema.properties[field]} */}
-        {/*               id={field} */}
-        {/*               focus={index === 0} */}
-        {/*               value={this.state.formData[field]} */}
-        {/*               required={schema.required.indexOf(field) !== -1} */}
-        {/*               onChange={this.onChangeField} */}
-        {/*               key={field} */}
-        {/*               error={this.state.errors[field]} */}
-        {/*             /> */}
-        {/*           ))} */}
-        {/*         </Segment>, */}
-        {/*       ])} */}
-        {/*   </UiForm> */}
-        {/* </Portal> */}
       </div>
     ) : (
       ''
