@@ -9,25 +9,10 @@ import {
   // hasBlocksData,
 } from '@plone/volto/helpers';
 import _ from 'lodash';
-import Loadable from 'react-loadable';
-
-const RGL = Loadable({
-  loader: () => import('react-grid-layout'),
-  loading() {
-    return <div>Loading</div>;
-  },
-});
+import { SizeMe } from 'react-sizeme';
+import RGL from 'react-grid-layout';
 
 const { Responsive } = RGL;
-
-const reactSizeme = Loadable({
-  loader: () => import('react-sizeme'),
-  loading() {
-    return <div>Loading</div>;
-  },
-});
-
-const { SizeMe } = reactSizeme;
 
 const ReactGridLayout = Responsive;
 

@@ -31,25 +31,12 @@ import editIcon from '@plone/volto/icons/editing.svg';
 import { blocks } from '~/config';
 import { changeSidebarState } from 'volto-sidebar/actions';
 import { connect } from 'react-redux';
+
 import _ from 'lodash';
 
-import Loadable from 'react-loadable';
+import { SizeMe } from 'react-sizeme';
 
-const RGL = Loadable({
-  loader: () => import('react-grid-layout'),
-  loading() {
-    return <div>Loading</div>;
-  },
-});
-
-const reactSizeme = Loadable({
-  loader: () => import('react-sizeme'),
-  loading() {
-    return <div>Loading</div>;
-  },
-});
-
-const { SizeMe } = reactSizeme;
+import RGL from 'react-grid-layout';
 
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
