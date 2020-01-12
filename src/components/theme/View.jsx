@@ -1,18 +1,40 @@
 import ReactDOM from 'react-dom';
 import { breakpoints, rowHeight } from '../../constants';
 import React, { Component } from 'react';
-import { Responsive } from 'react-grid-layout';
-// import WidthProvider from './WidthProvider';
 import { blocks } from '~/config'; // settings,
-import { SizeMe } from 'react-sizeme';
-import _ from 'lodash';
-import * as configJs from '~/config';
 
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
   // hasBlocksData,
 } from '@plone/volto/helpers';
+
+import Loadable from 'react-loadable';
+
+const RGL = Loadable({
+  loader: () => import('react-grid-layout'),
+  loading() {
+    return <div>Loading</div>;
+  },
+});
+
+const { Responsive } = RGL;
+
+const _ = Loadable({
+  loader: () => import('lodash'),
+  loading() {
+    return <div>Loading</div>;
+  },
+});
+
+const reactSizeme = Loadable({
+  loader: () => import('react-sizeme'),
+  loading() {
+    return <div>Loading</div>;
+  },
+});
+
+const { SizeMe } = reactSizeme;
 
 const ReactGridLayout = Responsive;
 

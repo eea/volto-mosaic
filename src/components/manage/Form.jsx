@@ -13,14 +13,8 @@ import {
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
 
-import _ from 'lodash';
-
-import RGL from 'react-grid-layout';
-
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-
-import { SizeMe } from 'react-sizeme';
 
 import '../css/edit.css';
 import '../css/view.css';
@@ -37,6 +31,31 @@ import editIcon from '@plone/volto/icons/editing.svg';
 import { blocks } from '~/config';
 import { changeSidebarState } from 'volto-sidebar/actions';
 import { connect } from 'react-redux';
+
+import Loadable from 'react-loadable';
+
+const RGL = Loadable({
+  loader: () => import('react-grid-layout'),
+  loading() {
+    return <div>Loading</div>;
+  },
+});
+
+const _ = Loadable({
+  loader: () => import('lodash'),
+  loading() {
+    return <div>Loading</div>;
+  },
+});
+
+const reactSizeme = Loadable({
+  loader: () => import('react-sizeme'),
+  loading() {
+    return <div>Loading</div>;
+  },
+});
+
+const { SizeMe } = reactSizeme;
 
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
