@@ -8,7 +8,7 @@ import {
   getBlocksLayoutFieldname,
   // hasBlocksData,
 } from '@plone/volto/helpers';
-
+import _ from 'lodash';
 import Loadable from 'react-loadable';
 
 const RGL = Loadable({
@@ -19,13 +19,6 @@ const RGL = Loadable({
 });
 
 const { Responsive } = RGL;
-
-const _ = Loadable({
-  loader: () => import('lodash'),
-  loading() {
-    return <div>Loading</div>;
-  },
-});
 
 const reactSizeme = Loadable({
   loader: () => import('react-sizeme'),

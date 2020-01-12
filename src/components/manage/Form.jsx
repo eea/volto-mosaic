@@ -31,18 +31,12 @@ import editIcon from '@plone/volto/icons/editing.svg';
 import { blocks } from '~/config';
 import { changeSidebarState } from 'volto-sidebar/actions';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import Loadable from 'react-loadable';
 
 const RGL = Loadable({
   loader: () => import('react-grid-layout'),
-  loading() {
-    return <div>Loading</div>;
-  },
-});
-
-const _ = Loadable({
-  loader: () => import('lodash'),
   loading() {
     return <div>Loading</div>;
   },
