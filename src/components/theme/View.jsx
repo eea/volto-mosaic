@@ -1,7 +1,8 @@
+import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { breakpoints, rowHeight } from '../../constants';
 import React, { Component } from 'react';
-import { blocks } from '~/config'; // settings,
+import { settings, blocks } from '~/config'; // settings,
 
 import {
   getBlocksFieldname,
@@ -16,6 +17,38 @@ const { Responsive } = RGL;
 
 const ReactGridLayout = Responsive;
 
+function getLocation(href) {
+  var match = href.match(
+    /^(https?:)\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
+  );
+  return (
+    match && {
+      href: href,
+      protocol: match[1],
+      host: match[2],
+      hostname: match[3],
+      port: match[4],
+      pathname: match[5],
+      search: match[6],
+      hash: match[7],
+    }
+  );
+}
+
+function samePath(url, path) {
+  // returns true if the router path is equal to the given url path
+  const parsed = getLocation(url);
+  const clean = url
+    .replace(settings.apiPath, '')
+    .replace(settings.internalApiPath, '')
+    .replace(parsed.hash, '')
+    .replace(parsed.search, '');
+
+  // console.log('cleaned path from url', clean, path, url, getLocation(url));
+  // console.log(clean, url, path, clean === path);
+
+  return clean === path;
+}
 export class BlockViewWrapper extends Component {
   constructor(props) {
     super(props);
@@ -82,7 +115,7 @@ export class BlockViewWrapper extends Component {
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
-    console.log('height in getheight', height)
+    console.log('height in getheight', height);
     return height && height + 20; // also add paddings from block-wrapper
   }
 
@@ -114,7 +147,7 @@ export class BlockViewWrapper extends Component {
   }
 }
 
-class View extends Component {
+class MosaicView extends Component {
   static defaultProps = {
     cols: 12,
     margin: [0, 0],
@@ -222,6 +255,20 @@ class View extends Component {
   }
 
   render() {
+    const currentUrl = this.props.content?.['@id'];
+    const shouldRenderRoutes =
+      typeof currentUrl !== 'undefined' &&
+      samePath(currentUrl, this.props.pathname)
+        ? true
+        : false;
+    // console.log(
+    //   'should',
+    //   shouldRenderRoutes,
+    //   this.props.pathname,
+    //   this.props.contentId,
+    // );
+
+    if (shouldRenderRoutes === false) return '';
     // console.log('the config', configJs);
     // console.log(this.state.mosaic_layout);
     return this.state.mosaic_layout ? (
@@ -266,4 +313,9 @@ class View extends Component {
   }
 }
 
-export default View;
+// export default View;
+export default connect((state, props) => ({
+  pathname: state.router.location.pathname, //props.location.pathname,
+  contentId: state.content.data?.['@id'] || 'no-id',
+  loading: state.content,
+}))(MosaicView);
