@@ -82,6 +82,7 @@ export class BlockViewWrapper extends Component {
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
+    console.log('height in getheight', height)
     return height && height + 20; // also add paddings from block-wrapper
   }
 
@@ -183,7 +184,7 @@ class View extends Component {
             <BlockViewWrapper
               blockid={item.i}
               formData={this.props.content}
-              showUpdate={this.onBlockShowUpdate}
+              // showUpdate={this.onBlockShowUpdate}
               containerWidth={this.state.containerWidth}
             />
           </div>
