@@ -316,6 +316,4 @@ class MosaicView extends Component {
 // export default View;
 export default connect((state, props) => ({
   pathname: state.router.location.pathname, //props.location.pathname,
-  contentId: state.content.data?.['@id'] || 'no-id',
-  loading: state.content,
 }))(MosaicView);
