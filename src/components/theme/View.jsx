@@ -268,7 +268,23 @@ class MosaicView extends Component {
     //   this.props.contentId,
     // );
 
-    if (shouldRenderRoutes === false) return '';
+    if (shouldRenderRoutes === false)
+      return (
+        <div className="lds-default">
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+          <div />
+        </div>
+      );
     // console.log('the config', configJs);
     // console.log(this.state.mosaic_layout);
     return this.state.mosaic_layout ? (
