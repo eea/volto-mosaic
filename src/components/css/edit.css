@@ -129,6 +129,7 @@
   overflow: auto;
   border: 2px solid white;
   background: #fafafa;
+  padding-bottom: 7px;
 
   /* border: 1px solid #ddd; */
 }
@@ -143,12 +144,7 @@
   margin: 0 !important;
 }
 
-.react-grid-layout.mosaic-edit-layout .ui.grid .column {
-  /* border: 1px solid #ddd; */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 
 .react-grid-layout.mosaic-edit-layout .ui.grid .row .column:first-child {
