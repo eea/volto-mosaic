@@ -890,44 +890,6 @@ class Form extends Component {
         ) : (
           ''
         )}
-
-        <Portal
-          node={__CLIENT__ && document.getElementById('sidebar-metadata')}
-        >
-          <UiForm>
-            <Segment secondary attached>
-              Layout properties
-            </Segment>
-            <Segment attached>
-              <Field
-                id="layout-css"
-                title="CSS Overrides"
-                value={
-                  this.state.formData.blocks_layout?.mosaic_layout
-                    ?.mosaic_css_override || ''
-                }
-                description="Custom css for this layout page"
-                widget="textarea"
-                required={false}
-                onChange={(id, value) => {
-                  this.setState({
-                    formData: {
-                      ...this.state.formData,
-                      blocks_layout: {
-                        ...this.state.formData.blocks_layout,
-                        mosaic_layout: {
-                          ...(this.state.formData.blocks_layout
-                            ?.mosaic_layout || {}),
-                          mosaic_css_override: value,
-                        },
-                      },
-                    },
-                  });
-                }}
-              />
-            </Segment>
-          </UiForm>
-        </Portal>
       </div>
     ) : (
       ''
