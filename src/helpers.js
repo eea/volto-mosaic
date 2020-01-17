@@ -1,6 +1,5 @@
 import { settings } from '~/config';
 
-
 export function getLocation(href) {
   var match = href.match(
     /^(https?:)\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
@@ -26,10 +25,9 @@ export function samePath(url, path) {
     .replace(settings.apiPath, '')
     .replace(settings.internalApiPath, '')
     .replace(parsed.hash, '')
-    .replace(parsed.search, '');
+    .replace(parsed.search, '')
+    .replace(/\/$/, '');
 
-  // console.log('cleaned path from url', clean, path, url, getLocation(url));
-  // console.log(clean, url, path, clean === path);
-
-  return clean === path;
+  const cleanPath = path.replace(/\/$/, '');
+  return clean === cleanPath;
 }

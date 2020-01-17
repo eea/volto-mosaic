@@ -12,43 +12,12 @@ import {
 import _ from 'lodash';
 import { SizeMe } from 'react-sizeme';
 import RGL from 'react-grid-layout';
+import { getLocation, samePath } from 'volto-mosaic/helpers';
 
 const { Responsive } = RGL;
 
 const ReactGridLayout = Responsive;
 
-function getLocation(href) {
-  var match = href.match(
-    /^(https?:)\/\/(([^:/?#]*)(?::([0-9]+))?)([/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
-  );
-  return (
-    match && {
-      href: href,
-      protocol: match[1],
-      host: match[2],
-      hostname: match[3],
-      port: match[4],
-      pathname: match[5],
-      search: match[6],
-      hash: match[7],
-    }
-  );
-}
-
-function samePath(url, path) {
-  // returns true if the router path is equal to the given url path
-  const parsed = getLocation(url);
-  const clean = url
-    .replace(settings.apiPath, '')
-    .replace(settings.internalApiPath, '')
-    .replace(parsed.hash, '')
-    .replace(parsed.search, '');
-
-  // console.log('cleaned path from url', clean, path, url, getLocation(url));
-  // console.log(clean, url, path, clean === path);
-
-  return clean === path;
-}
 export class BlockViewWrapper extends Component {
   constructor(props) {
     super(props);
