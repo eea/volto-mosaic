@@ -42,3 +42,8 @@
 .mosaic-preview-body .block-container {
   height: 100%;
 }
+
+.block-container p:empty:before {
+  content: ' ';
+  white-space: pre;
+}
