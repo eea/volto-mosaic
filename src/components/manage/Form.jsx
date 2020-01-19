@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
-import { Button, Form as UiForm, Segment } from 'semantic-ui-react';
+import { Button, Form as UiForm, Grid, List, Segment } from 'semantic-ui-react';
 import { defineMessages, injectIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
@@ -89,6 +89,12 @@ function fromEntries(iterable) {
     obj[key] = val;
     return obj;
   }, {});
+}
+
+export function getBlockById(formData, id) {
+  const blocksFieldname = getBlocksFieldname(formData);
+  const res = formData[blocksFieldname]?.[id];
+  return res;
 }
 
 function fallbackLayoutFromData(formData, ids) {
@@ -577,7 +583,7 @@ class Form extends Component {
                   size="mini"
                   icon
                   color="red"
-                  onClick={() => this.onRemoveItem.bind(this, i)}
+                  onClick={() => this.onRemoveItem.bind(this, i)()}
                 >
                   <Icon name={deleteIcon} size="10" />
                 </Button>
@@ -902,6 +908,7 @@ class Form extends Component {
     const { schema } = this.props; // , onCancel, onSubmit
     // console.log('render props', this.props);
     // console.log('mosaic props', this.props.inputRef);
+    console.log('mosaic layout', this.state.activeMosaicLayout);
 
     return __CLIENT__ ? (
       <div className="ui wrapper" style={{ overflow: 'auto' }}>
@@ -955,6 +962,27 @@ class Form extends Component {
             activeMosaicLayout={this.state.activeMosaicLayout}
             dispatchToParent={this.handleLayoutToolbar}
             currentZoom={this.state.zoom}
+            tilesList={_.map(this.state.activeMosaicLayout, el => (
+              <List.Item key={el.i}>
+                <List.Content floated="right">
+                  <Button size="mini" onClick={() => this.handleOpen(el.i)}>
+                    Edit
+                  </Button>
+                </List.Content>
+                <List.Content>
+                  <Grid stretched>
+                    <Grid.Column width="8">
+                      {getBlockById(this.state.formData, el.i)?.['@type']}
+                    </Grid.Column>
+                    <Grid.Column width="4">
+                      <small>
+                        {el.w} x {el.h}
+                      </small>
+                    </Grid.Column>
+                  </Grid>
+                </List.Content>
+              </List.Item>
+            ))}
           />
         </SidebarPortal>
         <Portal

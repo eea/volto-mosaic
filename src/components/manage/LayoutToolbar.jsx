@@ -1,6 +1,13 @@
 import { Icon as VoltoIcon } from '@plone/volto/components';
 import React, { Component } from 'react';
-import { Button, Dropdown, Segment, Checkbox, Grid } from 'semantic-ui-react';
+import {
+  Button,
+  Dropdown,
+  List,
+  Segment,
+  Checkbox,
+  Grid,
+} from 'semantic-ui-react';
 import checkIcon from '@plone/volto/icons/check.svg';
 import FormField from './FormField';
 import { availableZoomLevels } from './constants';
@@ -165,6 +172,11 @@ class LayoutToolbar extends Component {
               defaultValue={this.props.currentZoom}
             />
           </FormField>
+        </Segment>
+        <Segment>
+          <List divided verticalAlign="middle">
+            {this.props.tilesList}
+          </List>
         </Segment>
       </Segment.Group>
     );
