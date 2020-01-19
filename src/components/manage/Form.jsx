@@ -975,7 +975,9 @@ class Form extends Component {
                 <List.Content verticalAlign="middle">
                   <Grid stretched>
                     <Grid.Column width="8">
-                      {getBlockById(this.state.formData, el.i)?.['@type']}
+                      {getBlockById(this.state.formData, el.i)?.[
+                        '@type'
+                      ].replace(/_/gi, ' ')}
                     </Grid.Column>
                     <Grid.Column width="4">
                       <small>
