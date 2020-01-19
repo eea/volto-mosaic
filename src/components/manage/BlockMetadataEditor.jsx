@@ -35,7 +35,7 @@ class BlockMetadataEditor extends Component {
       selectedBoxStyle: block.mosaic_box_style || 'default-block',
 
       mosaic_block_title: block.mosaic_block_title,
-      mosaic_box_sizing: block.mosaic_box_sizing || 'manual',
+      mosaic_box_sizing: block.mosaic_box_sizing || 'fit-content',
       block_title: block.block_title,
       show_block_title,
     };
