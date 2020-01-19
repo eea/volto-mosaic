@@ -969,7 +969,7 @@ class Form extends Component {
                     Edit
                   </Button>
                 </List.Content>
-                <List.Content>
+                <List.Content verticalAlign="middle">
                   <Grid stretched>
                     <Grid.Column width="8">
                       {getBlockById(this.state.formData, el.i)?.['@type']}

@@ -174,9 +174,7 @@ class LayoutToolbar extends Component {
           </FormField>
         </Segment>
         <Segment>
-          <List divided verticalAlign="middle">
-            {this.props.tilesList}
-          </List>
+          <List divided>{this.props.tilesList}</List>
         </Segment>
       </Segment.Group>
     );
