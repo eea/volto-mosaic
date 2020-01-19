@@ -205,7 +205,10 @@ class Form extends Component {
   constructor(props) {
     super(props);
 
-    if (__SERVER__) return;
+    if (__SERVER__) {
+      this.state = {};
+      return;
+    }
 
     const ids = {
       title: uuid(),
@@ -908,7 +911,7 @@ class Form extends Component {
     const { schema } = this.props; // , onCancel, onSubmit
     // console.log('render props', this.props);
     // console.log('mosaic props', this.props.inputRef);
-    console.log('mosaic layout', this.state.activeMosaicLayout);
+    console.log('mosaic layout', this.state?.activeMosaicLayout);
 
     return __CLIENT__ ? (
       <div className="ui wrapper" style={{ overflow: 'auto' }}>
