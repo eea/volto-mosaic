@@ -7,7 +7,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
 
-import { Field, Icon } from '@plone/volto/components'; // EditBlock
+import { Field, Icon, SidebarPortal } from '@plone/volto/components'; // EditBlock
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
@@ -782,6 +782,7 @@ class Form extends Component {
 
     switch (evType) {
       case 'PREVIEW_TILES':
+        console.log('preview tiles', data);
         this.setState({
           preview: data,
         });
@@ -831,99 +832,6 @@ class Form extends Component {
       default:
         break;
     }
-  }
-
-  render() {
-    const { schema } = this.props; // , onCancel, onSubmit
-    // console.log('render props', this.props);
-    // console.log('mosaic props', this.props.inputRef);
-
-    return __CLIENT__ ? (
-      <div className="ui wrapper" style={{ overflow: 'auto' }}>
-        <LayoutToolbar
-          availableScreens={this.state.availableScreens}
-          layouts={
-            this.state.formData.blocks_layout.mosaic_layout ||
-            this.props.formData.blocks_layout.mosaic_layout
-          }
-          preview={this.state.preview}
-          activeMosaicLayout={this.state.activeMosaicLayout}
-          dispatchToParent={this.handleLayoutToolbar}
-        />
-
-        <div
-          className="layout-preview"
-          id={'layout-preview-' + this.state.activeScreenSize}
-        >
-          <SizeMe>
-            {({ size }) => (
-              <ReactGridLayout
-                onLayoutChange={this.onLayoutChange}
-                onBreakpointChange={this.onBreakpointChange}
-                layout={this.state.activeMosaicLayout}
-                width={
-                  this.state.layoutWidth ||
-                  size.width ||
-                  document.querySelector('main').offsetWidth
-                }
-                // onDragStop={this.onDragStop}
-                // onResizeStop={this.onResizeStop}
-                // onResize={this.onResize}
-                // onResizeStart={this.onResizeStart}
-                {...this.props}
-              >
-                {_.map(this.state.activeMosaicLayout, el =>
-                  this.createElement(el),
-                )}
-              </ReactGridLayout>
-            )}
-          </SizeMe>
-        </div>
-
-        {/* onChangeBlock={this.onEditBlock} */}
-        {this.state.showModal ? (
-          <BlockEditor
-            blockid={this.state.currentBlock}
-            formData={this.state.formData}
-            onClose={this.handleCloseEditor}
-          />
-        ) : (
-          ''
-        )}
-        <Portal
-          node={__CLIENT__ && document.getElementById('sidebar-metadata')}
-        >
-          <UiForm
-            method="post"
-            onSubmit={this.onSubmit}
-            error={keys(this.state.errors).length > 0}
-          >
-            {schema &&
-              map(schema.fieldsets, item => [
-                <Segment secondary attached key={item.title}>
-                  {item.title}
-                </Segment>,
-                <Segment attached key={`fieldset-contents-${item.title}`}>
-                  {map(item.fields, (field, index) => (
-                    <Field
-                      {...schema.properties[field]}
-                      id={field}
-                      focus={false}
-                      value={this.state.formData[field]}
-                      required={schema.required.indexOf(field) !== -1}
-                      onChange={this.onChangeField}
-                      key={field}
-                      error={this.state.errors[field]}
-                    />
-                  ))}
-                </Segment>,
-              ])}
-          </UiForm>
-        </Portal>
-      </div>
-    ) : (
-      ''
-    );
   }
 
   onResizeStop(layout, old, neu, x, e, node) {
@@ -982,6 +890,100 @@ class Form extends Component {
     this.setState({
       dirtyLayout: true,
     });
+  }
+
+  render() {
+    const { schema } = this.props; // , onCancel, onSubmit
+    // console.log('render props', this.props);
+    // console.log('mosaic props', this.props.inputRef);
+
+    return __CLIENT__ ? (
+      <div className="ui wrapper" style={{ overflow: 'auto' }}>
+        <div
+          className="ui layout-preview"
+          id={'layout-preview-' + this.state.activeScreenSize}
+        >
+          <SizeMe>
+            {({ size }) => (
+              <ReactGridLayout
+                onLayoutChange={this.onLayoutChange}
+                onBreakpointChange={this.onBreakpointChange}
+                layout={this.state.activeMosaicLayout}
+                width={
+                  this.state.layoutWidth ||
+                  size.width ||
+                  document.querySelector('main').offsetWidth
+                }
+                // onDragStop={this.onDragStop}
+                // onResizeStop={this.onResizeStop}
+                // onResize={this.onResize}
+                // onResizeStart={this.onResizeStart}
+                {...this.props}
+              >
+                {_.map(this.state.activeMosaicLayout, el =>
+                  this.createElement(el),
+                )}
+              </ReactGridLayout>
+            )}
+          </SizeMe>
+        </div>
+
+        {/* onChangeBlock={this.onEditBlock} */}
+        {this.state.showModal ? (
+          <BlockEditor
+            blockid={this.state.currentBlock}
+            formData={this.state.formData}
+            onClose={this.handleCloseEditor}
+          />
+        ) : (
+          ''
+        )}
+        <SidebarPortal selected={!this.state.showModal}>
+          <LayoutToolbar
+            availableScreens={this.state.availableScreens}
+            layouts={
+              this.state.formData.blocks_layout.mosaic_layout ||
+              this.props.formData.blocks_layout.mosaic_layout
+            }
+            preview={this.state.preview}
+            activeMosaicLayout={this.state.activeMosaicLayout}
+            dispatchToParent={this.handleLayoutToolbar}
+          />
+        </SidebarPortal>
+        <Portal
+          node={__CLIENT__ && document.getElementById('sidebar-metadata')}
+        >
+          <UiForm
+            method="post"
+            onSubmit={this.onSubmit}
+            error={keys(this.state.errors).length > 0}
+          >
+            {schema &&
+              map(schema.fieldsets, item => [
+                <Segment secondary attached key={item.title}>
+                  {item.title}
+                </Segment>,
+                <Segment attached key={`fieldset-contents-${item.title}`}>
+                  {map(item.fields, (field, index) => (
+                    <Field
+                      {...schema.properties[field]}
+                      id={field}
+                      focus={false}
+                      value={this.state.formData[field]}
+                      required={schema.required.indexOf(field) !== -1}
+                      onChange={this.onChangeField}
+                      key={field}
+                      error={this.state.errors[field]}
+                    />
+                  ))}
+                </Segment>,
+              ])}
+          </UiForm>
+        </Portal>
+      </div>
+    ) : (
+      ''
+    );
   }
 
   // onResize(layout, old, neu, x, e, node) {

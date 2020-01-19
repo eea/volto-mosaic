@@ -266,6 +266,7 @@
   background: gray;
   border: 6px solid gray;
   padding: 6px;
+  transform: scale(0.5) translate(-50%,-50%);
 }
 
 #layout-preview-lg {

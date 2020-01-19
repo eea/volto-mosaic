@@ -1,6 +1,6 @@
 import { Icon as VoltoIcon } from '@plone/volto/components';
 import React, { Component } from 'react';
-import { Button, Dropdown, Grid, Radio } from 'semantic-ui-react';
+import { Button, Dropdown, Segment, Checkbox, Grid } from 'semantic-ui-react';
 import checkIcon from '@plone/volto/icons/check.svg';
 
 class LayoutToolbar extends Component {
@@ -78,22 +78,36 @@ class LayoutToolbar extends Component {
       showSaveButton = has ? false : true;
       showDeleteButton = has ? true : false;
     }
+    // defaultChecked={this.props.preview}
 
     return (
-      <Grid columns={3}>
-        <Grid.Row>
-          <Grid.Column>
-            <div>
-              <Radio
-                toggle
-                checked={this.props.preview}
-                onChange={this.sendPreviewBlocks}
-              />
-              <small>Preview blocks</small>
-            </div>
-          </Grid.Column>
+      <Segment.Group raised>
+        <header className="header pulled">
+          <h2>Mosaic Layout</h2>
+        </header>
 
-          <Grid.Column>
+        <Segment secondary>
+          <Grid columns="two">
+            <Grid.Column>
+              <Checkbox
+                toggle
+                id="preview-toggle"
+                onChange={(ev, data) => {
+                  console.log('pvewi toggle');
+                  return this.sendPreviewBlocks(ev, data);
+                }}
+                label="Preview blocks"
+              />
+            </Grid.Column>
+            <Grid.Column>
+              {this.state.currentScreenSize === 'lg' && (
+                <Button onClick={this.sendAddBlock}>Add block</Button>
+              )}
+            </Grid.Column>
+          </Grid>
+        </Segment>
+        <Segment>
+          <div>
             <span>Select screen size</span>
             <Dropdown
               inline
@@ -102,30 +116,21 @@ class LayoutToolbar extends Component {
               selection
               value={this.state.currentScreenSize}
             />
-          </Grid.Column>
-          <Grid.Column>
-            {showSaveButton ? (
+          </div>
+          <div>
+            {showSaveButton && (
               <Button onClick={this.sendSaveLayout}>
                 Create responsive layout
               </Button>
-            ) : (
-              ''
             )}
-            {showDeleteButton ? (
+            {showDeleteButton && (
               <Button onClick={this.sendDeleteLayout}>
                 Delete responsive layout
               </Button>
-            ) : (
-              ''
             )}
-            {this.state.currentScreenSize === 'lg' ? (
-              <Button onClick={this.sendAddBlock}>Add new block</Button>
-            ) : (
-              ''
-            )}
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+          </div>
+        </Segment>
+      </Segment.Group>
     );
   }
 }
