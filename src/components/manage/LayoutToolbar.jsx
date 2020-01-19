@@ -173,6 +173,9 @@ class LayoutToolbar extends Component {
             />
           </FormField>
         </Segment>
+        <header className="header pulled">
+          <h2>Tiles</h2>
+        </header>
         <Segment>
           <List divided>{this.props.tilesList}</List>
         </Segment>
