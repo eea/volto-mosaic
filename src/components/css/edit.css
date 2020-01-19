@@ -128,7 +128,7 @@
 .view-editview .react-grid-item:not(.react-grid-placeholder) {
   overflow: auto;
   border: 2px solid white;
-  background: #fafafa;
+  background: white;
   padding-bottom: 7px;
 
   /* border: 1px solid #ddd; */
