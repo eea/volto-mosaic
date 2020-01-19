@@ -77,17 +77,20 @@ export class BlockViewWrapper extends Component {
   getHeight() {
     const node = ReactDOM.findDOMNode(this.state.ref.current);
     let child = node && node.querySelector('.block-wrapper > *');
-    // console.log('get height', node);
     let height = (child && child.scrollHeight) || (node && node.scrollHeight);
     // TODO: this is a hack. Need to make sure that this is correct;
     // The problem is that block-wrapper and its parrent block-container are all
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
-    const heightFromMargin = +this.props.formData?.blocks_layout?.margins
-      ? 2 * parseInt(this.props.formData.blocks_layout.margins)
-      : 0;
-    return height && height + 10 - heightFromMargin; // also add paddings from block-wrapper
+    console.log('get height', height, node);
+    return height && height - 20; //&& height + 20;
+    // const heightFromMargin = +this.props.formData?.blocks_layout?.margins
+    //   ? 2 * parseInt(this.props.formData.blocks_layout.margins)
+    //   : 0;
+    // const res = height && height + 10 - heightFromMargin; // also add paddings from block-wrapper
+    // console.log('height', height, heightFromMargin, res);
+    // return res;
   }
 
   componentDidMount() {
