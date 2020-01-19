@@ -575,7 +575,7 @@ class Form extends Component {
                   size="mini"
                   icon
                   color="red"
-                  onClick={this.onRemoveItem.bind(this, i)}
+                  onClick={() => this.onRemoveItem.bind(this, i)}
                 >
                   <Icon name={deleteIcon} size="10" />
                 </Button>

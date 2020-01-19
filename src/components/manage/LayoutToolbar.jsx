@@ -2,6 +2,7 @@ import { Icon as VoltoIcon } from '@plone/volto/components';
 import React, { Component } from 'react';
 import { Button, Dropdown, Segment, Checkbox, Grid } from 'semantic-ui-react';
 import checkIcon from '@plone/volto/icons/check.svg';
+import FormField from './FormField';
 
 class LayoutToolbar extends Component {
   static defaultProps = {
@@ -100,15 +101,17 @@ class LayoutToolbar extends Component {
               />
             </Grid.Column>
             <Grid.Column>
-              {this.state.currentScreenSize === 'lg' && (
-                <Button onClick={this.sendAddBlock}>Add block</Button>
-              )}
+              <Button
+                onClick={this.sendAddBlock}
+                disabled={this.state.currentScreenSize !== 'lg'}
+              >
+                Add block
+              </Button>
             </Grid.Column>
           </Grid>
         </Segment>
         <Segment>
-          <div>
-            <span>Select screen size</span>
+          <FormField id="select-screensize" title="Select screen size">
             <Dropdown
               inline
               onChange={this.sendChangeScreenSize}
@@ -116,19 +119,35 @@ class LayoutToolbar extends Component {
               selection
               value={this.state.currentScreenSize}
             />
-          </div>
-          <div>
-            {showSaveButton && (
-              <Button onClick={this.sendSaveLayout}>
-                Create responsive layout
+          </FormField>
+          {showSaveButton || showDeleteButton ? (
+            <FormField id="save-responsive" title="">
+              {showSaveButton && (
+                <Button size="mini" onClick={this.sendSaveLayout}>
+                  Create responsive layout
+                </Button>
+              )}
+              {showDeleteButton && (
+                <Button size="mini" onClick={this.sendDeleteLayout}>
+                  Delete responsive layout
+                </Button>
+              )}
+            </FormField>
+          ) : (
+            ''
+          )}
+        </Segment>
+        <Segment>
+          <FormField title="Zoom" id="zoom-mosaic">
+            <Button.Group size="mini">
+              <Button size="mini" active>
+                25%
               </Button>
-            )}
-            {showDeleteButton && (
-              <Button onClick={this.sendDeleteLayout}>
-                Delete responsive layout
-              </Button>
-            )}
-          </div>
+              <Button size="mini">50%</Button>
+              <Button size="mini">75%</Button>
+              <Button size="mini">100%</Button>
+            </Button.Group>
+          </FormField>
         </Segment>
       </Segment.Group>
     );
