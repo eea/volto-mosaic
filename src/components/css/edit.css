@@ -269,6 +269,25 @@
   transform: scale(0.5) translate(-50%,-50%);
 }
 
+.zoom-100 {
+  transform: scale(1) translate(0, 0);
+}
+
+.zoom-50 {
+  transform: scale(.5) translate(-50%, -50%);
+}
+
+.zoom-75 {
+  transform: scale(.75) translate(-17%, -17%);
+}
+
+.zoom-25 {
+  transform: scale(.25) translate(-150%, -150%);
+}
+#field-zoom-mosaic button {
+  padding: 0 !important;
+}
+
 #layout-preview-lg {
   width: 1573px !important;
 }

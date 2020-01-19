@@ -3,6 +3,22 @@ import React, { Component } from 'react';
 import { Button, Dropdown, Segment, Checkbox, Grid } from 'semantic-ui-react';
 import checkIcon from '@plone/volto/icons/check.svg';
 import FormField from './FormField';
+import { availableZoomLevels } from './constants';
+
+const ZoomButtons = ({ onZoom, defaultValue }) => (
+  <Button.Group size="mini">
+    {availableZoomLevels.map(name => (
+      <Button
+        size="mini"
+        active={name === defaultValue}
+        key={name}
+        onClick={() => onZoom(name)}
+      >
+        {name}
+      </Button>
+    ))}
+  </Button.Group>
+);
 
 class LayoutToolbar extends Component {
   static defaultProps = {
@@ -23,6 +39,7 @@ class LayoutToolbar extends Component {
     this.sendPreviewResponsive = this.sendPreviewResponsive.bind(this);
     this.sendPreviewBlocks = this.sendPreviewBlocks.bind(this);
     this.sendSaveLayout = this.sendSaveLayout.bind(this);
+    this.sendZoomChange = this.sendZoomChange.bind(this);
   }
 
   sendChangeScreenSize(event, data) {
@@ -49,6 +66,10 @@ class LayoutToolbar extends Component {
 
   sendAddBlock() {
     this.props.dispatchToParent('CREATE_TILE', null);
+  }
+
+  sendZoomChange(zoomName) {
+    this.props.dispatchToParent('CHANGE_ZOOM', zoomName);
   }
 
   getAvailableScreens() {
@@ -139,14 +160,10 @@ class LayoutToolbar extends Component {
         </Segment>
         <Segment>
           <FormField title="Zoom" id="zoom-mosaic">
-            <Button.Group size="mini">
-              <Button size="mini" active>
-                25%
-              </Button>
-              <Button size="mini">50%</Button>
-              <Button size="mini">75%</Button>
-              <Button size="mini">100%</Button>
-            </Button.Group>
+            <ZoomButtons
+              onZoom={this.sendZoomChange}
+              defaultValue={this.props.currentZoom}
+            />
           </FormField>
         </Segment>
       </Segment.Group>

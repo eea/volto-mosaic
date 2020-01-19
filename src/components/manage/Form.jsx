@@ -31,6 +31,7 @@ import editIcon from '@plone/volto/icons/editing.svg';
 import { blocks } from '~/config';
 import { changeSidebarState } from 'volto-sidebar/actions';
 import { connect } from 'react-redux';
+import { zoomClassNames } from './constants';
 
 import _ from 'lodash';
 
@@ -260,6 +261,7 @@ class Form extends Component {
       dirtyLayout: false,
       refs: fromEntries(refs),
       blockHeights: {},
+      zoom: '100%',
     };
 
     // this.onMoveBlock = this.onMoveBlock.bind(this);
@@ -782,9 +784,13 @@ class Form extends Component {
 
     switch (evType) {
       case 'PREVIEW_TILES':
-        console.log('preview tiles', data);
         this.setState({
           preview: data,
+        });
+        break;
+      case 'CHANGE_ZOOM':
+        this.setState({
+          zoom: data,
         });
         break;
       case 'CHANGE_SCREEN_SIZE':
@@ -900,7 +906,7 @@ class Form extends Component {
     return __CLIENT__ ? (
       <div className="ui wrapper" style={{ overflow: 'auto' }}>
         <div
-          className="ui layout-preview"
+          className={`ui layout-preview ${zoomClassNames[this.state.zoom]}`}
           id={'layout-preview-' + this.state.activeScreenSize}
         >
           <SizeMe>
@@ -948,6 +954,7 @@ class Form extends Component {
             preview={this.state.preview}
             activeMosaicLayout={this.state.activeMosaicLayout}
             dispatchToParent={this.handleLayoutToolbar}
+            currentZoom={this.state.zoom}
           />
         </SidebarPortal>
         <Portal
