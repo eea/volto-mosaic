@@ -353,7 +353,7 @@ class Form extends Component {
     const activeScreenSize = this.state.activeScreenSize || 'lg';
     const blockData = formData[blocksFieldname][blockid];
 
-    const sizing = blockData.mosaic_box_sizing || 'fit-content';
+    const sizing = blockData.mosaic_box_sizing || 'manual';
 
     let ix, lh;
     switch (sizing) {

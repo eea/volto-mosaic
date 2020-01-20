@@ -114,9 +114,9 @@ export class BlockViewWrapper extends Component {
       return;
 
     this.setState({ updated: true }, () => {
-      const height = this.getHeight();
+      // const height = this.getHeight();
       // console.log('componentDidUpdate default code', this.props.blockid, height);
-      this.props.showUpdate(this.props.blockid, height);
+      // this.props.showUpdate(this.props.blockid, height);
     });
   }
 }
