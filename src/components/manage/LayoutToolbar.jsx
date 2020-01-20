@@ -11,6 +11,7 @@ import {
 import checkIcon from '@plone/volto/icons/check.svg';
 import FormField from './FormField';
 import { availableZoomLevels } from './constants';
+import { Field } from '@plone/volto/components';
 
 const ZoomButtons = ({ onZoom, defaultValue }) => (
   <Button.Group size="mini">
@@ -78,6 +79,10 @@ class LayoutToolbar extends Component {
   sendZoomChange(zoomName) {
     this.props.dispatchToParent('CHANGE_ZOOM', zoomName);
   }
+
+  sendMarginsChange = margins => {
+    this.props.dispatchToParent('CHANGE_MARGINS', margins);
+  };
 
   getAvailableScreens() {
     const layouts = this.props.layouts || {};
@@ -172,6 +177,17 @@ class LayoutToolbar extends Component {
               defaultValue={this.props.currentZoom}
             />
           </FormField>
+        </Segment>
+        <Segment>
+          <Field
+            id="mosaic-margin"
+            title="Block margin"
+            type="number"
+            description="Margins for block"
+            value={this.props.margins}
+            required={false}
+            onChange={(e, d) => this.sendMarginsChange(d)}
+          />
         </Segment>
         <header className="header pulled">
           <h2>Tiles</h2>

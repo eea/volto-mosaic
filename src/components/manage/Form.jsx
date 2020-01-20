@@ -195,7 +195,7 @@ class Form extends Component {
     // cols: { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 },
     cols: 12,
     rowHeight: rowHeight,
-    margin: [0, 0],
+    margins: 0,
     layoutWidth: null, // preview responsive layout width
     activeScreenSize: 'lg', // 'desktop' is the default screen size
 
@@ -261,6 +261,7 @@ class Form extends Component {
 
     this.state = {
       formData,
+      margins: this.props.formData.blocks_layout.margins || 0,
       errors: {},
       cols: 12,
       availableScreens: screens,
@@ -352,7 +353,7 @@ class Form extends Component {
     const activeScreenSize = this.state.activeScreenSize || 'lg';
     const blockData = formData[blocksFieldname][blockid];
 
-    const sizing = blockData.mosaic_box_sizing || 'fit-content';
+    const sizing = blockData.mosaic_box_sizing || 'manual';
 
     let ix, lh;
     switch (sizing) {
@@ -834,6 +835,23 @@ class Form extends Component {
           // this.changeLayoutOnScreenSizeChange(data),
         );
         break;
+      case 'CHANGE_MARGINS':
+        console.log('change margins', data);
+        this.setState(
+          {
+            formData: {
+              ...this.state.formData,
+              blocks_layout: {
+                ...this.state.formData.blocks_layout,
+                margins: data,
+              },
+            },
+          },
+          () => {
+            console.log('SET STATE ON MARGINS CHANGE', this.state);
+          },
+        );
+        break;
       case 'CREATE_TILE':
         this.onAddBlock('text');
         break;
@@ -911,7 +929,11 @@ class Form extends Component {
     const { schema } = this.props; // , onCancel, onSubmit
     // console.log('render props', this.props);
     // console.log('mosaic props', this.props.inputRef);
-    console.log('mosaic layout', this.state?.activeMosaicLayout);
+    console.log('mosaic layout', this.state?.formData);
+    const marginsData =
+      this.state.formData?.blocks_layout?.margins &&
+      parseInt(this.state.formData?.blocks_layout?.margins);
+    const margins = marginsData ? [marginsData, marginsData] : [0, 0];
 
     return __CLIENT__ ? (
       <div className="ui wrapper" style={{ overflow: 'auto' }}>
@@ -930,6 +952,7 @@ class Form extends Component {
                   size.width ||
                   document.querySelector('main').offsetWidth
                 }
+                margins={margins}
                 // onDragStop={this.onDragStop}
                 // onResizeStop={this.onResizeStop}
                 // onResize={this.onResize}
@@ -965,6 +988,7 @@ class Form extends Component {
             activeMosaicLayout={this.state.activeMosaicLayout}
             dispatchToParent={this.handleLayoutToolbar}
             currentZoom={this.state.zoom}
+            margins={this.state.formData?.blocks_layout.margins}
             tilesList={_.map(this.state.activeMosaicLayout, el => (
               <List.Item key={el.i}>
                 <List.Content floated="right">

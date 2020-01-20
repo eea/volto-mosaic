@@ -77,15 +77,20 @@ export class BlockViewWrapper extends Component {
   getHeight() {
     const node = ReactDOM.findDOMNode(this.state.ref.current);
     let child = node && node.querySelector('.block-wrapper > *');
-    // console.log('get height', node);
     let height = (child && child.scrollHeight) || (node && node.scrollHeight);
     // TODO: this is a hack. Need to make sure that this is correct;
     // The problem is that block-wrapper and its parrent block-container are all
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
-    console.log('height in getheight', height);
-    return height && height + 20; // also add paddings from block-wrapper
+    console.log('get height', height, node);
+    return height && height - 20; //&& height + 20;
+    // const heightFromMargin = +this.props.formData?.blocks_layout?.margins
+    //   ? 2 * parseInt(this.props.formData.blocks_layout.margins)
+    //   : 0;
+    // const res = height && height + 10 - heightFromMargin; // also add paddings from block-wrapper
+    // console.log('height', height, heightFromMargin, res);
+    // return res;
   }
 
   componentDidMount() {
@@ -109,9 +114,9 @@ export class BlockViewWrapper extends Component {
       return;
 
     this.setState({ updated: true }, () => {
-      const height = this.getHeight();
+      // const height = this.getHeight();
       // console.log('componentDidUpdate default code', this.props.blockid, height);
-      this.props.showUpdate(this.props.blockid, height);
+      // this.props.showUpdate(this.props.blockid, height);
     });
   }
 }
@@ -255,7 +260,12 @@ class MosaicView extends Component {
         </div>
       );
     // console.log('the config', configJs);
-    // console.log(this.state.mosaic_layout);
+    console.log('lalalala', 'props', this.props);
+    const marginsData =
+      this.props.content?.blocks_layout?.margins &&
+      parseInt(this.props.content?.blocks_layout?.margins);
+    const margins = marginsData ? [marginsData, marginsData] : [0, 0];
+    console.log('MARGINS', margins);
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <SizeMe>
@@ -274,7 +284,8 @@ class MosaicView extends Component {
               onWidthChange={this.onWidthChange}
               measureBeforeMount={true}
               rowHeight={rowHeight}
-              margin={[0, 0]}
+              // margin={[0, 0]}
+              margin={margins}
               isDraggable={false}
               isResizable={false}
               isDroppable={false}
