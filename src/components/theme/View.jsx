@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { SizeMe } from 'react-sizeme';
 import RGL from 'react-grid-layout';
 import { getLocation, samePath } from 'volto-mosaic/helpers';
+import Spinner from './Spinner';
 
 const { Responsive } = RGL;
 
@@ -242,23 +243,8 @@ class MosaicView extends Component {
     //   this.props.contentId,
     // );
 
-    if (shouldRenderRoutes === false)
-      return (
-        <div className="lds-default">
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-          <div />
-        </div>
-      );
+    if (!shouldRenderRoutes) return <Spinner />;
+
     // console.log('the config', configJs);
     console.log('lalalala', 'props', this.props);
     const marginsData =
