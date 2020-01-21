@@ -230,20 +230,20 @@ class MosaicView extends Component {
   }
 
   render() {
-    const currentUrl = this.props.content?.['@id'];
-    const shouldRenderRoutes =
-      typeof currentUrl !== 'undefined' &&
-      samePath(currentUrl, this.props.pathname)
-        ? true
-        : false;
-    // console.log(
-    //   'should',
-    //   shouldRenderRoutes,
-    //   this.props.pathname,
-    //   this.props.contentId,
-    // );
-
-    if (!shouldRenderRoutes) return <Spinner />;
+    // const currentUrl = this.props.content?.['@id'];
+    // const shouldRenderRoutes =
+    //   typeof currentUrl !== 'undefined' &&
+    //   samePath(currentUrl, this.props.pathname)
+    //     ? true
+    //     : false;
+    // // console.log(
+    // //   'should',
+    // //   shouldRenderRoutes,
+    // //   this.props.pathname,
+    // //   this.props.contentId,
+    // // );
+    //
+    // if (!shouldRenderRoutes) return <Spinner />;
 
     // console.log('the config', configJs);
     console.log('lalalala', 'props', this.props);
@@ -297,5 +297,6 @@ class MosaicView extends Component {
 
 // export default View;
 export default connect((state, props) => ({
+  content: state.prefetch?.[props.location.pathname] || state.content.data,
   pathname: state.router.location.pathname, //props.location.pathname,
 }))(MosaicView);
