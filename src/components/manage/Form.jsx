@@ -1,4 +1,5 @@
 // import ReactDOM from 'react-dom';
+import { toast } from 'react-toastify';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { keys, map, mapValues, omit, uniq, without } from 'lodash';
@@ -7,7 +8,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { v4 as uuid } from 'uuid';
 import { Portal } from 'react-portal';
 
-import { Field, Icon, SidebarPortal } from '@plone/volto/components'; // EditBlock
+import { Field, Icon, SidebarPortal, Toast } from '@plone/volto/components'; // EditBlock
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
@@ -776,15 +777,28 @@ class Form extends Component {
       }),
     );
     if (keys(errors).length > 0) {
-      this.setState({
-        errors,
-      });
+      this.setState(
+        {
+          errors,
+        },
+        () =>
+          toast.error(
+            <Toast
+              error
+              title="Validation error"
+              content="There were some errors in form validation. Please check metadata"
+            />,
+          ),
+      );
     } else {
       this.props.onSubmit(this.state.formData);
       if (this.props.resetAfterSubmit) {
-        this.setState({
-          formData: this.props.formData,
-        });
+        this.setState(
+          {
+            formData: this.props.formData,
+          },
+          () => this.props.onUpdateForm && this.props.onUpdateForm(errors),
+        );
       }
     }
   }
