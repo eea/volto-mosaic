@@ -64,9 +64,9 @@ class ModalEditor extends Component {
   }
 
   renderEditBlock() {
-    const { formData } = this.state; // destructuring
-    const blocksFieldname = getBlocksFieldname(formData);
-    const blocksDict = formData[blocksFieldname];
+    // const { formData } = this.state; // destructuring
+    // const blocksFieldname = getBlocksFieldname(formData);
+    // const blocksDict = formData[blocksFieldname];
 
     let Block = null;
     let type = this.state.blockData['@type'].toLowerCase();
@@ -142,17 +142,12 @@ class ModalEditor extends Component {
     // handles changes coming from the metadata editor
 
     let blockData = this.state.blockData;
-    this.setState(
-      {
-        blockData: {
-          ...blockData,
-          ...values,
-        },
+    this.setState({
+      blockData: {
+        ...blockData,
+        ...values,
       },
-      () => {
-        // console.log('State after handleMetadataChange', this.state);
-      },
-    );
+    });
   }
 
   updateblockData(name, data) {
@@ -174,9 +169,6 @@ class ModalEditor extends Component {
   }
 
   render() {
-    // console.log('blocks config', blocks.blocksConfig);
-    // console.log('state block type', this.state.blockData['@type']);
-
     const selectedBlock = blocks.blocksConfig[this.state.blockData['@type']];
 
     return (
