@@ -691,9 +691,6 @@ class Form extends Component {
     const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
     const layoutField = formData[blocksLayoutFieldname];
 
-    // const totalItems = formData[blocksLayoutFieldname].items.length;
-    // const insert = index === -1 ? totalItems : index;
-
     const newBlock = {
       i: id,
       x: 0,
@@ -701,18 +698,16 @@ class Form extends Component {
       w: this.state.cols || 2,
       h: 2,
     };
-    const newLayout = this.state.activeMosaicLayout.concat(newBlock);
 
-    let mosaic_layout = layoutField.mosaic_layout || {};
-
-    /// avoids ugly BBB situation
-    if (typeof mosaic_layout === typeof []) mosaic_layout = {};
-    mosaic_layout[this.state.activeScreenSize] = newLayout;
+    const newLayout = {};
+    _.forEach(layoutField.mosaic_layout, (v, k) => {
+      newLayout[k] = v.concat(newBlock);
+    });
 
     this.setState(
       {
         // Add a new item. It must have a unique key!
-        activeMosaicLayout: newLayout,
+        activeMosaicLayout: newLayout[this.state.activeScreenSize],
 
         refs: {
           ...this.state.refs,
@@ -726,7 +721,7 @@ class Form extends Component {
               ...(this.state.formData[blocksLayoutFieldname].items || []),
               id,
             ],
-            mosaic_layout: { ...mosaic_layout },
+            mosaic_layout: newLayout,
           },
           [blocksFieldname]: {
             ...this.state.formData[blocksFieldname],
@@ -943,7 +938,7 @@ class Form extends Component {
     const { schema } = this.props; // , onCancel, onSubmit
     // console.log('render props', this.props);
     // console.log('mosaic props', this.props.inputRef);
-    console.log('mosaic layout', this.state?.formData);
+    // console.log('mosaic layout', this.state?.formData);
     const marginsData =
       this.state.formData?.blocks_layout?.margins &&
       parseInt(this.state.formData?.blocks_layout?.margins);
