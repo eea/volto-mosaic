@@ -40,8 +40,6 @@ import { SizeMe } from 'react-sizeme';
 
 import RGL from 'react-grid-layout';
 
-import BlocksLayoutEditor from 'volto-sidebar/BlocksLayoutEditor';
-
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -1025,44 +1023,6 @@ class Form extends Component {
             ))}
           />
 
-          <div className="import-export-blockdata">
-            <Button
-              size="mini"
-              onClick={() =>
-                this.setState({
-                  showImportExport: true,
-                })
-              }
-            >
-              Import/Export layout and blocks
-            </Button>
-
-            {this.state.showImportExport ? (
-              <BlocksLayoutEditor
-                value={{
-                  blocks: this.state.formData?.blocks || {},
-                  blocks_layout: this.state.formData?.blocks_layout || {},
-                }}
-                onSave={({ blocks, blocks_layout }) =>
-                  this.setState({
-                    formData: {
-                      ...this.state.formData,
-                      blocks,
-                      blocks_layout,
-                    },
-                    showImportExport: false,
-                  })
-                }
-                onClose={() =>
-                  this.setState({
-                    showImportExport: false,
-                  })
-                }
-              />
-            ) : (
-              ''
-            )}
-          </div>
         </SidebarPortal>
         <Portal
           node={__CLIENT__ && document.getElementById('sidebar-metadata')}
