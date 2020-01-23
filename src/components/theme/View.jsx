@@ -2,18 +2,16 @@ import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { breakpoints, rowHeight } from '../../constants';
 import React, { Component } from 'react';
-import { settings, blocks } from '~/config'; // settings,
+import { blocks } from '~/config'; // settings,
 
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
-  // hasBlocksData,
 } from '@plone/volto/helpers';
+
 import _ from 'lodash';
 import { SizeMe } from 'react-sizeme';
 import RGL from 'react-grid-layout';
-import { getLocation, samePath } from 'volto-mosaic/helpers';
-import Spinner from './Spinner';
 
 const { Responsive } = RGL;
 
@@ -84,7 +82,7 @@ export class BlockViewWrapper extends Component {
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
-    console.log('get height', height, node);
+    console.debug('mosaic-debug get height', height, node);
     return height && height - 20; //&& height + 20;
     // const heightFromMargin = +this.props.formData?.blocks_layout?.margins
     //   ? 2 * parseInt(this.props.formData.blocks_layout.margins)
@@ -230,28 +228,12 @@ class MosaicView extends Component {
   }
 
   render() {
-    // const currentUrl = this.props.content?.['@id'];
-    // const shouldRenderRoutes =
-    //   typeof currentUrl !== 'undefined' &&
-    //   samePath(currentUrl, this.props.pathname)
-    //     ? true
-    //     : false;
-    // // console.log(
-    // //   'should',
-    // //   shouldRenderRoutes,
-    // //   this.props.pathname,
-    // //   this.props.contentId,
-    // // );
-    //
-    // if (!shouldRenderRoutes) return <Spinner />;
-
-    // console.log('the config', configJs);
-    console.log('lalalala', 'props', this.props);
+    console.debug('mosaic-debug props', this.props);
     const marginsData =
       this.props.content?.blocks_layout?.margins &&
       parseInt(this.props.content?.blocks_layout?.margins);
     const margins = marginsData ? [marginsData, marginsData] : [0, 0];
-    console.log('MARGINS', margins);
+    console.debug('mosaic-debug margins', margins);
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <SizeMe>
