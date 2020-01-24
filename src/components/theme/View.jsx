@@ -246,6 +246,9 @@ class MosaicView extends Component {
     console.debug('mosaic-debug margins', margins);
     // TODO: I'm not sure why the 4*margin adjustment is needed. Should test
     // and come up with an explanation
+    //
+    // There seems to be different DOM output between the mosaic view and the
+    // cloned blocks view. To be investigated!
 
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
