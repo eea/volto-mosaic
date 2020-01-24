@@ -10,8 +10,11 @@ import {
 } from '@plone/volto/helpers';
 
 import _ from 'lodash';
-import { SizeMe } from 'react-sizeme';
+import sizeMe, { SizeMe } from 'react-sizeme';
 import RGL from 'react-grid-layout';
+
+// Needed for SSR, see See https://github.com/ctrlplusb/react-sizeme
+sizeMe.noPlaceholders = true;
 
 const { Responsive } = RGL;
 
@@ -233,7 +236,7 @@ class MosaicView extends Component {
 
     const { content } = this.props;
 
-    const blocksFieldname = getBlocksFieldname(content);
+    // const blocksFieldname = getBlocksFieldname(content);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
 
     const marginsData =
@@ -245,31 +248,34 @@ class MosaicView extends Component {
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <SizeMe>
-          {({ size }) => (
-            <ReactGridLayout
-              layouts={this.state.mosaic_layout}
-              breakpoints={breakpoints}
-              cols={{
-                lg: 12,
-                md: this.state.mosaic_layout.md ? 12 : 9, // is this a good default?
-                sm: this.state.mosaic_layout.sm ? 12 : 4,
-                xs: this.state.mosaic_layout.xs ? 12 : 2,
-                xxs: this.state.mosaic_layout.xxs ? 12 : 1,
-              }}
-              onBreakpointChange={this.onBreakpointChange}
-              onWidthChange={this.onWidthChange}
-              measureBeforeMount={true}
-              rowHeight={rowHeight}
-              // margin={[0, 0]}
-              margin={margins}
-              isDraggable={false}
-              isResizable={false}
-              isDroppable={false}
-              width={size.width || document.querySelector('main').offsetWidth}
-            >
-              {this.renderBlocks()}
-            </ReactGridLayout>
-          )}
+          {({ size }) => {
+            console.debug('got SizeMe size', size);
+            return (
+              <ReactGridLayout
+                layouts={this.state.mosaic_layout}
+                breakpoints={breakpoints}
+                cols={{
+                  lg: 12,
+                  md: this.state.mosaic_layout.md ? 12 : 9, // is this a good default?
+                  sm: this.state.mosaic_layout.sm ? 12 : 4,
+                  xs: this.state.mosaic_layout.xs ? 12 : 2,
+                  xxs: this.state.mosaic_layout.xxs ? 12 : 1,
+                }}
+                onBreakpointChange={this.onBreakpointChange}
+                onWidthChange={this.onWidthChange}
+                measureBeforeMount={true}
+                rowHeight={rowHeight}
+                // margin={[0, 0]}
+                margin={margins}
+                isDraggable={false}
+                isResizable={false}
+                isDroppable={false}
+                width={size.width || document.querySelector('main').offsetWidth}
+              >
+                {this.renderBlocks()}
+              </ReactGridLayout>
+            );
+          }}
         </SizeMe>
         {this.state.mosaic_layout.mosaic_css_override && (
           <style
