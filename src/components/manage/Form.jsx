@@ -40,6 +40,8 @@ import { SizeMe } from 'react-sizeme';
 
 import RGL from 'react-grid-layout';
 
+import { TemplatingToolbar } from 'volto-sidebar/LayoutTemplating';
+
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -987,6 +989,16 @@ class Form extends Component {
           ''
         )}
         <SidebarPortal selected={!this.state.showModal}>
+          <TemplatingToolbar
+            mode={this.props.mode}
+            formData={this.state.formData || {}}
+            onSave={({ blocks, blocks_layout }) =>
+              this.setState({
+                formData: { ...this.state.formData, blocks, blocks_layout },
+              })
+            }
+          />
+
           <LayoutToolbar
             availableScreens={this.state.availableScreens}
             layouts={
@@ -1022,7 +1034,6 @@ class Form extends Component {
               </List.Item>
             ))}
           />
-
         </SidebarPortal>
         <Portal
           node={__CLIENT__ && document.getElementById('sidebar-metadata')}
