@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Spinner = () => (
-  <div id="floatBarsG" style={{ margin: '1rem' }}>
+  <div id="floatBarsG" style={{ margin: '1rem auto' }}>
     <div id="floatBarsG_1" className="floatBarsG" />
     <div id="floatBarsG_2" className="floatBarsG" />
     <div id="floatBarsG_3" className="floatBarsG" />
