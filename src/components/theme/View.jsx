@@ -30,14 +30,15 @@ export class BlockViewWrapper extends Component {
   }
 
   render() {
-    const formData = this.props.formData;
-    const blockid = this.props.blockid;
+    const { formData, blockid } = this.props;
 
     const blocksFieldname = getBlocksFieldname(formData);
+
     if (!formData[blocksFieldname]) {
       return <div>The content for this mosaic view is not blocks-enabled</div>;
     }
     const blockData = formData[blocksFieldname][blockid];
+
     if (!blockData) {
       console.warn(
         'no block data for blockid',
@@ -186,7 +187,7 @@ class MosaicView extends Component {
       this.state.mosaic_layout['lg'] &&
       this.state.mosaic_layout['lg'].map((item, i) => {
         return (
-          <div key={item.i}>
+          <div key={`${item.i}`}>
             <BlockViewWrapper
               blockid={item.i}
               formData={this.props.content}
@@ -229,11 +230,18 @@ class MosaicView extends Component {
 
   render() {
     console.debug('mosaic-debug props', this.props);
+
+    const { content } = this.props;
+
+    const blocksFieldname = getBlocksFieldname(content);
+    const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
+
     const marginsData =
-      this.props.content?.blocks_layout?.margins &&
-      parseInt(this.props.content?.blocks_layout?.margins);
+      content?.[blocksLayoutFieldname]?.margins &&
+      parseInt(content?.[blocksLayoutFieldname]?.margins);
     const margins = marginsData ? [marginsData, marginsData] : [0, 0];
     console.debug('mosaic-debug margins', margins);
+
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <SizeMe>
