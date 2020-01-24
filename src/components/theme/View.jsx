@@ -244,6 +244,8 @@ class MosaicView extends Component {
       parseInt(content?.[blocksLayoutFieldname]?.margins);
     const margins = marginsData ? [marginsData, marginsData] : [0, 0];
     console.debug('mosaic-debug margins', margins);
+    // TODO: I'm not sure why the 4*margin adjustment is needed. Should test
+    // and come up with an explanation
 
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
@@ -270,7 +272,13 @@ class MosaicView extends Component {
                 isDraggable={false}
                 isResizable={false}
                 isDroppable={false}
-                width={size.width || document.querySelector('main').offsetWidth}
+                width={
+                  Math.max(
+                    size.width,
+                    document.querySelector('main').offsetWidth,
+                  ) -
+                  4 * margins[0]
+                }
               >
                 {this.renderBlocks()}
               </ReactGridLayout>
