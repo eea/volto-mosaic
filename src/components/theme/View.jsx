@@ -86,7 +86,7 @@ export class BlockViewWrapper extends Component {
     // 100% height. There is a conflict between need for static layout but also
     // update dynamically, so we need to be a lot smarter and there will be
     // a lot of edge cases that we can't avoid.
-    console.debug('mosaic-debug get height', height, node);
+    // console.debug('mosaic-debug get height', height, node);
     return height && height - 20; //&& height + 20;
     // const heightFromMargin = +this.props.formData?.blocks_layout?.margins
     //   ? 2 * parseInt(this.props.formData.blocks_layout.margins)
@@ -232,7 +232,7 @@ class MosaicView extends Component {
   }
 
   render() {
-    console.debug('mosaic-debug props', this.props);
+    // console.debug('mosaic-debug props', this.props);
 
     const { content } = this.props;
 
@@ -243,18 +243,21 @@ class MosaicView extends Component {
       content?.[blocksLayoutFieldname]?.margins &&
       parseInt(content?.[blocksLayoutFieldname]?.margins);
     const margins = marginsData ? [marginsData, marginsData] : [0, 0];
-    console.debug('mosaic-debug margins', margins);
+    // console.debug('mosaic-debug margins', margins);
     // TODO: I'm not sure why the 4*margin adjustment is needed. Should test
     // and come up with an explanation
     //
     // There seems to be different DOM output between the mosaic view and the
     // cloned blocks view. To be investigated!
+    // Math.max(
+    // ) -
+    // 4 * margins[0]
 
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <SizeMe>
           {({ size }) => {
-            console.debug('got SizeMe size', size);
+            // console.debug('got SizeMe size', size);
             return (
               <ReactGridLayout
                 layouts={this.state.mosaic_layout}
@@ -275,13 +278,7 @@ class MosaicView extends Component {
                 isDraggable={false}
                 isResizable={false}
                 isDroppable={false}
-                width={
-                  Math.max(
-                    size.width,
-                    document.querySelector('main').offsetWidth,
-                  ) -
-                  4 * margins[0]
-                }
+                width={size.width || document.querySelector('main').offsetWidth}
               >
                 {this.renderBlocks()}
               </ReactGridLayout>
