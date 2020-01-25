@@ -181,9 +181,8 @@ class LayoutToolbar extends Component {
         <Segment>
           <Field
             id="mosaic-margin"
-            title="Block margin"
+            title="Block margins"
             type="number"
-            description="Margins for block"
             value={this.props.margins}
             required={false}
             onChange={(e, d) => this.sendMarginsChange(d)}
