@@ -139,20 +139,30 @@ class MosaicView extends Component {
     const layout = content[blocksLayoutFieldname];
     // console.log('received layout', layout);
 
-    if (!__SERVER__) {
-      this.state = {
-        mosaic_layout: (layout && layout.mosaic_layout) || {},
-        items: (layout && layout.items) || {},
-        activeMosaicLayout: 'lg',
-        containerWidth: null,
-      };
-    } else {
-      this.state = {};
-    }
+    // if (!__SERVER__) {
+    this.state = {
+      mosaic_layout: (layout && layout.mosaic_layout) || {},
+      items: (layout && layout.items) || {},
+      activeMosaicLayout: 'lg',
+      containerWidth: null,
+      itIsServer: __SERVER__,
+    };
+    // } else {
+    //   this.state = {};
+    // }
 
     this.onBlockShowUpdate = this.onBlockShowUpdate.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
     this.onWidthChange = this.onWidthChange.bind(this);
+  }
+
+  componentDidMount() {
+    if (
+      __CLIENT__ &&
+      1920 - parseInt(document.querySelector('main').offsetWidth) > 100
+    ) {
+      this.resetLayout();
+    }
   }
 
   onBlockShowUpdate(blockid, height) {
@@ -185,13 +195,13 @@ class MosaicView extends Component {
   }
 
   renderBlocks() {
-    // console.log('render blocks');
     return (
       this.state.mosaic_layout['lg'] &&
       this.state.mosaic_layout['lg'].map((item, i) => {
         return (
           <div key={`${item.i}`}>
             <BlockViewWrapper
+              style={{ maxWidth: '100%' }}
               blockid={item.i}
               formData={this.props.content}
               // showUpdate={this.onBlockShowUpdate}
@@ -202,12 +212,15 @@ class MosaicView extends Component {
       })
     );
   }
-
   onBreakpointChange(bk, cols) {
     // console.log('New breakpoint', bk, cols, this.state.containerWidth);
     this.setState({
       activeMosaicLayout: bk,
     });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('didupdate', prevProps, prevState);
   }
 
   onWidthChange(containerWidth, margin, cols, containerPadding) {
@@ -230,15 +243,24 @@ class MosaicView extends Component {
       });
     }
   }
+  resetLayout = () => {
+    const layout = this.state.mosaic_layout;
+    console.log('>>>>>>> reset layout')
+    this.setState({ mosaic_layout: {} }, () =>
+      this.setState({ mosaic_layout: layout }),
+    );
+  };
 
   render() {
     // console.debug('mosaic-debug props', this.props);
 
     const { content } = this.props;
-
+    if (!this.state.itIsServer) {
+      this.setState({ itIsServer: true });
+    }
     // const blocksFieldname = getBlocksFieldname(content);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
-
+    console.log('stateinrender', this.state);
     const marginsData =
       content?.[blocksLayoutFieldname]?.margins &&
       parseInt(content?.[blocksLayoutFieldname]?.margins);
@@ -252,6 +274,7 @@ class MosaicView extends Component {
     // Math.max(
     // ) -
     // 4 * margins[0]
+    // return (<div>asd{JSON.stringify(this.props.mosaic_layout)}</div>)
 
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
@@ -262,6 +285,7 @@ class MosaicView extends Component {
               <ReactGridLayout
                 layouts={this.state.mosaic_layout}
                 breakpoints={breakpoints}
+                useCSSTransforms={__SERVER__ ? true : false}
                 cols={{
                   lg: 12,
                   md: this.state.mosaic_layout.md ? 12 : 9, // is this a good default?
@@ -278,7 +302,14 @@ class MosaicView extends Component {
                 isDraggable={false}
                 isResizable={false}
                 isDroppable={false}
-                width={size.width || document.querySelector('main').offsetWidth}
+                width={(() => {
+                  return (
+                    size.width ||
+                    ((__CLIENT__ &&
+                      document.querySelector('main').offsetWidth) ||
+                      1920)
+                  );
+                })()}
               >
                 {this.renderBlocks()}
               </ReactGridLayout>
