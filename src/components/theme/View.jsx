@@ -145,7 +145,6 @@ class MosaicView extends Component {
       items: (layout && layout.items) || {},
       activeMosaicLayout: 'lg',
       containerWidth: null,
-      itIsServer: __SERVER__,
     };
     // } else {
     //   this.state = {};
@@ -219,10 +218,6 @@ class MosaicView extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log('didupdate', prevProps, prevState);
-  }
-
   onWidthChange(containerWidth, margin, cols, containerPadding) {
     // (containerWidth: number,
     //   margin: [number, number],
@@ -255,12 +250,8 @@ class MosaicView extends Component {
     // console.debug('mosaic-debug props', this.props);
 
     const { content } = this.props;
-    if (!this.state.itIsServer) {
-      this.setState({ itIsServer: true });
-    }
     // const blocksFieldname = getBlocksFieldname(content);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
-    console.log('stateinrender', this.state);
     const marginsData =
       content?.[blocksLayoutFieldname]?.margins &&
       parseInt(content?.[blocksLayoutFieldname]?.margins);
