@@ -8,6 +8,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
+import { Helmet } from '@plone/volto/helpers';
 
 import _ from 'lodash';
 import sizeMe, { SizeMe } from 'react-sizeme';
@@ -240,7 +241,7 @@ class MosaicView extends Component {
   }
   resetLayout = () => {
     const layout = this.state.mosaic_layout;
-    console.log('>>>>>>> reset layout')
+    // console.log('>>>>>>> reset layout');
     this.setState({ mosaic_layout: {} }, () =>
       this.setState({ mosaic_layout: layout }),
     );
@@ -269,6 +270,7 @@ class MosaicView extends Component {
 
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
+        <Helmet title={content.title} />
         <SizeMe>
           {({ size }) => {
             // console.debug('got SizeMe size', size);
