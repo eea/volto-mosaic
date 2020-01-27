@@ -10,7 +10,7 @@ import {
 } from 'semantic-ui-react';
 import checkIcon from '@plone/volto/icons/check.svg';
 import FormField from './FormField';
-import { availableZoomLevels } from './constants';
+import { availableZoomLevels } from 'volto-mosaic/constants';
 import { Field } from '@plone/volto/components';
 
 const ZoomButtons = ({ onZoom, defaultValue }) => (

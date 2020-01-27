@@ -9,3 +9,19 @@ export const screenSizes = {
   xxs: 'Small screen',
 };
 export const rowHeight = 21;
+
+export const availableZoomLevels = ['100%', '75%', '50%', '25%'];
+
+export const zoomClassNames = {
+  '100%': 'zoom-100',
+  '75%': 'zoom-75',
+  '50%': 'zoom-50',
+  '25%': 'zoom-25',
+};
+
+export const zoomCoeficients = {
+  '100%': 1,
+  '75%': 0.75,
+  '50%': 0.5,
+  '25%': 0.25,
+};

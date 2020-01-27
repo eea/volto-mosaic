@@ -20,7 +20,13 @@ import 'react-resizable/css/styles.css';
 import '../css/edit.css';
 import '../css/view.css';
 
-import { rowHeight, breakpoints, screenSizes } from '../../constants';
+import {
+  rowHeight,
+  breakpoints,
+  screenSizes,
+  zoomClassNames,
+  zoomCoeficients,
+} from '../../constants';
 
 import BlockEditor from './BlockEditor';
 import LayoutToolbar from './LayoutToolbar';
@@ -32,7 +38,6 @@ import editIcon from '@plone/volto/icons/editing.svg';
 import { blocks } from '~/config';
 import { changeSidebarState } from 'volto-sidebar/actions';
 import { connect } from 'react-redux';
-import { zoomClassNames } from './constants';
 
 import _ from 'lodash';
 
@@ -964,6 +969,7 @@ class Form extends Component {
                   document.querySelector('main').offsetWidth
                 }
                 margins={margins}
+                transformScale={zoomCoeficients[this.state.zoom]}
                 // onDragStop={this.onDragStop}
                 // onResizeStop={this.onResizeStop}
                 // onResize={this.onResize}
