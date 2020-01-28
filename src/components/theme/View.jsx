@@ -161,7 +161,12 @@ class MosaicView extends Component {
       __CLIENT__ &&
       1920 - parseInt(document.querySelector('main').offsetWidth) > 100
     ) {
-      this.resetLayout();
+      console.log(
+        'RESET LAYOYUT',
+        1920 - parseInt(document.querySelector('main').offsetWidth),
+        1920 - parseInt(document.querySelector('main').offsetWidth) > 100,
+      );
+      setTimeout(() => this.resetLayout(), 50);
     }
   }
 
