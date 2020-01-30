@@ -264,8 +264,8 @@
 
 .layout-preview {
   background: gray;
-  border: 6px solid gray;
-  padding: 6px;
+  /* border: 6px solid gray; */
+  /* padding: 6px; */
   transform: scale(0.5) translate(-50%,-50%);
 }
 
@@ -288,19 +288,24 @@
   padding: 0 !important;
 }
 
+/* 767        768-1199      1200-1599     1600+
+mobile     tablet         desktop       widescreen */
+/* export const breakpoints = { lg: 1600, md: 1200, sm: 768, xs: 0, xxs: 0 }; */
+
+
 #layout-preview-lg {
-  width: 1573px !important;
+  width: 1601px !important;
 }
 
 #layout-preview-md {
   /* width: 1230px !important; */
-  width: 1449px !important;
+  width: 1200px !important;
 }
 
 #layout-preview-sm {
   /* for some reasone need to add 24px, probably padding and border */
   /* width: 792px !important; */
-  width: 743px;
+  width: 768px !important;
 }
 #layout-preview-xs {
   width: 504px !important;
@@ -308,6 +313,7 @@
 #layout-preview-xxs {
   width: 484px !important;
 }
+
 .block-chooser {
   top:unset;
   left: 0;
