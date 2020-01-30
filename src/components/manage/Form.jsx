@@ -968,13 +968,13 @@ class Form extends Component {
                   size.width ||
                   document.querySelector('main').offsetWidth
                 }
-                margins={margins}
                 transformScale={zoomCoeficients[this.state.zoom]}
                 // onDragStop={this.onDragStop}
                 // onResizeStop={this.onResizeStop}
                 // onResize={this.onResize}
                 // onResizeStart={this.onResizeStart}
                 {...this.props}
+                margin={[0, 0]}
               >
                 {_.map(this.state.activeMosaicLayout, el =>
                   this.createElement(el),
