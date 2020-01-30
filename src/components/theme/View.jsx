@@ -294,7 +294,8 @@ class MosaicView extends Component {
                 onBreakpointChange={this.onBreakpointChange}
                 onWidthChange={this.onWidthChange}
                 measureBeforeMount={true}
-                rowHeight={rowHeight}
+                //TODO: no idea why, but rowheight - 5.5 seems to fix the big margin bottom problem on view
+                rowHeight={rowHeight - 5.5}
                 // margin={[0, 0]}
                 margin={margins}
                 isDraggable={false}
