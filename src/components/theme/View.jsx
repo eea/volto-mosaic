@@ -13,6 +13,7 @@ import { Helmet } from '@plone/volto/helpers';
 import _ from 'lodash';
 import sizeMe, { SizeMe } from 'react-sizeme';
 import RGL from 'react-grid-layout';
+import { setMosaicWidth } from 'volto-mosaic/actions';
 
 // Needed for SSR, see See https://github.com/ctrlplusb/react-sizeme
 sizeMe.noPlaceholders = true;
@@ -301,6 +302,11 @@ class MosaicView extends Component {
                 isResizable={false}
                 isDroppable={false}
                 width={(() => {
+                  this.props.setMosaicWidth(
+                    size.width ||
+                      (__CLIENT__ &&
+                        document.querySelector('main').offsetWidth),
+                  );
                   return (
                     size.width ||
                     ((__CLIENT__ &&
@@ -334,7 +340,10 @@ class MosaicView extends Component {
 }
 
 // export default View;
-export default connect((state, props) => ({
-  content: state.prefetch?.[props.location.pathname] || state.content.data,
-  pathname: state.router.location.pathname, //props.location.pathname,
-}))(MosaicView);
+export default connect(
+  (state, props) => ({
+    content: state.prefetch?.[props.location.pathname] || state.content.data,
+    pathname: state.router.location.pathname, //props.location.pathname,
+  }),
+  { setMosaicWidth },
+)(MosaicView);

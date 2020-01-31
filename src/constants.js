@@ -1,4 +1,5 @@
 export const GET_MOSAIC_SETTINGS = 'GET_MOSAIC_SETTINGS';
+export const SET_MOSAIC_WIDTH = 'SET_MOSAIC_WIDTH';
 
 // 767        768-1199      1200-1599     1600+
 // mobile     tablet         desktop       widescreen
