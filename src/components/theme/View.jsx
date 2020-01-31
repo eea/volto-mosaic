@@ -166,7 +166,7 @@ class MosaicView extends Component {
         1920 - parseInt(document.querySelector('main').offsetWidth),
         1920 - parseInt(document.querySelector('main').offsetWidth) > 100,
       );
-      setTimeout(() => this.resetLayout(), 50);
+      setTimeout(() => this.resetLayout(), 200);
     }
   }
 
