@@ -146,6 +146,7 @@ class MosaicView extends Component {
       items: (layout && layout.items) || {},
       activeMosaicLayout: 'lg',
       containerWidth: null,
+      blurred: true,
     };
     // } else {
     //   this.state = {};
@@ -159,14 +160,11 @@ class MosaicView extends Component {
   componentDidMount() {
     if (
       __CLIENT__ &&
-      1920 - parseInt(document.querySelector('main').offsetWidth) > 100
+      1920 - parseInt(document.querySelector('main').offsetWidth) > 280
     ) {
-      console.log(
-        'RESET LAYOYUT',
-        1920 - parseInt(document.querySelector('main').offsetWidth),
-        1920 - parseInt(document.querySelector('main').offsetWidth) > 100,
-      );
       setTimeout(() => this.resetLayout(), 200);
+    } else {
+      this.setState({ blurred: false });
     }
   }
 
@@ -248,7 +246,10 @@ class MosaicView extends Component {
     const layout = this.state.mosaic_layout;
     // console.log('>>>>>>> reset layout');
     this.setState({ mosaic_layout: {} }, () =>
-      this.setState({ mosaic_layout: layout }),
+      this.setState(
+        { mosaic_layout: layout },
+        this.setState({ blurred: false }),
+      ),
     );
   };
 
@@ -307,6 +308,11 @@ class MosaicView extends Component {
                       1920)
                   );
                 })()}
+                className={`${
+                  this.state.blurred
+                    ? 'blurr-transition blurred'
+                    : 'blur-transition'
+                }`}
               >
                 {this.renderBlocks()}
               </ReactGridLayout>
