@@ -288,10 +288,10 @@ class MosaicView extends Component {
                 useCSSTransforms={__SERVER__ ? true : false}
                 cols={{
                   lg: 12,
-                  md: this.state.mosaic_layout.md ? 12 : 9, // is this a good default?
-                  sm: this.state.mosaic_layout.sm ? 12 : 4,
-                  xs: this.state.mosaic_layout.xs ? 12 : 2,
-                  xxs: this.state.mosaic_layout.xxs ? 12 : 1,
+                  md: this.state.mosaic_layout.md ? 12 : 12, // 9 - is this a good default?
+                  sm: this.state.mosaic_layout.sm ? 12 : 12, // 4
+                  xs: this.state.mosaic_layout.xs ? 12 : 12, // 2
+                  xxs: this.state.mosaic_layout.xxs ? 12 : 12, //1
                 }}
                 onBreakpointChange={this.onBreakpointChange}
                 onWidthChange={this.onWidthChange}
