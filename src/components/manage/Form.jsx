@@ -38,6 +38,7 @@ import editIcon from '@plone/volto/icons/editing.svg';
 import { blocks } from '~/config';
 import { changeSidebarState } from 'volto-sidebar/actions';
 import { connect } from 'react-redux';
+import { setMosaicWidth } from 'volto-mosaic/actions';
 
 import _ from 'lodash';
 
@@ -963,11 +964,21 @@ class Form extends Component {
                 onLayoutChange={this.onLayoutChange}
                 onBreakpointChange={this.onBreakpointChange}
                 layout={this.state.activeMosaicLayout}
-                width={
-                  this.state.layoutWidth ||
-                  size.width ||
-                  document.querySelector('main').offsetWidth
-                }
+                width={(() => {
+                  this.props.setMosaicWidth(
+                    __CLIENT__ && document.querySelector('main').offsetWidth,
+                  );
+
+                  console.log(
+                    'width in form',
+                    __CLIENT__ && document.querySelector('main').offsetWidth,
+                  );
+                  return (
+                    this.state.layoutWidth ||
+                    size.width ||
+                    (__CLIENT__ && document.querySelector('main').offsetWidth)
+                  );
+                })()}
                 transformScale={zoomCoeficients[this.state.zoom]}
                 // onDragStop={this.onDragStop}
                 // onResizeStop={this.onResizeStop}
@@ -1133,5 +1144,5 @@ class Form extends Component {
 
 export default connect(
   null,
-  { changeSidebarState },
+  { changeSidebarState, setMosaicWidth },
 )(injectIntl(Form, { forwardRef: true }));
