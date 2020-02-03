@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { breakpoints, rowHeight } from '../../constants';
 import React, { Component } from 'react';
 import { blocks } from '~/config'; // settings,
+import { BodyClass } from '@plone/volto/helpers';
 
 import {
   getBlocksFieldname,
@@ -278,6 +279,7 @@ class MosaicView extends Component {
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <Helmet title={content.title} />
+        <BodyClass className="mosaic-view" />
         <SizeMe>
           {({ size }) => {
             // console.debug('got SizeMe size', size);
