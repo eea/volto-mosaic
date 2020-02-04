@@ -4,7 +4,7 @@ export const SET_MOSAIC_WIDTH = 'SET_MOSAIC_WIDTH';
 // 767        768-1199      1200-1599     1600+
 // mobile     tablet         desktop       widescreen
 
-export const breakpoints = { lg: 1600, md: 1200, sm: 768, xs: 0, xxs: 0 };
+export const breakpoints = { lg: 1489, md: 1094, sm: 768, xs: 0, xxs: 0 };
 export const screenSizes = {
   lg: 'Unspecified (default)',
   md: 'Laptop',

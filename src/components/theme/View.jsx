@@ -260,11 +260,11 @@ class MosaicView extends Component {
 
     const { content } = this.props;
     // const blocksFieldname = getBlocksFieldname(content);
-    const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
-    const marginsData =
-      content?.[blocksLayoutFieldname]?.margins &&
-      parseInt(content?.[blocksLayoutFieldname]?.margins);
-    const margins = marginsData ? [marginsData, marginsData] : [0, 0];
+    // const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
+    // const marginsData =
+    //   content?.[blocksLayoutFieldname]?.margins &&
+    //   parseInt(content?.[blocksLayoutFieldname]?.margins);
+    // const margins = marginsData ? [marginsData, marginsData] : [0, 0];
     // console.debug('mosaic-debug margins', margins);
     // TODO: I'm not sure why the 4*margin adjustment is needed. Should test
     // and come up with an explanation
