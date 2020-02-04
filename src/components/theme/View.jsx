@@ -286,7 +286,7 @@ class MosaicView extends Component {
             return (
               <ReactGridLayout
                 layouts={this.state.mosaic_layout}
-                breakpoints={breakpoints}
+                breakpoints={breakpoints(size.width)}
                 useCSSTransforms={__SERVER__ ? true : false}
                 cols={{
                   lg: 12,

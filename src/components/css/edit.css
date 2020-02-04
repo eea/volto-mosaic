@@ -311,7 +311,7 @@ mobile     tablet         desktop       widescreen */
   width: 504px !important;
 }
 #layout-preview-xxs {
-  width: 484px !important;
+  width: 400px !important;
 }
 
 .block-chooser {
