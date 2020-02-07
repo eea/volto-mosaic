@@ -344,7 +344,8 @@ class MosaicView extends Component {
 // export default View;
 export default connect(
   (state, props) => ({
-    content: state.prefetch?.[props.location.pathname] || state.content.data,
+    content:
+      state.prefetch?.[state.router.location.pathname] || state.content.data,
     pathname: state.router.location.pathname, //props.location.pathname,
   }),
   { setMosaicWidth },
