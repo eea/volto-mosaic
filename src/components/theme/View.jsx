@@ -140,9 +140,8 @@ class MosaicView extends Component {
     const content = props.content;
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     const layout = content[blocksLayoutFieldname];
-    // console.log('received layout', layout);
 
-    // if (!__SERVER__) {
+    this.timeout = null;
     this.state = {
       mosaic_layout: (layout && layout.mosaic_layout) || {},
       items: (layout && layout.items) || {},
@@ -150,9 +149,6 @@ class MosaicView extends Component {
       containerWidth: null,
       blurred: true,
     };
-    // } else {
-    //   this.state = {};
-    // }
 
     this.onBlockShowUpdate = this.onBlockShowUpdate.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
@@ -164,11 +160,19 @@ class MosaicView extends Component {
       __CLIENT__ &&
       1920 - parseInt(document.querySelector('main').offsetWidth) > 280
     ) {
-      setTimeout(() => this.resetLayout(), 200);
+      this.timeout = setTimeout(() => this.resetLayout(), 200);
+      console.log('adding timeout', this.timeout);
     } else {
       this.setState({ blurred: false });
     }
   }
+
+  componentWillUnmount = () => {
+    if (this.timeout) {
+      console.log('clearing timout');
+      clearTimeout(this.timeout);
+    }
+  };
 
   onBlockShowUpdate(blockid, height) {
     const size = this.state.activeMosaicLayout;
