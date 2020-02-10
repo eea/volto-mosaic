@@ -139,8 +139,13 @@ class MosaicView extends Component {
 
     const content = props.content;
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
-    const layout = content[blocksLayoutFieldname];
+    const propsLayout = content[blocksLayoutFieldname];
+    // remove mosaic_css_override from our hard copy of layout so the object matches the breakpoints object
+    var layout = JSON.parse(JSON.stringify(propsLayout));
+    delete layout.mosaic_layout.mosaic_css_override;
 
+    const mosaic_css_override =
+      propsLayout && propsLayout.mosaic_layout?.mosaic_css_override;
     this.timeout = null;
     this.state = {
       mosaic_layout: (layout && layout.mosaic_layout) || {},
@@ -148,6 +153,7 @@ class MosaicView extends Component {
       activeMosaicLayout: 'lg',
       containerWidth: null,
       blurred: true,
+      mosaic_css_override: mosaic_css_override,
     };
 
     this.onBlockShowUpdate = this.onBlockShowUpdate.bind(this);
@@ -287,6 +293,11 @@ class MosaicView extends Component {
         <SizeMe>
           {({ size }) => {
             // console.debug('got SizeMe size', size);
+            // console.log(
+            //   '----------->',
+            //   breakpoints(size.width),
+            //   this.state.mosaic_layout,
+            // );
             return (
               <ReactGridLayout
                 layouts={this.state.mosaic_layout}
@@ -331,10 +342,10 @@ class MosaicView extends Component {
             );
           }}
         </SizeMe>
-        {this.state.mosaic_layout.mosaic_css_override && (
+        {this.state.mosaic_css_override && (
           <style
             dangerouslySetInnerHTML={{
-              __html: this.state.mosaic_layout.mosaic_css_override,
+              __html: this.state.mosaic_css_override,
             }}
           />
         )}
