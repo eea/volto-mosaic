@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "react-grid-layout": "^0.17.1",
-    "react-resizable": "^1.9.0"
+    "react-resizable": "^1.9.0",
+    "react-sizeme": "^2.6.12"
   },
   "peerDependencies": {
-    "react-sizeme": "^2.6.10",
     "@plone/volto": "^4.0.0.alpha-17"
   }
 }
