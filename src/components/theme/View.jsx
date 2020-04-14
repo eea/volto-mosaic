@@ -15,6 +15,8 @@ import _ from 'lodash';
 import sizeMe, { SizeMe } from 'react-sizeme';
 import RGL from 'react-grid-layout';
 import { setMosaicWidth } from 'volto-mosaic/actions';
+import { Icon } from '@plone/volto/components';
+import printer from '@plone/volto/icons/printer.svg';
 
 // Needed for SSR, see See https://github.com/ctrlplusb/react-sizeme
 sizeMe.noPlaceholders = true;
@@ -265,6 +267,14 @@ class MosaicView extends Component {
     );
   };
 
+  printDocument = () => {
+    document.getElementById('main').classList.add('print')
+    setTimeout(() => {
+      window.print()
+    }, 1000)
+    window.onafterprint = () => document.getElementById('main').classList.remove('print')
+  }
+
   render() {
     // console.debug('mosaic-debug props', this.props);
 
@@ -290,6 +300,7 @@ class MosaicView extends Component {
       <div className="mosaic_view">
         <Helmet title={content.title} />
         <BodyClass className="mosaic-view" />
+        <Icon className="print-button" onClick={this.printDocument} name={printer} size="32px" />
         <SizeMe>
           {({ size }) => {
             // console.debug('got SizeMe size', size);
