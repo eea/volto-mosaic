@@ -36,6 +36,7 @@ export class BlockViewWrapper extends Component {
   }
 
   render() {
+    console.log('rendering mosaic');
     const { formData, blockid } = this.props;
 
     const blocksFieldname = getBlocksFieldname(formData);
@@ -44,7 +45,14 @@ export class BlockViewWrapper extends Component {
       return <div>The content for this mosaic view is not blocks-enabled</div>;
     }
     const blockData = formData[blocksFieldname][blockid];
-
+    console.log(
+      'formdata',
+      formData,
+      'blocksfieldname',
+      blocksFieldname,
+      'blockid',
+      blockid,
+    );
     if (!blockData) {
       console.warn(
         'no block data for blockid',
@@ -142,7 +150,9 @@ class MosaicView extends Component {
     const propsLayout = content[blocksLayoutFieldname];
     // remove mosaic_css_override from our hard copy of layout so the object matches the breakpoints object
     var layout = JSON.parse(JSON.stringify(propsLayout));
-    delete layout.mosaic_layout.mosaic_css_override;
+    if (layout.mosaic_layout.mosaic_css_override) {
+      delete layout.mosaic_layout.mosaic_css_override;
+    }
 
     const mosaic_css_override =
       propsLayout && propsLayout.mosaic_layout?.mosaic_css_override;
