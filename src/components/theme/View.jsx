@@ -138,8 +138,7 @@ export class BlockViewWrapper extends Component {
 class MosaicView extends Component {
   static defaultProps = {
     cols: 12,
-    margin: [0, 0],
-    onLayoutChange: function() {},
+    margin: [0, 0]
   };
 
   constructor(props) {
@@ -153,7 +152,6 @@ class MosaicView extends Component {
     if (layout?.mosaic_layout?.mosaic_css_override) {
       delete layout.mosaic_layout.mosaic_css_override;
     }
-
     const mosaic_css_override =
       propsLayout && propsLayout.mosaic_layout?.mosaic_css_override;
     this.timeout = null;
@@ -265,19 +263,36 @@ class MosaicView extends Component {
     }
   }
   resetLayout = () => {
-    const layout = this.state.mosaic_layout;
-    // console.log('>>>>>>> reset layout');
-    this.setState({ mosaic_layout: {} }, () =>
-      this.setState(
-        { mosaic_layout: layout },
-        this.setState({ blurred: false }),
-      ),
-    );
+    const { content } = this.props;
+    const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
+    const propsLayout = content[blocksLayoutFieldname];
+    let layout = JSON.parse(JSON.stringify(propsLayout));
+    let mosaic_css_override, mosaic_layout, items
+    if (layout.items.toString() !== this.state.items.toString()) {
+      if (layout?.mosaic_layout?.mosaic_css_override) {
+        delete layout.mosaic_layout.mosaic_css_override;
+      }
+      mosaic_css_override = propsLayout && propsLayout.mosaic_layout?.mosaic_css_override;
+      mosaic_layout = (layout && layout.mosaic_layout) || {};
+      items = (layout && layout.items) || {};
+      this.setState({ mosaic_css_override: {}, mosaic_layout: {}, items: {} }, () =>
+        this.setState(
+          { mosaic_css_override, mosaic_layout, items },
+          this.setState({ blurred: false }),
+        ),
+      );
+    } else {
+      mosaic_layout = this.state.mosaic_layout;
+      this.setState({ mosaic_layout: {} }, () =>
+        this.setState(
+          { mosaic_layout },
+          this.setState({ blurred: false }),
+        ),
+      );
+    }
   };
 
   render() {
-    // console.debug('mosaic-debug props', this.props);
-
     const { content } = this.props;
     // const blocksFieldname = getBlocksFieldname(content);
     // const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
