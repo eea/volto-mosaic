@@ -275,9 +275,9 @@ class MosaicView extends Component {
       mosaic_css_override = propsLayout && propsLayout.mosaic_layout?.mosaic_css_override;
       mosaic_layout = (layout && layout.mosaic_layout) || {};
       items = (layout && layout.items) || {};
-      this.setState({ mosaic_css_override: {}, mosaic_layout: {}, items: {} }, () =>
+      this.setState({ mosaic_css_override, items, mosaic_layout: {} }, () =>
         this.setState(
-          { mosaic_css_override, mosaic_layout, items },
+          { mosaic_layout },
           this.setState({ blurred: false }),
         ),
       );
