@@ -150,7 +150,7 @@ class MosaicView extends Component {
     const propsLayout = content[blocksLayoutFieldname];
     // remove mosaic_css_override from our hard copy of layout so the object matches the breakpoints object
     var layout = JSON.parse(JSON.stringify(propsLayout));
-    if (layout.mosaic_layout.mosaic_css_override) {
+    if (layout?.mosaic_layout?.mosaic_css_override) {
       delete layout.mosaic_layout.mosaic_css_override;
     }
 
