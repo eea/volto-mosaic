@@ -36,7 +36,7 @@ import deleteIcon from '@plone/volto/icons/delete.svg';
 import editIcon from '@plone/volto/icons/editing.svg';
 
 import { blocks } from '~/config';
-import { changeSidebarState } from 'volto-sidebar/actions';
+import { changeSidebarState } from 'volto-addons/actions';
 import { connect } from 'react-redux';
 import { setMosaicWidth } from 'volto-mosaic/actions';
 
@@ -46,7 +46,7 @@ import { SizeMe } from 'react-sizeme';
 
 import RGL from 'react-grid-layout';
 
-import { TemplatingToolbar } from 'volto-sidebar/LayoutTemplating';
+import { TemplatingToolbar } from 'volto-addons/LayoutTemplating';
 
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
