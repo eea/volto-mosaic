@@ -27,6 +27,7 @@ export function applyConfig(config) {
       byLayout: {
         ...config.editForms?.byLayout,
         mosaic_tiles_view: MosaicForm,
+        cloned_blocks_view: MosaicForm,
       },
       byType: {
         ...config.editForms?.byType,

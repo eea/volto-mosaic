@@ -31,3 +31,29 @@ export function samePath(url, path) {
   const cleanPath = path.replace(/\/$/, '');
   return clean === cleanPath;
 }
+
+export function reject(obj, keys) {
+  return Object.keys(obj)
+    .filter(k => !keys.includes(k))
+    .map(k => Object.assign({}, { [k]: obj[k] }))
+    .reduce((res, o) => Object.assign(res, o), {});
+}
+
+// Instead of Object.fromEntries
+export function fromEntries(iterable) {
+  return [...iterable].reduce((obj, [key, val]) => {
+    obj[key] = val;
+    return obj;
+  }, {});
+}
+
+export function getOverridenBlocks(blocks) {
+  return Object.keys(blocks)
+    .filter(key => blocks[key].override === true)
+    .reduce((obj, key) => {
+      return {
+        ...obj,
+        [key]: blocks[key],
+      };
+    }, {});
+}

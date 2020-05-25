@@ -1,3 +1,5 @@
+import { defineMessages } from 'react-intl';
+
 export const GET_MOSAIC_SETTINGS = 'GET_MOSAIC_SETTINGS';
 export const SET_MOSAIC_WIDTH = 'SET_MOSAIC_WIDTH';
 
@@ -58,3 +60,38 @@ export const zoomCoeficients = {
   '50%': 0.5,
   '25%': 0.25,
 };
+
+export const messages = defineMessages({
+  addBlock: {
+    id: 'Add block...',
+    defaultMessage: 'Add block...',
+  },
+  required: {
+    id: 'Required input is missing.',
+    defaultMessage: 'Required input is missing.',
+  },
+  minLength: {
+    id: 'Minimum length is {len}.',
+    defaultMessage: 'Minimum length is {len}.',
+  },
+  uniqueItems: {
+    id: 'Items must be unique.',
+    defaultMessage: 'Items must be unique.',
+  },
+  save: {
+    id: 'Save',
+    defaultMessage: 'Save',
+  },
+  cancel: {
+    id: 'Cancel',
+    defaultMessage: 'Cancel',
+  },
+  error: {
+    id: 'Error',
+    defaultMessage: 'Error',
+  },
+  thereWereSomeErrors: {
+    id: 'There were some errors.',
+    defaultMessage: 'There were some errors.',
+  },
+});

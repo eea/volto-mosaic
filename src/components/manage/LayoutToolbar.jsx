@@ -64,12 +64,20 @@ class LayoutToolbar extends Component {
     this.props.dispatchToParent('DELETE_LAYOUT', this.state.currentScreenSize);
   }
 
+  sendOverrideLayout(event, data) {
+    this.props.dispatchToParent('OVERRIDE_LAYOUT', data.checked);
+  }
+
   sendSaveLayout() {
     this.props.dispatchToParent('CREATE_LAYOUT', this.state.currentScreenSize);
   }
 
   sendPreviewBlocks(event, data) {
     this.props.dispatchToParent('PREVIEW_TILES', data.checked);
+  }
+
+  sendChangeDisplayType(event, data) {
+    this.props.dispatchToParent('CHANGE_DISPLAY_TYPE', data.checked);
   }
 
   sendAddBlock() {
@@ -120,6 +128,27 @@ class LayoutToolbar extends Component {
           <h2>Mosaic Layout</h2>
         </header>
 
+        <Segment secondary>
+          {/* <Checkbox
+            toggle
+            id="display_type"
+            onChange={(ev, data) => {
+              console.log('display toggle');
+              return this.sendChangeDisplayType(ev, data);
+            }}
+            label="Change display type"
+          /> */}
+          <Checkbox
+            toggle
+            id="override-toggle"
+            onChange={(ev, data) => {
+              console.log('pvewi toggle');
+              return this.sendOverrideLayout(ev, data);
+            }}
+            defaultChecked={this.props.overrideLayout}
+            label="Override layout"
+          />
+        </Segment>
         <Segment secondary>
           <Grid columns="two">
             <Grid.Column>

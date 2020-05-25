@@ -11,6 +11,8 @@ import {
 } from '@plone/volto/helpers';
 import { Helmet } from '@plone/volto/helpers';
 
+import { getOverridenBlocks } from 'volto-mosaic/helpers';
+
 import _ from 'lodash';
 import sizeMe, { SizeMe } from 'react-sizeme';
 import RGL from 'react-grid-layout';
@@ -44,7 +46,14 @@ export class BlockViewWrapper extends Component {
       return <div>The content for this mosaic view is not blocks-enabled</div>;
     }
     const blockData = formData[blocksFieldname][blockid];
-
+    // console.log(
+    //   'formdata',
+    //   formData,
+    //   'blocksfieldname',
+    //   blocksFieldname,
+    //   'blockid',
+    //   blockid,
+    // );
     if (!blockData) {
       console.warn(
         'no block data for blockid',
@@ -131,21 +140,54 @@ class MosaicView extends Component {
   static defaultProps = {
     cols: 12,
     margin: [0, 0],
-    onLayoutChange: function() {},
   };
 
   constructor(props) {
     super(props);
 
-    const content = props.content;
+    const hasClonedBehaviour = props.content.layout === 'cloned_blocks_view';
+    // const content = props.content;
+
+    const overridenBlocks = hasClonedBehaviour
+      ? getOverridenBlocks(props.content.blocks)
+      : {};
+
+    const blocks = hasClonedBehaviour
+      ? { ...props.content.cloned_blocks, ...overridenBlocks }
+      : props.content.blocks;
+
+    console.log('props content', props.content);
+    let blocks_layout = JSON.parse(JSON.stringify(props.content.blocks_layout));
+    if (
+      hasClonedBehaviour &&
+      props.content.blocks_layout?.overrideLayout === true
+    ) {
+      if (props.content.blocks_layout?.items?.length === 0) {
+        blocks_layout = JSON.parse(
+          JSON.stringify(props.content.cloned_blocks_layout),
+        );
+      }
+    }
+    if (hasClonedBehaviour && !props.content.blocks_layout?.overrideLayout) {
+      blocks_layout = JSON.parse(
+        JSON.stringify(props.content.cloned_blocks_layout),
+      );
+    }
+
+    const content = hasClonedBehaviour
+      ? {
+          ...props.content,
+          blocks_layout,
+          blocks: {
+            ...blocks,
+            ...overridenBlocks,
+          },
+        }
+      : props.content;
+
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     const propsLayout = content[blocksLayoutFieldname];
-    // remove mosaic_css_override from our hard copy of layout so the object matches the breakpoints object
     var layout = JSON.parse(JSON.stringify(propsLayout));
-    delete layout.mosaic_layout.mosaic_css_override;
-
-    const mosaic_css_override =
-      propsLayout && propsLayout.mosaic_layout?.mosaic_css_override;
     this.timeout = null;
     this.state = {
       mosaic_layout: (layout && layout.mosaic_layout) || {},
@@ -153,7 +195,7 @@ class MosaicView extends Component {
       activeMosaicLayout: 'lg',
       containerWidth: null,
       blurred: true,
-      mosaic_css_override: mosaic_css_override,
+      content,
     };
 
     this.onBlockShowUpdate = this.onBlockShowUpdate.bind(this);
@@ -173,17 +215,24 @@ class MosaicView extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.content['@id'] !== this.props.content['@id']) {
+      this.resetLayout();
+    }
+  }
+
   componentWillUnmount = () => {
     if (this.timeout) {
       console.log('clearing timout');
       clearTimeout(this.timeout);
     }
+    clearTimeout(this.timeout);
   };
 
   onBlockShowUpdate(blockid, height) {
     const size = this.state.activeMosaicLayout;
 
-    const content = this.props.content;
+    const content = this.state.content;
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     const fullLayout = content[blocksLayoutFieldname];
 
@@ -218,7 +267,7 @@ class MosaicView extends Component {
             <BlockViewWrapper
               style={{ maxWidth: '100%' }}
               blockid={item.i}
-              formData={this.props.content}
+              formData={this.state.content}
               // showUpdate={this.onBlockShowUpdate}
               containerWidth={this.state.containerWidth}
             />
@@ -255,20 +304,71 @@ class MosaicView extends Component {
     }
   }
   resetLayout = () => {
-    const layout = this.state.mosaic_layout;
-    // console.log('>>>>>>> reset layout');
-    this.setState({ mosaic_layout: {} }, () =>
-      this.setState(
-        { mosaic_layout: layout },
-        this.setState({ blurred: false }),
-      ),
-    );
+    const hasClonedBehaviour = this.props.content.layout === 'cloned_blocks_view';
+    // const content = props.content;
+
+    const overridenBlocks = hasClonedBehaviour
+      ? getOverridenBlocks(this.props.content.blocks)
+      : {};
+
+    const blocks = hasClonedBehaviour
+      ? { ...this.props.content.cloned_blocks, ...overridenBlocks }
+      : this.props.content.blocks;
+
+    console.log('props content', this.props.content);
+    let blocks_layout = JSON.parse(JSON.stringify(this.props.content.blocks_layout));
+    if (
+      hasClonedBehaviour &&
+      this.props.content.blocks_layout?.overrideLayout === true
+    ) {
+      if (this.props.content.blocks_layout?.items?.length === 0) {
+        blocks_layout = JSON.parse(
+          JSON.stringify(this.props.content.cloned_blocks_layout),
+        );
+      }
+    }
+    if (hasClonedBehaviour && !this.props.content.blocks_layout?.overrideLayout) {
+      blocks_layout = JSON.parse(
+        JSON.stringify(this.props.content.cloned_blocks_layout),
+      );
+    }
+
+    const content = hasClonedBehaviour
+      ? {
+          ...this.props.content,
+          blocks_layout,
+          blocks: {
+            ...blocks,
+            ...overridenBlocks,
+          },
+        }
+      : this.props.content;
+
+    this.setState({ content }, () => {
+      const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
+      const propsLayout = content[blocksLayoutFieldname];
+      let layout = JSON.parse(JSON.stringify(propsLayout));
+      let mosaic_layout, items;
+      if (layout.items.toString() !== this.state.items.toString()) {
+        mosaic_layout = (layout && layout.mosaic_layout) || {};
+        items = (layout && layout.items) || {};
+        this.setState({ items, mosaic_layout: {} }, () =>
+          this.setState({ mosaic_layout }, this.setState({ blurred: false })),
+        );
+      } else {
+        mosaic_layout = JSON.parse(JSON.stringify(this.state.mosaic_layout));
+        this.setState({ mosaic_layout: {} }, () =>
+          this.setState({ mosaic_layout }, this.setState({ blurred: false })),
+        );
+      }
+    });
   };
 
   render() {
     // console.debug('mosaic-debug props', this.props);
 
-    const { content } = this.props;
+    const { content } = this.state;
+    console.log('content in view', content);
     // const blocksFieldname = getBlocksFieldname(content);
     // const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     // const marginsData =
@@ -342,13 +442,6 @@ class MosaicView extends Component {
             );
           }}
         </SizeMe>
-        {this.state.mosaic_css_override && (
-          <style
-            dangerouslySetInnerHTML={{
-              __html: this.state.mosaic_css_override,
-            }}
-          />
-        )}
       </div>
     ) : (
       ''
