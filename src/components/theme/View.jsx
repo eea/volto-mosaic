@@ -152,9 +152,20 @@ class MosaicView extends Component {
       ? getOverridenBlocks(props.content.blocks)
       : {};
 
-    const blocks = hasClonedBehaviour
-      ? { ...props.content.cloned_blocks, ...overridenBlocks }
-      : props.content.blocks;
+    let blocks = props.content.blocks;
+    if (
+      hasClonedBehaviour &&
+      props.content.blocks_layout?.overrideLayout === true
+    ) {
+      blocks = {
+        ...props.content.blocks,
+        ...props.content.cloned_blocks,
+        ...overridenBlocks,
+      };
+    }
+    if (hasClonedBehaviour && !props.content.blocks_layout?.overrideLayout) {
+      blocks = { ...props.content.cloned_blocks, ...overridenBlocks };
+    }
 
     console.log('props content', props.content);
     let blocks_layout = JSON.parse(JSON.stringify(props.content.blocks_layout));
@@ -304,19 +315,36 @@ class MosaicView extends Component {
     }
   }
   resetLayout = () => {
-    const hasClonedBehaviour = this.props.content.layout === 'cloned_blocks_view';
+    const hasClonedBehaviour =
+      this.props.content.layout === 'cloned_blocks_view';
     // const content = props.content;
 
     const overridenBlocks = hasClonedBehaviour
       ? getOverridenBlocks(this.props.content.blocks)
       : {};
 
-    const blocks = hasClonedBehaviour
-      ? { ...this.props.content.cloned_blocks, ...overridenBlocks }
-      : this.props.content.blocks;
+    let blocks = this.props.content.blocks;
+    if (
+      hasClonedBehaviour &&
+      this.props.content.blocks_layout?.overrideLayout === true
+    ) {
+      blocks = {
+        ...this.props.content.blocks,
+        ...this.props.content.cloned_blocks,
+        ...overridenBlocks,
+      };
+    }
+    if (
+      hasClonedBehaviour &&
+      !this.props.content.blocks_layout?.overrideLayout
+    ) {
+      blocks = { ...this.props.content.cloned_blocks, ...overridenBlocks };
+    }
 
     console.log('props content', this.props.content);
-    let blocks_layout = JSON.parse(JSON.stringify(this.props.content.blocks_layout));
+    let blocks_layout = JSON.parse(
+      JSON.stringify(this.props.content.blocks_layout),
+    );
     if (
       hasClonedBehaviour &&
       this.props.content.blocks_layout?.overrideLayout === true
@@ -327,7 +355,10 @@ class MosaicView extends Component {
         );
       }
     }
-    if (hasClonedBehaviour && !this.props.content.blocks_layout?.overrideLayout) {
+    if (
+      hasClonedBehaviour &&
+      !this.props.content.blocks_layout?.overrideLayout
+    ) {
       blocks_layout = JSON.parse(
         JSON.stringify(this.props.content.cloned_blocks_layout),
       );

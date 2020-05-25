@@ -61,7 +61,11 @@ const renderEditBlockPlaceholder = ({
               size="mini"
               icon
               color="green"
-              disabled={hasClonedBehaviour && !block.override}
+              disabled={
+                block.fromOverriddenLayout
+                  ? false
+                  : hasClonedBehaviour && !block.override
+              }
               onClick={() => handleOpen(blockid)}
             >
               <Icon name={editIcon} size="10" />
@@ -71,13 +75,17 @@ const renderEditBlockPlaceholder = ({
                 size="mini"
                 icon
                 color="red"
-                disabled={hasClonedBehaviour && !overrideLayout}
+                disabled={
+                  block.fromOverriddenLayout
+                    ? false
+                    : hasClonedBehaviour && !overrideLayout
+                }
                 onClick={() => removeItem({ i: blockid })}
               >
                 <Icon name={deleteIcon} size="10" />
               </Button>
             )}
-            {hasClonedBehaviour ? (
+            {hasClonedBehaviour && !block.fromOverriddenLayout ? (
               <Radio
                 style={{ marginLeft: '5px' }}
                 defaultChecked={block.override}

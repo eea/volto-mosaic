@@ -316,6 +316,7 @@ const Form = props => {
           refs,
           activeScreenSize,
           use_grid_layout,
+          overrideLayout,
         });
         props.setFormData(addBlockData.formData);
         break;

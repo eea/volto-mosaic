@@ -12,6 +12,7 @@ const onAddBlock = ({
   refs,
   activeScreenSize,
   use_grid_layout,
+  overrideLayout
 }) => {
   // Handles the creation of a new block in the layout editor
   const id = uuid();
@@ -53,6 +54,7 @@ const onAddBlock = ({
     formData: {
       ...formData,
       [blocksLayoutFieldname]: {
+        ...formData[blocksLayoutFieldname],
         items: [...(formData[blocksLayoutFieldname].items || []), id],
         mosaic_layout: newLayout,
       },
@@ -60,6 +62,7 @@ const onAddBlock = ({
         ...formData[blocksFieldname],
         [id]: {
           '@type': type,
+          fromOverriddenLayout: overrideLayout ? true : false,
         },
       },
     },
