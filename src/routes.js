@@ -1,15 +1,24 @@
 import MosaicSettingsView from './components/theme/MosaicSettingsView';
-// import EditMosaic from './components/manage/Edit';
+import Add from './components/manage/Add';
+import Edit from './components/manage/Edit';
 
 const routes = [
-  // {
-  //   path: '/edit',
-  //   component: EditMosaic,
-  // },
-  // {
-  //   path: '*/**/edit',
-  //   component: EditMosaic,
-  // },
+  {
+    path: '/add',
+    component: Add,
+  },
+  {
+    path: '*/**/add',
+    component: Add,
+  },
+  {
+    path: '/edit',
+    component: Edit,
+  },
+  {
+    path: '*/**/edit',
+    component: Edit,
+  },
   {
     path: '*/mosaic-settings-view',
     component: MosaicSettingsView,

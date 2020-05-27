@@ -46,8 +46,6 @@ import { SizeMe } from 'react-sizeme';
 
 import RGL from 'react-grid-layout';
 
-import { TemplatingToolbar } from 'volto-addons/LayoutTemplating';
-
 // import move from 'lodash-move';
 // import aheadSVG from '@plone/volto/icons/ahead.svg';
 // import clearSVG from '@plone/volto/icons/clear.svg';
@@ -1006,16 +1004,6 @@ class Form extends Component {
           ''
         )}
         <SidebarPortal selected={!this.state.showModal}>
-          <TemplatingToolbar
-            mode={this.props.mode}
-            formData={this.state.formData || {}}
-            onSave={({ blocks, blocks_layout }) =>
-              this.setState({
-                formData: { ...this.state.formData, blocks, blocks_layout },
-              })
-            }
-          />
-
           <LayoutToolbar
             availableScreens={this.state.availableScreens}
             layouts={
@@ -1074,6 +1062,50 @@ class Form extends Component {
                       value={this.state.formData[field]}
                       required={schema.required.indexOf(field) !== -1}
                       onChange={this.onChangeField}
+                      onSave={({ blocks, blocks_layout }) => {
+                        let formData = { ...this.state.formData, blocks, blocks_layout }
+                        const ids = {
+                          title: uuid(),
+                          text: uuid(),
+                        };
+                        const blocksFieldname = getBlocksFieldname(formData);
+                        const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
+                        if (!formData) {
+                          // get defaults from schema
+                          formData = mapValues(props.schema.properties, 'default');
+                        }
+                        // defaults for block editor; should be moved to schema on server side
+                        if (!formData[blocksLayoutFieldname]) {
+                          formData[blocksLayoutFieldname] = {
+                            items: [ids.title, ids.text],
+                          };
+                        }
+                        if (!formData[blocksFieldname]) {
+                          formData[blocksFieldname] = {
+                            [ids.title]: {
+                              '@type': 'title',
+                              mosaic_block_title: 'title block',
+                            },
+                            [ids.text]: {
+                              '@type': 'text',
+                              mosaic_block_title: 'text block',
+                            },
+                          };
+                        }
+                        const activeScreenSize = this.state.activeScreenSize;
+                        const activeMosaicLayout = formData?.blocks_layout?.mosaic_layout ?
+                          formData.blocks_layout.mosaic_layout[activeScreenSize]
+                          : fallbackLayoutFromData(formData, ids);
+                        if (!formData[blocksLayoutFieldname].mosaic_layout) {
+                          formData[blocksLayoutFieldname].mosaic_layout = {
+                            lg: activeMosaicLayout,
+                          };
+                        }
+                        this.setState({
+                          formData,
+                          activeMosaicLayout
+                        })
+                      }}
                       key={field}
                       error={this.state.errors[field]}
                     />
