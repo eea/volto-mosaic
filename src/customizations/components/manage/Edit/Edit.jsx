@@ -15,6 +15,7 @@ import { Portal } from 'react-portal';
 import qs from 'query-string';
 import { find } from 'lodash';
 import { toast } from 'react-toastify';
+import { getEditForm } from 'volto-mosaic/helpers';
 
 import {
   Forbidden,
@@ -35,12 +36,6 @@ import { getBaseUrl, hasBlocksData } from '@plone/volto/helpers';
 
 import saveSVG from '@plone/volto/icons/save.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
-//  Custom imports
-import { Tab } from 'semantic-ui-react';
-import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-//  Edit Form
-import { getEditForm } from 'volto-mosaic/helpers';
 
 const messages = defineMessages({
   edit: {
@@ -58,14 +53,6 @@ const messages = defineMessages({
   error: {
     id: 'Error',
     defaultMessage: 'Error',
-  },
-  document: {
-    id: 'Document',
-    defaultMessage: 'Document',
-  },
-  block: {
-    id: 'Block',
-    defaultMessage: 'Block',
   },
 });
 
@@ -126,11 +113,9 @@ class Edit extends Component {
     super(props);
     this.state = {
       visual: true,
-      currentTab: 0,
     };
     this.onCancel = this.onCancel.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.onTabChange = this.onTabChange.bind(this);
   }
 
   /**
@@ -205,10 +190,6 @@ class Edit extends Component {
     );
   }
 
-  onTabChange(event, { activeIndex }) {
-    this.setState({ currentTab: activeIndex });
-  }
-
   form = React.createRef();
 
   /**
@@ -220,7 +201,9 @@ class Edit extends Component {
     const editPermission = find(this.props.objectActions, { id: 'edit' });
     const type = this.props?.content?.['@type'] || null;
     if (!type) return '';
+
     const FormImpl = getEditForm(this.props, 'edit') || Form;
+
     return (
       <div id="page-edit">
         {this.props.objectActions?.length > 0 && (
@@ -236,87 +219,26 @@ class Edit extends Component {
                       : null
                   }
                 />
-                {this.state.visual ? (
-                  <Tab
-                    menu={{
-                      secondary: true,
-                      pointing: true,
-                      attached: true,
-                      tabular: true,
-                      className: 'formtabs',
-                    }}
-                    className="tabs-wrapper"
-                    renderActiveOnly={false}
-                    activeIndex={this.props.tab}
-                    onTabChange={this.onTabChange}
-                    panes={[
-                      {
-                        menuItem: 'Blocks',
-                        pane: (
-                          <Tab.Pane
-                            key="visual"
-                            className="tab-wrapper"
-                            id="visual-form"
-                          >
-                            <FormImpl
-                              ref={this.form}
-                              inputRef={this.form}
-                              schema={this.props.schema}
-                              formData={this.props.content}
-                              onSubmit={this.onSubmit}
-                              hideActions
-                              pathname={this.props.pathname}
-                              visual={this.state.visual}
-                              title={
-                                this.props?.schema?.title
-                                  ? this.props.intl.formatMessage(
-                                      messages.edit,
-                                      {
-                                        title: this.props.schema.title,
-                                      },
-                                    )
-                                  : null
-                              }
-                              loading={this.props.updateRequest.loading}
-                              mode="editform"
-                            />
-                          </Tab.Pane>
-                        ),
-                      },
-                      {
-                        menuItem: 'Metadata',
-                        pane: (
-                          <Tab.Pane
-                            key="metadata"
-                            className="tab-wrapper"
-                            id="sidebar-metadata"
-                          />
-                        ),
-                      },
-                    ]}
+                {this.state.visual && (
+                  <FormImpl
+                    isEditForm
+                    inputRef={this.form}
+                    schema={this.props.schema}
+                    formData={this.props.content}
+                    onSubmit={this.onSubmit}
+                    hideActions
+                    pathname={this.props.pathname}
+                    visual={this.state.visual}
+                    title={
+                      this.props?.schema?.title
+                        ? this.props.intl.formatMessage(messages.edit, {
+                            title: this.props.schema.title,
+                          })
+                        : null
+                    }
+                    mode="editform"
+                    loading={this.props.updateRequest.loading}
                   />
-                ) : (
-                  <>
-                    <FormImpl
-                      ref={this.form}
-                      inputRef={this.form}
-                      schema={this.props.schema}
-                      formData={this.props.content}
-                      onSubmit={this.onSubmit}
-                      hideActions
-                      pathname={this.props.pathname}
-                      visual={this.state.visual}
-                      title={
-                        this.props?.schema?.title
-                          ? this.props.intl.formatMessage(messages.edit, {
-                              title: this.props.schema.title,
-                            })
-                          : null
-                      }
-                      loading={this.props.updateRequest.loading}
-                      mode="editform"
-                    />
-                  </>
                 )}
               </>
             )}
@@ -329,6 +251,7 @@ class Edit extends Component {
                 )}
               </>
             )}
+
             {editPermission && this.state.visual && (
               <Portal node={__CLIENT__ && document.getElementById('sidebar')}>
                 <Sidebar />
@@ -402,7 +325,6 @@ export const __test__ = compose(
 )(Edit);
 
 export default compose(
-  DragDropContext(HTML5Backend),
   injectIntl,
   asyncConnect([
     {

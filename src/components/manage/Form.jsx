@@ -471,14 +471,6 @@ const Form = props => {
         ''
       )}
       <SidebarPortal selected={!showModal.modal}>
-        {/* <TemplatingToolbar
-          mode={props.mode}
-          formData={formData || {}}
-          onSave={({ blocks, blocks_layout }) =>
-            props.setFormData({ ...formData, blocks, blocks_layout })
-          }
-        /> */}
-
         <LayoutToolbar
           availableScreens={availableScreens}
           layouts={
@@ -543,8 +535,8 @@ const Form = props => {
                       })
                     }
                     onSave={({ blocks, blocks_layout }) => {
-                      let formData = {
-                        ...this.state.formData,
+                      let currentFormData = {
+                        ...formData,
                         blocks,
                         blocks_layout,
                       };
@@ -552,25 +544,27 @@ const Form = props => {
                         title: uuid(),
                         text: uuid(),
                       };
-                      const blocksFieldname = getBlocksFieldname(formData);
-                      const blocksLayoutFieldname = getBlocksLayoutFieldname(
-                        formData,
+                      const blocksFieldname = getBlocksFieldname(
+                        currentFormData,
                       );
-                      if (!formData) {
+                      const blocksLayoutFieldname = getBlocksLayoutFieldname(
+                        currentFormData,
+                      );
+                      if (!currentFormData) {
                         // get defaults from schema
-                        formData = mapValues(
+                        currentFormData = mapValues(
                           props.schema.properties,
                           'default',
                         );
                       }
                       // defaults for block editor; should be moved to schema on server side
-                      if (!formData[blocksLayoutFieldname]) {
-                        formData[blocksLayoutFieldname] = {
+                      if (!currentFormData[blocksLayoutFieldname]) {
+                        currentFormData[blocksLayoutFieldname] = {
                           items: [ids.title, ids.text],
                         };
                       }
-                      if (!formData[blocksFieldname]) {
-                        formData[blocksFieldname] = {
+                      if (!currentFormData[blocksFieldname]) {
+                        currentFormData[blocksFieldname] = {
                           [ids.title]: {
                             '@type': 'title',
                             mosaic_block_title: 'title block',
@@ -581,20 +575,20 @@ const Form = props => {
                           },
                         };
                       }
-                      const activeScreenSize = this.state.activeScreenSize;
-                      const activeMosaicLayout = formData?.blocks_layout
+                      const currentActiveMosaicLayout = currentFormData?.blocks_layout
                         ?.mosaic_layout
-                        ? formData.blocks_layout.mosaic_layout[activeScreenSize]
-                        : fallbackLayoutFromData(formData, ids);
-                      if (!formData[blocksLayoutFieldname].mosaic_layout) {
-                        formData[blocksLayoutFieldname].mosaic_layout = {
-                          lg: activeMosaicLayout,
+                        ? currentFormData.blocks_layout.mosaic_layout[
+                            activeScreenSize
+                          ]
+                        : fallbackLayoutFromData(currentFormData, ids);
+                      if (
+                        !currentFormData[blocksLayoutFieldname].mosaic_layout
+                      ) {
+                        currentFormData[blocksLayoutFieldname].mosaic_layout = {
+                          lg: currentActiveMosaicLayout,
                         };
                       }
-                      this.setState({
-                        formData,
-                        activeMosaicLayout,
-                      });
+                      props.setFormData(currentFormData);
                     }}
                     key={field}
                     error={errors[field]}
