@@ -44,7 +44,7 @@ import {
 import BlockEditor from './BlockEditor';
 import LayoutToolbar from './LayoutToolbar';
 
-import { changeSidebarState } from 'volto-sidebar/actions';
+import { changeSidebarState } from 'volto-addons/actions';
 import { connect } from 'react-redux';
 import { setMosaicWidth } from 'volto-mosaic/actions';
 
@@ -54,7 +54,6 @@ import { SizeMe } from 'react-sizeme';
 
 import RGL from 'react-grid-layout';
 
-import { TemplatingToolbar } from 'volto-sidebar/LayoutTemplating';
 // import GridLayout from './GridLayout';
 
 // import move from 'lodash-move';
@@ -472,13 +471,13 @@ const Form = props => {
         ''
       )}
       <SidebarPortal selected={!showModal.modal}>
-        <TemplatingToolbar
+        {/* <TemplatingToolbar
           mode={props.mode}
           formData={formData || {}}
           onSave={({ blocks, blocks_layout }) =>
             props.setFormData({ ...formData, blocks, blocks_layout })
           }
-        />
+        /> */}
 
         <LayoutToolbar
           availableScreens={availableScreens}
@@ -543,6 +542,60 @@ const Form = props => {
                         [id]: value || null,
                       })
                     }
+                    onSave={({ blocks, blocks_layout }) => {
+                      let formData = {
+                        ...this.state.formData,
+                        blocks,
+                        blocks_layout,
+                      };
+                      const ids = {
+                        title: uuid(),
+                        text: uuid(),
+                      };
+                      const blocksFieldname = getBlocksFieldname(formData);
+                      const blocksLayoutFieldname = getBlocksLayoutFieldname(
+                        formData,
+                      );
+                      if (!formData) {
+                        // get defaults from schema
+                        formData = mapValues(
+                          props.schema.properties,
+                          'default',
+                        );
+                      }
+                      // defaults for block editor; should be moved to schema on server side
+                      if (!formData[blocksLayoutFieldname]) {
+                        formData[blocksLayoutFieldname] = {
+                          items: [ids.title, ids.text],
+                        };
+                      }
+                      if (!formData[blocksFieldname]) {
+                        formData[blocksFieldname] = {
+                          [ids.title]: {
+                            '@type': 'title',
+                            mosaic_block_title: 'title block',
+                          },
+                          [ids.text]: {
+                            '@type': 'text',
+                            mosaic_block_title: 'text block',
+                          },
+                        };
+                      }
+                      const activeScreenSize = this.state.activeScreenSize;
+                      const activeMosaicLayout = formData?.blocks_layout
+                        ?.mosaic_layout
+                        ? formData.blocks_layout.mosaic_layout[activeScreenSize]
+                        : fallbackLayoutFromData(formData, ids);
+                      if (!formData[blocksLayoutFieldname].mosaic_layout) {
+                        formData[blocksLayoutFieldname].mosaic_layout = {
+                          lg: activeMosaicLayout,
+                        };
+                      }
+                      this.setState({
+                        formData,
+                        activeMosaicLayout,
+                      });
+                    }}
                     key={field}
                     error={errors[field]}
                   />
