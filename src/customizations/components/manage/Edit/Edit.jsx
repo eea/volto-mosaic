@@ -12,6 +12,8 @@ import { asyncConnect } from 'redux-connect';
 import { defineMessages, injectIntl } from 'react-intl';
 import { Button } from 'semantic-ui-react';
 import { Portal } from 'react-portal';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import qs from 'query-string';
 import { find } from 'lodash';
 import { toast } from 'react-toastify';
@@ -145,7 +147,7 @@ class Edit extends Component {
       }
     }
     // Hack for make the Plone site editable by Volto Editor without checkings
-    if (this.props?.content?.['@type'] === 'Plone Site') {
+    if (this.props.content['@type'] === 'Plone Site') {
       this.setState({
         visual: true,
       });
@@ -161,9 +163,7 @@ class Edit extends Component {
         <Toast
           error
           title={this.props.intl.formatMessage(messages.error)}
-          content={`${nextProps.updateRequest.error.status} ${
-            nextProps.updateRequest.error.response?.body?.message
-          }`}
+          content={`${nextProps.updateRequest.error.status} ${nextProps.updateRequest.error.response?.body?.message}`}
         />,
       );
     }
@@ -199,14 +199,11 @@ class Edit extends Component {
    */
   render() {
     const editPermission = find(this.props.objectActions, { id: 'edit' });
-    const type = this.props?.content?.['@type'] || null;
-    if (!type) return '';
-
     const FormImpl = getEditForm(this.props, 'edit') || Form;
 
     return (
       <div id="page-edit">
-        {this.props.objectActions?.length > 0 && (
+        {this.props.objectActions.length > 0 && (
           <>
             {editPermission && (
               <>
@@ -219,27 +216,25 @@ class Edit extends Component {
                       : null
                   }
                 />
-                {this.state.visual && (
-                  <FormImpl
-                    isEditForm
-                    inputRef={this.form}
-                    schema={this.props.schema}
-                    formData={this.props.content}
-                    onSubmit={this.onSubmit}
-                    hideActions
-                    pathname={this.props.pathname}
-                    visual={this.state.visual}
-                    title={
-                      this.props?.schema?.title
-                        ? this.props.intl.formatMessage(messages.edit, {
-                            title: this.props.schema.title,
-                          })
-                        : null
-                    }
-                    mode="editform"
-                    loading={this.props.updateRequest.loading}
-                  />
-                )}
+                <FormImpl
+                  isEditForm
+                  ref={this.form}
+                  inputRef={this.form}
+                  schema={this.props.schema}
+                  formData={this.props.content}
+                  onSubmit={this.onSubmit}
+                  hideActions
+                  pathname={this.props.pathname}
+                  visual={this.state.visual}
+                  title={
+                    this.props?.schema?.title
+                      ? this.props.intl.formatMessage(messages.edit, {
+                          title: this.props.schema.title,
+                        })
+                      : null
+                  }
+                  loading={this.props.updateRequest.loading}
+                />
               </>
             )}
             {!editPermission && (
@@ -325,12 +320,13 @@ export const __test__ = compose(
 )(Edit);
 
 export default compose(
+  DragDropContext(HTML5Backend),
   injectIntl,
   asyncConnect([
     {
       key: 'actions',
-      promise: async ({ location, store: { dispatch } }) => {
-        await dispatch(listActions(getBaseUrl(location.pathname)));
+      promise: ({ location, store: { dispatch } }) => {
+        __SERVER__ && dispatch(listActions(getBaseUrl(location.pathname)));
       },
     },
   ]),
