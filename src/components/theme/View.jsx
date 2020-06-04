@@ -38,7 +38,7 @@ export class BlockViewWrapper extends Component {
   }
 
   render() {
-    const { formData, blockid } = this.props;
+    const { formData, blockid, className } = this.props;
 
     const blocksFieldname = getBlocksFieldname(formData);
 
@@ -73,7 +73,7 @@ export class BlockViewWrapper extends Component {
     Block = blocks.blocksConfig[blocktype].view;
 
     let style = blockData.mosaic_box_style || 'default-block';
-    let klass = 'block-wrapper ' + style;
+    let klass = 'block-wrapper ' + style + ' ' + className;
 
     return Block !== null ? (
       <div className="block-container" ref={this.state.ref}>
@@ -167,7 +167,6 @@ class MosaicView extends Component {
       blocks = { ...props.content.cloned_blocks, ...overridenBlocks };
     }
 
-    console.log('props content', props.content);
     let blocks_layout = JSON.parse(JSON.stringify(props.content.blocks_layout));
     if (
       hasClonedBehaviour &&
@@ -273,12 +272,16 @@ class MosaicView extends Component {
     return (
       this.state.mosaic_layout['lg'] &&
       this.state.mosaic_layout['lg'].map((item, i) => {
+        const content = this.state.content;
+        const blocksFieldName = getBlocksFieldname(content);
+        const blocksField = content[blocksFieldName];
         return (
           <div key={`${item.i}`}>
             <BlockViewWrapper
               style={{ maxWidth: '100%' }}
               blockid={item.i}
               formData={this.state.content}
+              className={`type-${blocksField[item.i]?.['@type']}`}
               // showUpdate={this.onBlockShowUpdate}
               containerWidth={this.state.containerWidth}
             />
@@ -341,7 +344,6 @@ class MosaicView extends Component {
       blocks = { ...this.props.content.cloned_blocks, ...overridenBlocks };
     }
 
-    console.log('props content', this.props.content);
     let blocks_layout = JSON.parse(
       JSON.stringify(this.props.content.blocks_layout),
     );
@@ -399,7 +401,6 @@ class MosaicView extends Component {
     // console.debug('mosaic-debug props', this.props);
 
     const { content } = this.state;
-    console.log('content in view', content);
     // const blocksFieldname = getBlocksFieldname(content);
     // const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     // const marginsData =

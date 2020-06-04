@@ -47,3 +47,7 @@
   content: ' ';
   white-space: pre;
 }
+
+.drop-shadow-tile.type-text {
+  padding: 10px;
+}

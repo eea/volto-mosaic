@@ -470,133 +470,136 @@ const Form = props => {
       ) : (
         ''
       )}
-      <SidebarPortal selected={!showModal.modal}>
-        <LayoutToolbar
-          availableScreens={availableScreens}
-          layouts={
-            formData.blocks_layout.mosaic_layout ||
-            props.formData.blocks_layout.mosaic_layout
-          }
-          preview={preview}
-          activeMosaicLayout={activeMosaicLayout}
-          dispatchToParent={handleLayoutToolbar}
-          currentZoom={zoom}
-          margins={formData?.blocks_layout.margins}
-          overrideLayout={overrideLayout}
-          tilesList={_.map(activeMosaicLayout, el => (
-            <List.Item key={el.i}>
-              <List.Content floated="right">
-                <Button size="mini" onClick={() => handleOpen(el.i)}>
-                  Edit
-                </Button>
-              </List.Content>
-              <List.Content verticalAlign="middle">
-                <Grid stretched>
-                  <Grid.Column width="8">
-                    {getBlockById(formData, el.i)?.['@type'].replace(
-                      /_/gi,
-                      ' ',
-                    )}
-                  </Grid.Column>
-                  <Grid.Column width="4">
-                    <small>
-                      {el.w} x {el.h}
-                    </small>
-                  </Grid.Column>
-                </Grid>
-              </List.Content>
-            </List.Item>
-          ))}
-        />
-      </SidebarPortal>
+      {/* <SidebarPortal selected={!showModal.modal} /> */}
       <Portal node={__CLIENT__ && document.getElementById('sidebar-metadata')}>
-        <UiForm
-          method="post"
-          onSubmit={onSubmit}
-          error={keys(errors).length > 0}
-        >
-          {schema &&
-            map(schema.fieldsets, item => [
-              <Segment secondary attached key={item.title}>
-                {item.title}
-              </Segment>,
-              <Segment attached key={`fieldset-contents-${item.title}`}>
-                {map(item.fields, (field, index) => (
-                  <Field
-                    {...schema.properties[field]}
-                    id={field}
-                    focus={false}
-                    value={formData[field]}
-                    required={schema.required.indexOf(field) !== -1}
-                    onChange={(id, value) =>
-                      props.setFormData({
-                        ...formData,
-                        [id]: value || null,
-                      })
-                    }
-                    onSave={({ blocks, blocks_layout }) => {
-                      let currentFormData = {
-                        ...formData,
-                        blocks,
-                        blocks_layout,
-                      };
-                      const ids = {
-                        title: uuid(),
-                        text: uuid(),
-                      };
-                      const blocksFieldname = getBlocksFieldname(
-                        currentFormData,
-                      );
-                      const blocksLayoutFieldname = getBlocksLayoutFieldname(
-                        currentFormData,
-                      );
-                      if (!currentFormData) {
-                        // get defaults from schema
-                        currentFormData = mapValues(
-                          props.schema.properties,
-                          'default',
+        <React.Fragment>
+          <LayoutToolbar
+            availableScreens={availableScreens}
+            layouts={
+              formData.blocks_layout.mosaic_layout ||
+              props.formData.blocks_layout.mosaic_layout
+            }
+            preview={preview}
+            activeMosaicLayout={activeMosaicLayout}
+            dispatchToParent={handleLayoutToolbar}
+            currentZoom={zoom}
+            margins={formData?.blocks_layout.margins}
+            overrideLayout={overrideLayout}
+            tilesList={_.map(activeMosaicLayout, el => (
+              <List.Item key={el.i}>
+                <List.Content floated="right">
+                  <Button size="mini" onClick={() => handleOpen(el.i)}>
+                    Edit
+                  </Button>
+                </List.Content>
+                <List.Content verticalAlign="middle">
+                  <Grid stretched>
+                    <Grid.Column width="8">
+                      {getBlockById(formData, el.i)?.['@type'].replace(
+                        /_/gi,
+                        ' ',
+                      )}
+                    </Grid.Column>
+                    <Grid.Column width="4">
+                      <small>
+                        {el.w} x {el.h}
+                      </small>
+                    </Grid.Column>
+                  </Grid>
+                </List.Content>
+              </List.Item>
+            ))}
+          />
+          <UiForm
+            method="post"
+            onSubmit={onSubmit}
+            error={keys(errors).length > 0}
+          >
+            {schema &&
+              map(schema.fieldsets, item => [
+                <Segment secondary attached key={item.title}>
+                  {item.title}
+                </Segment>,
+                <Segment attached key={`fieldset-contents-${item.title}`}>
+                  {map(item.fields, (field, index) => (
+                    <Field
+                      {...schema.properties[field]}
+                      id={field}
+                      focus={false}
+                      value={formData[field]}
+                      required={schema.required.indexOf(field) !== -1}
+                      onChange={(id, value) =>
+                        props.setFormData({
+                          ...formData,
+                          [id]: value || null,
+                        })
+                      }
+                      onSave={({ blocks, blocks_layout }) => {
+                        let currentFormData = {
+                          ...formData,
+                          blocks,
+                          blocks_layout,
+                        };
+                        const ids = {
+                          title: uuid(),
+                          text: uuid(),
+                        };
+                        const blocksFieldname = getBlocksFieldname(
+                          currentFormData,
                         );
-                      }
-                      // defaults for block editor; should be moved to schema on server side
-                      if (!currentFormData[blocksLayoutFieldname]) {
-                        currentFormData[blocksLayoutFieldname] = {
-                          items: [ids.title, ids.text],
-                        };
-                      }
-                      if (!currentFormData[blocksFieldname]) {
-                        currentFormData[blocksFieldname] = {
-                          [ids.title]: {
-                            '@type': 'title',
-                            mosaic_block_title: 'title block',
-                          },
-                          [ids.text]: {
-                            '@type': 'text',
-                            mosaic_block_title: 'text block',
-                          },
-                        };
-                      }
-                      const currentActiveMosaicLayout = currentFormData?.blocks_layout
-                        ?.mosaic_layout
-                        ? currentFormData.blocks_layout.mosaic_layout[
-                            activeScreenSize
-                          ]
-                        : fallbackLayoutFromData(currentFormData, ids);
-                      if (
-                        !currentFormData[blocksLayoutFieldname].mosaic_layout
-                      ) {
-                        currentFormData[blocksLayoutFieldname].mosaic_layout = {
-                          lg: currentActiveMosaicLayout,
-                        };
-                      }
-                      props.setFormData(currentFormData);
-                    }}
-                    key={field}
-                    error={errors[field]}
-                  />
-                ))}
-              </Segment>,
-            ])}
-        </UiForm>
+                        const blocksLayoutFieldname = getBlocksLayoutFieldname(
+                          currentFormData,
+                        );
+                        if (!currentFormData) {
+                          // get defaults from schema
+                          currentFormData = mapValues(
+                            props.schema.properties,
+                            'default',
+                          );
+                        }
+                        // defaults for block editor; should be moved to schema on server side
+                        if (!currentFormData[blocksLayoutFieldname]) {
+                          currentFormData[blocksLayoutFieldname] = {
+                            items: [ids.title, ids.text],
+                          };
+                        }
+                        if (!currentFormData[blocksFieldname]) {
+                          currentFormData[blocksFieldname] = {
+                            [ids.title]: {
+                              '@type': 'title',
+                              mosaic_block_title: 'title block',
+                            },
+                            [ids.text]: {
+                              '@type': 'text',
+                              mosaic_block_title: 'text block',
+                            },
+                          };
+                        }
+                        const currentActiveMosaicLayout = currentFormData
+                          ?.blocks_layout?.mosaic_layout
+                          ? currentFormData.blocks_layout.mosaic_layout[
+                              activeScreenSize
+                            ]
+                          : fallbackLayoutFromData(currentFormData, ids);
+                        if (
+                          !currentFormData[blocksLayoutFieldname].mosaic_layout
+                        ) {
+                          currentFormData[
+                            blocksLayoutFieldname
+                          ].mosaic_layout = {
+                            lg: currentActiveMosaicLayout,
+                          };
+                        }
+                        props.setFormData(currentFormData);
+                      }}
+                      key={field}
+                      error={errors[field]}
+                    />
+                  ))}
+                </Segment>,
+              ])}
+          </UiForm>
+        </React.Fragment>
       </Portal>
     </div>
   ) : (

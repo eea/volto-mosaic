@@ -68,6 +68,7 @@ class BlockMetadataEditor extends Component {
   render() {
     let styles = (this.state.settings && this.state.settings.styles) || [];
     // console.log('will pass styles', styles);
+    console.log('mosaic settings', this.state.settings)
     return (
       <UiForm>
         <UiForm.Field
