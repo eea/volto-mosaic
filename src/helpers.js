@@ -1,4 +1,8 @@
 import { settings, editForms } from '~/config';
+import {
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+} from '@plone/volto/helpers';
 
 export function getLocation(href) {
   var match = href.match(
@@ -58,7 +62,6 @@ export function getOverridenBlocks(blocks) {
     }, {});
 }
 
-
 function getByType(props, type) {
   let res;
   switch (type) {
@@ -83,4 +86,49 @@ export function getEditForm(props, type = 'edit') {
     getByLayout(props, type) || getByType(props, type) || editForms.default;
 
   return impl;
+}
+
+export function fallbackLayoutFromData(formData, ids) {
+  // create a default layout based on existing blocks
+
+  const blocksFieldname = getBlocksFieldname(formData);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
+
+  const order = formData[blocksLayoutFieldname].items || [];
+  const data = formData[blocksFieldname];
+
+  const fallbackLayout = [
+    {
+      // provide default block for title
+      h: 1,
+      i: ids.title,
+      w: 12,
+      x: 0,
+      y: 0,
+    },
+    {
+      // provide default block for text
+      h: 3,
+      i: ids.text,
+      w: 12,
+      x: 0,
+      y: 1,
+    },
+  ];
+
+  const validIds = order.filter(i => {
+    return Object.keys(data).indexOf(i) > -1;
+  });
+
+  const res = validIds.map((el, ix) => {
+    return {
+      w: 12,
+      h: ix === 0 ? 2 : 4,
+      x: 0,
+      y: ix === 0 ? 0 : 2 + (ix - 1) * 4,
+      i: el,
+    };
+  });
+
+  return res || fallbackLayout;
 }

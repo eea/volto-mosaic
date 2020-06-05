@@ -25,7 +25,7 @@ import {
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
 
-import { fromEntries } from 'volto-mosaic/helpers';
+import { fallbackLayoutFromData } from 'volto-mosaic/helpers';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -69,51 +69,6 @@ export function getBlockById(formData, id) {
   const blocksFieldname = getBlocksFieldname(formData);
   const res = formData[blocksFieldname]?.[id];
   return res;
-}
-
-function fallbackLayoutFromData(formData, ids) {
-  // create a default layout based on existing blocks
-
-  const blocksFieldname = getBlocksFieldname(formData);
-  const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
-
-  const order = formData[blocksLayoutFieldname].items || [];
-  const data = formData[blocksFieldname];
-
-  const fallbackLayout = [
-    {
-      // provide default block for title
-      h: 1,
-      i: ids.title,
-      w: 12,
-      x: 0,
-      y: 0,
-    },
-    {
-      // provide default block for text
-      h: 3,
-      i: ids.text,
-      w: 12,
-      x: 0,
-      y: 1,
-    },
-  ];
-
-  const validIds = order.filter(i => {
-    return Object.keys(data).indexOf(i) > -1;
-  });
-
-  const res = validIds.map((el, ix) => {
-    return {
-      w: 12,
-      h: ix === 0 ? 2 : 4,
-      x: 0,
-      y: ix === 0 ? 0 : 2 + (ix - 1) * 4,
-      i: el,
-    };
-  });
-
-  return res || fallbackLayout;
 }
 
 const Form = props => {
@@ -178,14 +133,10 @@ const Form = props => {
     return '';
   }
 
-  const ids = {
-    title: uuid(),
-    text: uuid(),
-  };
   const { schema } = props; // , onCancel, onSubmit
 
   const hasClonedBehaviour = props.hasClonedBehaviour;
-
+  const ids = props.ids;
   let formData = props.formData;
 
   const blocksFieldname = getBlocksFieldname(formData);
@@ -298,6 +249,9 @@ const Form = props => {
         break;
       case 'CHANGE_SCREEN_SIZE':
         props.setActiveScreenSize(data);
+        // props.setFormData({
+        //   ...formData,
+        // });
         break;
       case 'CHANGE_MARGINS':
         props.setFormData({
@@ -399,15 +353,20 @@ const Form = props => {
               ''
             ) : (
               <ReactGridLayout
-                onLayoutChange={layout =>
-                  props.setFormData(
-                    onLayoutChange({
-                      newLayout: layout,
-                      formData,
-                      activeScreenSize,
-                    }).formData,
-                  )
-                }
+                onLayoutChange={layout => {
+                  const layoutChangeData = onLayoutChange({
+                    newLayout: layout,
+                    formData,
+                    activeScreenSize,
+                  });
+                  if (layoutChangeData.formData) {
+                    props.setFormData(layoutChangeData.formData);
+                  } else {
+                    props.setActiveMosaicLayout(
+                      layoutChangeData.activeMosaicLayout,
+                    );
+                  }
+                }}
                 onBreakpointChange={() => {}}
                 layout={activeMosaicLayout}
                 width={(() => {

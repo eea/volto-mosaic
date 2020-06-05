@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 import { getOverridenBlocks } from 'volto-mosaic/helpers';
+import { fallbackLayoutFromData } from 'volto-mosaic/helpers';
+import { v4 as uuid } from 'uuid';
 
 const FormManager = WrappedComponent => props => {
+  const ids = {
+    title: uuid(),
+    text: uuid(),
+  };
   const [formData, setFormData] = useState(props.formData);
   const [activeScreenSize, setActiveScreenSize] = useState('lg');
-  console.log('formData in manage', formData);
+  const [activeMosaicLayout, setActiveMosaicLayout] = useState(
+    props.formData?.blocks_layout?.mosaic_layout?.[activeScreenSize] ||
+      fallbackLayoutFromData(props.formData, ids),
+  );
+
+  console.log('formData in manage', formData, props);
 
   const hasClonedBehaviour = props.formData.layout === 'cloned_blocks_view';
 
@@ -51,7 +62,10 @@ const FormManager = WrappedComponent => props => {
     setFormData,
     setActiveScreenSize,
     activeScreenSize,
+    activeMosaicLayout,
+    setActiveMosaicLayout,
     hasClonedBehaviour,
+    ids,
   };
   console.log('updated props', updatedProps);
   return <WrappedComponent {...updatedProps} />;
