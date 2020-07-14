@@ -38,6 +38,7 @@ export class BlockViewWrapper extends Component {
   }
 
   render() {
+
     const { formData, blockid, className } = this.props;
 
     const blocksFieldname = getBlocksFieldname(formData);
@@ -46,14 +47,6 @@ export class BlockViewWrapper extends Component {
       return <div>The content for this mosaic view is not blocks-enabled</div>;
     }
     const blockData = formData[blocksFieldname][blockid];
-    // console.log(
-    //   'formdata',
-    //   formData,
-    //   'blocksfieldname',
-    //   blocksFieldname,
-    //   'blockid',
-    //   blockid,
-    // );
     if (!blockData) {
       console.warn(
         'no block data for blockid',
@@ -198,6 +191,7 @@ class MosaicView extends Component {
     const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     const propsLayout = content[blocksLayoutFieldname];
     var layout = JSON.parse(JSON.stringify(propsLayout));
+
     this.timeout = null;
     this.state = {
       mosaic_layout: (layout && layout.mosaic_layout) || {},
@@ -401,6 +395,7 @@ class MosaicView extends Component {
     // console.debug('mosaic-debug props', this.props);
 
     const { content } = this.state;
+
     // const blocksFieldname = getBlocksFieldname(content);
     // const blocksLayoutFieldname = getBlocksLayoutFieldname(content);
     // const marginsData =
