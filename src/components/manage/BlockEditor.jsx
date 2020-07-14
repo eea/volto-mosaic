@@ -50,9 +50,11 @@ class ModalEditor extends Component {
 
   handleClickOutside = e => {
     if (this.ref && doesNodeContainClick(this.ref, e)) return;
-    this.setState(() => ({
-      showBlockChooser: false,
-    }));
+    if (this.state.showBlockChooser) {
+      this.setState(() => ({
+        showBlockChooser: false,
+      }));
+    }
   };
 
   componentDidMount() {

@@ -32,11 +32,13 @@
     "@babel/preset-react": "^7.0.0"
   },
   "dependencies": {
+    "performant-array-to-tree": "^1.7.1",
     "react-grid-layout": "^0.17.1",
     "react-resizable": "^1.9.0",
     "react-sizeme": "^2.6.12"
   },
   "peerDependencies": {
     "@plone/volto": "^4.0.0.alpha-17"
-  }
+  },
+  "voltoCustomizationPath": "src/customizations"
 }
