@@ -38,7 +38,6 @@ export class BlockViewWrapper extends Component {
   }
 
   render() {
-
     const { formData, blockid, className } = this.props;
 
     const blocksFieldname = getBlocksFieldname(formData);
@@ -138,7 +137,11 @@ class MosaicView extends Component {
   constructor(props) {
     super(props);
 
-    const hasClonedBehaviour = props.content.layout === 'cloned_blocks_view';
+    const hasClonedBehaviour = [
+      'cloned_blocks_view',
+      'tabs_mosaic_view',
+      'tabs_mosaic_child_view',
+    ].includes(props.content.layout);
     // const content = props.content;
 
     const overridenBlocks = hasClonedBehaviour
@@ -312,8 +315,11 @@ class MosaicView extends Component {
     }
   }
   resetLayout = () => {
-    const hasClonedBehaviour =
-      this.props.content.layout === 'cloned_blocks_view';
+    const hasClonedBehaviour = [
+      'cloned_blocks_view',
+      'tabs_mosaic_view',
+      'tabs_mosaic_child_view',
+    ].includes(this.props.content.layout);
     // const content = props.content;
 
     const overridenBlocks = hasClonedBehaviour

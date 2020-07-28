@@ -163,7 +163,9 @@ class Edit extends Component {
         <Toast
           error
           title={this.props.intl.formatMessage(messages.error)}
-          content={`${nextProps.updateRequest.error.status} ${nextProps.updateRequest.error.response?.body?.message}`}
+          content={`${nextProps.updateRequest.error.status} ${
+            nextProps.updateRequest.error.response?.body?.message
+          }`}
         />,
       );
     }

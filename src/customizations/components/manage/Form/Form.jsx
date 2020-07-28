@@ -153,6 +153,7 @@ class Form extends Component {
       text: uuid(),
     };
     let { formData } = props;
+    if (!formData) formData = {};
     const blocksFieldname = getBlocksFieldname(formData);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
 
@@ -167,14 +168,14 @@ class Form extends Component {
     // Adding fallback in case the fields are empty, so we are sure that the edit form
     // shows at least the default blocks
     if (
-      !formData[blocksLayoutFieldname] ||
-      isEmpty(formData[blocksLayoutFieldname].items)
+      !formData?.[blocksLayoutFieldname] ||
+      isEmpty(formData?.[blocksLayoutFieldname]?.items)
     ) {
       formData[blocksLayoutFieldname] = {
         items: [ids.title, ids.text],
       };
     }
-    if (!formData[blocksFieldname] || isEmpty(formData[blocksFieldname])) {
+    if (!formData?.[blocksFieldname] || isEmpty(formData?.[blocksFieldname])) {
       formData[blocksFieldname] = {
         [ids.title]: {
           '@type': 'title',
