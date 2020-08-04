@@ -65,7 +65,12 @@ export class BlockViewWrapper extends Component {
     Block = blocks.blocksConfig[blocktype].view;
 
     let style = blockData.mosaic_box_style || 'default-block';
-    let klass = 'block-wrapper ' + style + ' ' + className;
+    let klass =
+      'block-wrapper ' +
+      style +
+      ' ' +
+      className +
+      (blockData.blockClassName ? ` ${blockData.blockClassName}` : '');
 
     return Block !== null ? (
       <div className="block-container" ref={this.state.ref}>
@@ -174,7 +179,11 @@ class MosaicView extends Component {
         );
       }
     }
-    if (hasClonedBehaviour && !props.content.blocks_layout?.overrideLayout) {
+    if (
+      hasClonedBehaviour &&
+      !props.content.blocks_layout?.overrideLayout &&
+      props.content.cloned_blocks_layout
+    ) {
       blocks_layout = JSON.parse(
         JSON.stringify(props.content.cloned_blocks_layout),
       );
@@ -198,10 +207,12 @@ class MosaicView extends Component {
     this.timeout = null;
     this.state = {
       mosaic_layout: (layout && layout.mosaic_layout) || {},
+      mosaic_layout_copy: (layout && layout.mosaic_layout) || {},
       items: (layout && layout.items) || {},
       activeMosaicLayout: 'lg',
       containerWidth: null,
       blurred: true,
+      watchElements: {},
       content,
     };
 
@@ -220,9 +231,15 @@ class MosaicView extends Component {
     } else {
       this.setState({ blurred: false });
     }
+    // if (__CLIENT__) {
+    //   this.setMosaicLayout();
+    // }
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // if (__CLIENT__) {
+    //   this.setMosaicLayout();
+    // }
     if (prevProps.content['@id'] !== this.props.content['@id']) {
       this.resetLayout();
     }
@@ -339,7 +356,8 @@ class MosaicView extends Component {
     }
     if (
       hasClonedBehaviour &&
-      !this.props.content.blocks_layout?.overrideLayout
+      !this.props.content.blocks_layout?.overrideLayout &&
+      this.props.content.blocks_layout
     ) {
       blocks = { ...this.props.content.cloned_blocks, ...overridenBlocks };
     }
@@ -359,7 +377,8 @@ class MosaicView extends Component {
     }
     if (
       hasClonedBehaviour &&
-      !this.props.content.blocks_layout?.overrideLayout
+      !this.props.content.blocks_layout?.overrideLayout &&
+      this.props.content.cloned_blocks_layout
     ) {
       blocks_layout = JSON.parse(
         JSON.stringify(this.props.content.cloned_blocks_layout),
@@ -397,7 +416,100 @@ class MosaicView extends Component {
     });
   };
 
+  setMosaicLayout = () => {
+    let blockHidden = false;
+    const mosaic_layout = {};
+    const watchElements = { ...this.state.watchElements };
+    Object.entries(this.state.mosaic_layout_copy).forEach(([key, layout]) => {
+      mosaic_layout[key] = [];
+      layout.forEach(block => {
+        const blockContent = this.state.content.blocks?.[block.i];
+        if (
+          blockContent?.hide_block?.selector &&
+          blockContent?.hide_block?.hiddenClassName
+        ) {
+          const selector = blockContent?.hide_block?.selector;
+          const hiddenClassName = blockContent?.hide_block?.hiddenClassName;
+          const event = blockContent?.hide_block?.event || '';
+          const element = document.querySelector(selector);
+          if (!watchElements[selector]) {
+            watchElements[selector] = {
+              hiddenClassName,
+            };
+          }
+          if (element && !element.hasAttribute('sidebarToggle')) {
+            watchElements[selector][event] = true;
+            element.setAttribute('sidebarToggle', true);
+            element.addEventListener(event, e => {
+              setTimeout(() => {
+                this.setMosaicLayout();
+              }, 0);
+            });
+          }
+          if (element && element.classList.contains(hiddenClassName)) {
+            blockHidden = { ...block };
+            mosaic_layout[key].forEach((modifiedBlock, index) => {
+              if (
+                (modifiedBlock.y >= blockHidden.y &&
+                  modifiedBlock.y <= blockHidden.y + blockHidden.h) ||
+                (modifiedBlock.y <= blockHidden.y &&
+                  modifiedBlock.y + modifiedBlock.h > blockHidden.y)
+              ) {
+                mosaic_layout[key][index].x = 0;
+                mosaic_layout[key][index].w = 11;
+              }
+            });
+            mosaic_layout[key].push({ ...block, w: 1 });
+          } else {
+            mosaic_layout[key].push({ ...block });
+          }
+        }
+        if (
+          blockHidden &&
+          block.i !== blockHidden.i &&
+          ((block.y >= blockHidden.y &&
+            block.y <= blockHidden.y + blockHidden.h) ||
+            (block.y <= blockHidden.y && block.y + block.h > blockHidden.y))
+        ) {
+          const modifiedBlock = { ...block };
+          modifiedBlock.x = 0;
+          modifiedBlock.w = 11;
+          mosaic_layout[key].push({ ...modifiedBlock });
+        } else if (!blockContent?.hide_block?.selector) {
+          mosaic_layout[key].push({ ...block });
+        }
+      });
+    });
+    if (
+      JSON.stringify(watchElements) !==
+        JSON.stringify(this.state.watchElements) &&
+      JSON.stringify(mosaic_layout) !== JSON.stringify(this.state.mosaic_layout)
+    ) {
+      this.setState({
+        watchElements,
+        mosaic_layout,
+      });
+      return;
+    }
+    if (
+      JSON.stringify(mosaic_layout) !== JSON.stringify(this.state.mosaic_layout)
+    ) {
+      this.setState({
+        mosaic_layout,
+      });
+    }
+    return;
+  };
+
   render() {
+    // Object.entries(this.state.watchElements).forEach(
+    //   ([selector, hiddenClassName]) => {
+    //     const element = document.querySelector(selector);
+    //     if (element) {
+    //       console.log(element.classList.contains(hiddenClassName));
+    //     }
+    //   },
+    // );
     // console.debug('mosaic-debug props', this.props);
 
     const { content } = this.state;
@@ -418,7 +530,6 @@ class MosaicView extends Component {
     // ) -
     // 4 * margins[0]
     // return (<div>asd{JSON.stringify(this.props.mosaic_layout)}</div>)
-
     return this.state.mosaic_layout ? (
       <div className="mosaic_view">
         <Helmet title={content.title} />
@@ -431,6 +542,7 @@ class MosaicView extends Component {
             //   breakpoints(size.width),
             //   this.state.mosaic_layout,
             // );
+            // return <h1>SIZE ME</h1>;
             return (
               <ReactGridLayout
                 layouts={this.state.mosaic_layout}

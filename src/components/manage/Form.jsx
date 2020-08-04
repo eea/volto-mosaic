@@ -446,14 +446,9 @@ const Form = props => {
             overrideLayout={overrideLayout}
             tilesList={_.map(activeMosaicLayout, el => (
               <List.Item key={el.i}>
-                <List.Content floated="right">
-                  <Button size="mini" onClick={() => handleOpen(el.i)}>
-                    Edit
-                  </Button>
-                </List.Content>
-                <List.Content verticalAlign="middle">
-                  <Grid stretched>
-                    <Grid.Column width="8">
+                <List.Content>
+                  <Grid>
+                    <Grid.Column width="7">
                       {getBlockById(formData, el.i)?.['@type'].replace(
                         /_/gi,
                         ' ',
@@ -465,6 +460,36 @@ const Form = props => {
                       </small>
                     </Grid.Column>
                   </Grid>
+                </List.Content>
+                <List.Content>
+                  <Grid>
+                    <Grid.Column width="4">
+                      <p>Classname</p>
+                    </Grid.Column>
+                    <Grid.Column width="7">
+                      <input
+                        value={formData.blocks?.[el.i]?.blockClassName}
+                        type="text"
+                        onChange={event => {
+                          props.setFormData({
+                            ...formData,
+                            blocks: {
+                              ...formData.blocks,
+                              [el.i]: {
+                                ...formData.blocks?.[el.i],
+                                blockClassName: event.target.value,
+                              },
+                            },
+                          });
+                        }}
+                      />
+                    </Grid.Column>
+                  </Grid>
+                </List.Content>
+                <List.Content>
+                  <Button size="mini" onClick={() => handleOpen(el.i)}>
+                    Edit
+                  </Button>
                 </List.Content>
               </List.Item>
             ))}
