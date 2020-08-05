@@ -146,11 +146,12 @@ class MosaicView extends Component {
       'cloned_blocks_view',
       'tabs_mosaic_view',
       'tabs_mosaic_child_view',
+      'discodata_view',
     ].includes(props.content.layout);
     // const content = props.content;
 
     const overridenBlocks = hasClonedBehaviour
-      ? getOverridenBlocks(props.content.blocks)
+      ? getOverridenBlocks(props.content.blocks || {})
       : {};
 
     let blocks = props.content.blocks;
@@ -168,7 +169,9 @@ class MosaicView extends Component {
       blocks = { ...props.content.cloned_blocks, ...overridenBlocks };
     }
 
-    let blocks_layout = JSON.parse(JSON.stringify(props.content.blocks_layout));
+    let blocks_layout = props.content.blocks_layout
+      ? JSON.parse(JSON.stringify(props.content.blocks_layout))
+      : {};
     if (
       hasClonedBehaviour &&
       props.content.blocks_layout?.overrideLayout === true
@@ -340,7 +343,7 @@ class MosaicView extends Component {
     // const content = props.content;
 
     const overridenBlocks = hasClonedBehaviour
-      ? getOverridenBlocks(this.props.content.blocks)
+      ? getOverridenBlocks(this.props.content.blocks || {})
       : {};
 
     let blocks = this.props.content.blocks;
@@ -362,9 +365,9 @@ class MosaicView extends Component {
       blocks = { ...this.props.content.cloned_blocks, ...overridenBlocks };
     }
 
-    let blocks_layout = JSON.parse(
-      JSON.stringify(this.props.content.blocks_layout),
-    );
+    let blocks_layout =
+      this.props.content.blocks_layout &&
+      JSON.parse(JSON.stringify(this.props.content.blocks_layout));
     if (
       hasClonedBehaviour &&
       this.props.content.blocks_layout?.overrideLayout === true

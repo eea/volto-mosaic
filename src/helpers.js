@@ -52,14 +52,17 @@ export function fromEntries(iterable) {
 }
 
 export function getOverridenBlocks(blocks) {
-  return Object.keys(blocks)
-    .filter(key => blocks[key].override === true)
-    .reduce((obj, key) => {
-      return {
-        ...obj,
-        [key]: blocks[key],
-      };
-    }, {});
+  return (
+    blocks &&
+    Object.keys(blocks)
+      .filter(key => blocks[key].override === true)
+      .reduce((obj, key) => {
+        return {
+          ...obj,
+          [key]: blocks[key],
+        };
+      }, {})
+  );
 }
 
 function getByType(props, type) {
