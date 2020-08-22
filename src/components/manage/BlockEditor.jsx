@@ -48,7 +48,7 @@ class ModalEditor extends Component {
     this.panes = [];
   }
 
-  handleClickOutside = e => {
+  handleClickOutside = (e) => {
     if (this.ref && doesNodeContainClick(this.ref, e)) return;
     if (this.state.showBlockChooser) {
       this.setState(() => ({
@@ -212,8 +212,8 @@ class ModalEditor extends Component {
         </Modal.Content>
         <Modal.Actions>
           <Grid columns={2}>
-            <Grid.Column style={{ textAlign: 'left' }}>
-              <Button.Group floated="left">
+            <Grid.Column style={{ textAlign: 'left', width: '100%' }}>
+              <div className="block-editor-container">
                 <Button
                   onClick={() => this.setState({ showBlockChooser: true })}
                 >
@@ -222,7 +222,10 @@ class ModalEditor extends Component {
                     : 'Set type'}
                 </Button>
 
-                <div ref={node => (this.ref = node)}>
+                <div
+                  ref={(node) => (this.ref = node)}
+                  style={{ width: '100%' }}
+                >
                   {this.state.showBlockChooser && (
                     <BlockChooser
                       onMutateBlock={this.onMutateBlock}
@@ -230,10 +233,10 @@ class ModalEditor extends Component {
                     />
                   )}
                 </div>
-              </Button.Group>
+              </div>
             </Grid.Column>
-            <Grid.Column>
-              <Button.Group floated="right">
+            <Grid.Column style={{ textAlign: 'center', width: '100%' }}>
+              <Button.Group>
                 <Button
                   basic
                   circular

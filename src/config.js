@@ -22,6 +22,13 @@ export function applyConfig(config) {
         mosaic_tiles_view: MosaicTilesView,
       },
     },
+    addonRoutes: [...(config.addonRoutes || []), ...addonRoutes],
+  };
+}
+
+export function applyEditForms(config) {
+  return {
+    ...config,
     editForms: {
       ...config.editForms,
       byLayout: {
@@ -34,6 +41,5 @@ export function applyConfig(config) {
         'Plone Site': MosaicForm,
       },
     },
-    addonRoutes: [...(config.addonRoutes || []), ...addonRoutes],
   };
 }

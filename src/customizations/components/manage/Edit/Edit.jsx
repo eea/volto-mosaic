@@ -12,12 +12,9 @@ import { asyncConnect } from 'redux-connect';
 import { defineMessages, injectIntl } from 'react-intl';
 import { Button } from 'semantic-ui-react';
 import { Portal } from 'react-portal';
-import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import qs from 'query-string';
 import { find } from 'lodash';
 import { toast } from 'react-toastify';
-import { getEditForm } from 'volto-mosaic/helpers';
 
 import {
   Forbidden,
@@ -35,7 +32,7 @@ import {
   listActions,
 } from '@plone/volto/actions';
 import { getBaseUrl, hasBlocksData } from '@plone/volto/helpers';
-
+import { getEditForm } from 'volto-mosaic/helpers';
 import saveSVG from '@plone/volto/icons/save.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
 
@@ -115,6 +112,7 @@ class Edit extends Component {
     super(props);
     this.state = {
       visual: true,
+      isClient: false,
     };
     this.onCancel = this.onCancel.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -126,7 +124,10 @@ class Edit extends Component {
    * @returns {undefined}
    */
   componentDidMount() {
-    this.props.getContent(getBaseUrl(this.props.pathname));
+    if (this.props.getRequest.loaded && this.props.content?.['@type']) {
+      this.props.getSchema(this.props.content['@type']);
+    }
+    this.setState({ isClient: true });
   }
 
   /**
@@ -136,9 +137,6 @@ class Edit extends Component {
    * @returns {undefined}
    */
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.getRequest.loading && nextProps.getRequest.loaded) {
-      this.props.getSchema(nextProps.content['@type']);
-    }
     if (this.props.schemaRequest.loading && nextProps.schemaRequest.loaded) {
       if (!hasBlocksData(nextProps.schema.properties)) {
         this.setState({
@@ -147,7 +145,7 @@ class Edit extends Component {
       }
     }
     // Hack for make the Plone site editable by Volto Editor without checkings
-    if (this.props.content['@type'] === 'Plone Site') {
+    if (this.props?.content?.['@type'] === 'Plone Site') {
       this.setState({
         visual: true,
       });
@@ -163,9 +161,7 @@ class Edit extends Component {
         <Toast
           error
           title={this.props.intl.formatMessage(messages.error)}
-          content={`${nextProps.updateRequest.error.status} ${
-            nextProps.updateRequest.error.response?.body?.message
-          }`}
+          content={`${nextProps.updateRequest.error.status} ${nextProps.updateRequest.error.response?.body?.message}`}
         />,
       );
     }
@@ -202,10 +198,9 @@ class Edit extends Component {
   render() {
     const editPermission = find(this.props.objectActions, { id: 'edit' });
     const FormImpl = getEditForm(this.props, 'edit') || Form;
-
     return (
       <div id="page-edit">
-        {this.props.objectActions.length > 0 && (
+        {this.props.objectActions?.length > 0 && (
           <>
             {editPermission && (
               <>
@@ -224,6 +219,9 @@ class Edit extends Component {
                   inputRef={this.form}
                   schema={this.props.schema}
                   formData={this.props.content}
+                  requestError={
+                    this.props.updateRequest.error?.response?.body?.message
+                  }
                   onSubmit={this.onSubmit}
                   hideActions
                   pathname={this.props.pathname}
@@ -249,50 +247,52 @@ class Edit extends Component {
               </>
             )}
 
-            {editPermission && this.state.visual && (
-              <Portal node={__CLIENT__ && document.getElementById('sidebar')}>
+            {editPermission && this.state.visual && this.state.isClient && (
+              <Portal node={document.getElementById('sidebar')}>
                 <Sidebar />
               </Portal>
             )}
           </>
         )}
-        <Portal node={__CLIENT__ && document.getElementById('toolbar')}>
-          <Toolbar
-            pathname={this.props.pathname}
-            hideDefaultViewButtons
-            inner={
-              <>
-                <Button
-                  id="toolbar-save"
-                  className="save"
-                  aria-label={this.props.intl.formatMessage(messages.save)}
-                  onClick={() => this.form.current.onSubmit()}
-                  disabled={this.props.updateRequest.loading}
-                  loading={this.props.updateRequest.loading}
-                >
-                  <Icon
-                    name={saveSVG}
-                    className="circled"
-                    size="30px"
-                    title={this.props.intl.formatMessage(messages.save)}
-                  />
-                </Button>
-                <Button
-                  className="cancel"
-                  aria-label={this.props.intl.formatMessage(messages.cancel)}
-                  onClick={() => this.onCancel()}
-                >
-                  <Icon
-                    name={clearSVG}
-                    className="circled"
-                    size="30px"
-                    title={this.props.intl.formatMessage(messages.cancel)}
-                  />
-                </Button>
-              </>
-            }
-          />
-        </Portal>
+        {this.state.isClient && (
+          <Portal node={document.getElementById('toolbar')}>
+            <Toolbar
+              pathname={this.props.pathname}
+              hideDefaultViewButtons
+              inner={
+                <>
+                  <Button
+                    id="toolbar-save"
+                    className="save"
+                    aria-label={this.props.intl.formatMessage(messages.save)}
+                    onClick={() => this.form.current.onSubmit()}
+                    disabled={this.props.updateRequest.loading}
+                    loading={this.props.updateRequest.loading}
+                  >
+                    <Icon
+                      name={saveSVG}
+                      className="circled"
+                      size="30px"
+                      title={this.props.intl.formatMessage(messages.save)}
+                    />
+                  </Button>
+                  <Button
+                    className="cancel"
+                    aria-label={this.props.intl.formatMessage(messages.cancel)}
+                    onClick={() => this.onCancel()}
+                  >
+                    <Icon
+                      name={clearSVG}
+                      className="circled"
+                      size="30px"
+                      title={this.props.intl.formatMessage(messages.cancel)}
+                    />
+                  </Button>
+                </>
+              }
+            />
+          </Portal>
+        )}
       </div>
     );
   }
@@ -322,14 +322,18 @@ export const __test__ = compose(
 )(Edit);
 
 export default compose(
-  DragDropContext(HTML5Backend),
   injectIntl,
   asyncConnect([
     {
       key: 'actions',
-      promise: ({ location, store: { dispatch } }) => {
-        __SERVER__ && dispatch(listActions(getBaseUrl(location.pathname)));
+      promise: async ({ location, store: { dispatch } }) => {
+        await dispatch(listActions(getBaseUrl(location.pathname)));
       },
+    },
+    {
+      key: 'content',
+      promise: async ({ location, store: { dispatch } }) =>
+        await dispatch(getContent(getBaseUrl(location.pathname))),
     },
   ]),
   connect(
