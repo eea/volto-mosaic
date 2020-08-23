@@ -72,11 +72,10 @@ class ModalEditor extends Component {
 
     let Block = null;
     let type = this.state.blockData['@type'].toLowerCase();
-    Block = blocks.blocksConfig[type].edit;
+    Block = blocks.blocksConfig?.[type]?.edit;
 
     let nop = () => {};
-
-    return (
+    return Block ? (
       <Block
         id={this.state.blockid}
         block={this.state.blockid}
@@ -118,7 +117,7 @@ class ModalEditor extends Component {
         // block={this.state.blockid}
         // selected={this.state.selected === this.state.blockid}
       />
-    );
+    ) : null;
   }
 
   onChangeBlock(id, value) {
