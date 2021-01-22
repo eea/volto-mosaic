@@ -44,7 +44,7 @@ import {
 import BlockEditor from './BlockEditor';
 import LayoutToolbar from './LayoutToolbar';
 
-import { changeSidebarState } from 'volto-addons-forest/actions';
+import { changeSidebarState } from '@eeacms/volto-addons-forest/actions';
 import { connect } from 'react-redux';
 import { setMosaicWidth } from 'volto-mosaic/actions';
 
