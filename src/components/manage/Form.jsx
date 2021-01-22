@@ -44,7 +44,7 @@ import {
 import BlockEditor from './BlockEditor';
 import LayoutToolbar from './LayoutToolbar';
 
-import { changeSidebarState } from 'volto-addons/actions';
+import { changeSidebarState } from 'volto-addons-forest/actions';
 import { connect } from 'react-redux';
 import { setMosaicWidth } from 'volto-mosaic/actions';
 
@@ -61,7 +61,7 @@ import RGL from 'react-grid-layout';
 // import clearSVG from '@plone/volto/icons/clear.svg';
 const ReactGridLayout = RGL;
 
-const availableScreens = Object.keys(screenSizes).map(k => {
+const availableScreens = Object.keys(screenSizes).map((k) => {
   return { key: k, text: screenSizes[k], value: k };
 });
 
@@ -71,7 +71,7 @@ export function getBlockById(formData, id) {
   return res;
 }
 
-const Form = props => {
+const Form = (props) => {
   Form.propTypes = {
     schema: PropTypes.shape({
       fieldsets: PropTypes.arrayOf(
@@ -181,7 +181,7 @@ const Form = props => {
   const overrideLayout = formData[blocksLayoutFieldname].overrideLayout;
 
   const items = formData[blocksLayoutFieldname].items || [];
-  const refs = items.map(id => [id, React.createRef()]);
+  const refs = items.map((id) => [id, React.createRef()]);
 
   // STATE
   const [errors, setErrors] = useState({}),
@@ -197,12 +197,12 @@ const Form = props => {
   }
 
   // Methods
-  const handleOpen = blockid => {
+  const handleOpen = (blockid) => {
     props.changeSidebarState(true);
     setShowModal({ modal: true, currentBlock: blockid });
   };
 
-  const showUpdate = blockid => {
+  const showUpdate = (blockid) => {
     const showBlockData = onShowBlock({
       formData,
       activeScreenSize,
@@ -229,7 +229,7 @@ const Form = props => {
     });
   };
 
-  const removeItem = i => {
+  const removeItem = (i) => {
     const removeItemData = onRemoveItem({
       id: i.i,
       formData,
@@ -312,7 +312,7 @@ const Form = props => {
     }
   };
 
-  const onSubmit = event => {
+  const onSubmit = (event) => {
     const submitData = onSubmitForm({
       event,
       schema,
@@ -353,7 +353,7 @@ const Form = props => {
               ''
             ) : (
               <ReactGridLayout
-                onLayoutChange={layout => {
+                onLayoutChange={(layout) => {
                   const layoutChangeData = onLayoutChange({
                     newLayout: layout,
                     formData,
@@ -388,7 +388,7 @@ const Form = props => {
                 {...props}
                 margin={[0, 0]}
               >
-                {_.map(activeMosaicLayout, el =>
+                {_.map(activeMosaicLayout, (el) =>
                   renderElement({
                     el,
                     showUpdate,
@@ -415,7 +415,7 @@ const Form = props => {
         <BlockEditor
           blockid={showModal.currentBlock}
           formData={formData}
-          onClose={blockData => {
+          onClose={(blockData) => {
             const handleCloseEditorData = handleCloseEditor({
               blockData,
               currentBlock: showModal.currentBlock,
@@ -444,7 +444,7 @@ const Form = props => {
             currentZoom={zoom}
             margins={formData?.blocks_layout.margins}
             overrideLayout={overrideLayout}
-            tilesList={_.map(activeMosaicLayout, el => (
+            tilesList={_.map(activeMosaicLayout, (el) => (
               <List.Item key={el.i}>
                 <List.Content>
                   <Grid>
@@ -470,7 +470,7 @@ const Form = props => {
                       <input
                         value={formData.blocks?.[el.i]?.blockClassName}
                         type="text"
-                        onChange={event => {
+                        onChange={(event) => {
                           props.setFormData({
                             ...formData,
                             blocks: {
@@ -500,7 +500,7 @@ const Form = props => {
             error={keys(errors).length > 0}
           >
             {schema &&
-              map(schema.fieldsets, item => [
+              map(schema.fieldsets, (item) => [
                 <Segment secondary attached key={item.title}>
                   {item.title}
                 </Segment>,
@@ -591,7 +591,6 @@ const Form = props => {
   );
 };
 
-export default connect(
-  null,
-  { changeSidebarState, setMosaicWidth },
-)(injectIntl(FormManager(Form), { forwardRef: true }));
+export default connect(null, { changeSidebarState, setMosaicWidth })(
+  injectIntl(FormManager(Form), { forwardRef: true }),
+);
